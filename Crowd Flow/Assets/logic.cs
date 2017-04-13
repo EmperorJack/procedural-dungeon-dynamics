@@ -30,6 +30,7 @@ public class logic : MonoBehaviour {
 	}
 
 	void drawGrid(){
+		grid = new float[]{ 0f, 0f, 0f };
 
 		for (int i = 0; i < dim; i++) {
 			for (int j = 0; j < dim; j++) {
@@ -37,7 +38,6 @@ public class logic : MonoBehaviour {
 				float height = 1;
 
 				float density = grid[2];
-				print (grid [2]);
 				Color d_Color = new Color (density, density, density);
 
 				setColor (d_Color);
