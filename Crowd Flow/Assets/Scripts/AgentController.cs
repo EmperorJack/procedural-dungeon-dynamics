@@ -34,7 +34,7 @@ public class AgentController : MonoBehaviour {
 			mPos.z = 10;
 			Vector3 pos = Camera.main.ScreenToWorldPoint (mPos);
 
-			print (pos.x + " " + pos.y + " " + pos.z);
+			//print (pos.x + " " + pos.y + " " + pos.z);
 			rb.position = new Vector3 (pos.x, rb.position.y, pos.z);
 		}
 
