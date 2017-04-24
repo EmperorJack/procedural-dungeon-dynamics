@@ -187,6 +187,7 @@ MonoBehaviour:
   top: 0
   agent: {fileID: 1845141050}
   left2: 0
+  board: {fileID: 1190878780}
 --- !u!4 &346346746
 Transform:
   m_ObjectHideFlags: 0

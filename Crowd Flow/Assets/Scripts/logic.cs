@@ -26,13 +26,42 @@ public class logic : MonoBehaviour
 
 	private bool isInitialized = false;
 
+	public GameObject board;
+
+	private Texture2D tex = new Texture2D (1000,1000, TextureFormat.ARGB32, false);
+
 
 
 	// Use this for initialization
 	void Start ()
 	{
+
 		isInitialized = true;
 		populateGrid ();
+	}
+
+	void fillRectTex(Vector2 pos, float size, Color color){
+		pos = (pos / 10) * 1000;
+		size = (size / 10) * 1000;
+		for (int i = (int)(-pos.x-(size/2)-500); i < (int)(-pos.x + (size/2)-500); i++) {
+			for (int j = (int)(-pos.y-(size/2)-500); j < (int)(-pos.y + size/2-500); j++) {
+				tex.SetPixel (i, j, color);
+			}
+		}
+	}
+
+	void clear(){
+		tex = new Texture2D (1000,1000, TextureFormat.ARGB32, false);
+		for (int i = 0; i < tex.width; i++) {
+			for (int j = 0; j < tex.height; j++) {
+				tex.SetPixel (i, j, Color.black);
+			}
+		}
+	}
+
+	void redraw(){
+		tex.Apply ();
+		board.GetComponent<Renderer> ().material.SetTexture ("_MainTex", tex);
 	}
 
 	void populateGrid ()
@@ -84,9 +113,20 @@ public class logic : MonoBehaviour
 		}
 	}
 
+	void clearGrid()
+	{
+		for (int i = 0; i < dim; i++) {
+			for (int j = 0; j < dim; j++) {
+				sharedGrid [i, j].density = 0.0f;
+			}
+		}
+	}
+
 	// Update is called once per frame
 	void Update ()
 	{
+
+		drawGrid ();
 
 		if (Input.GetMouseButton (0) && !isClicked) {
 			Vector3 mPos = Input.mousePosition;
@@ -97,9 +137,6 @@ public class logic : MonoBehaviour
 			Rigidbody agentBody = agent.GetComponent<Rigidbody> ();
 			agentBody.position = new Vector3 (pos.x, agent.transform.localScale.y / 4, pos.z);
 			agents.Add (agent);
-
-			assignDensities ();
-
 			isClicked = true;
 
 		}
@@ -108,14 +145,14 @@ public class logic : MonoBehaviour
 			isClicked = false;
 		}
 
-		if (Input.GetMouseButton (1)) {
-
-		}
+		//clearGrid ();
+	    //assignDensities ();
 
 	}
-
+		
 	void assignDensities ()
 	{
+		
 		foreach (GameObject agent in agents) {
 			Rigidbody agentBody = agent.GetComponent<Rigidbody> ();
 
@@ -124,15 +161,17 @@ public class logic : MonoBehaviour
 			int y = (int)cellIndex.y;
 			SharedCell cell = sharedGrid [x, y];
 
-			float deltaX = agentBody.position.x - cell.position.x;
-			float deltaY = agentBody.position.y - cell.position.y;
+			float dif =1f;
+
+			float deltaX = Mathf.Abs(agentBody.position.x - cell.position.x);
+			float deltaY = Mathf.Abs(agentBody.position.y - cell.position.y);
 			float densityExponent = 0.1f;
-			float densityA = Mathf.Pow (Mathf.Min (1 - deltaX, 1 - deltaY), densityExponent);
+			float densityA = Mathf.Pow (Mathf.Min (dif - deltaX, dif - deltaY), densityExponent);
 			cell.density += densityA;
 			//cell.avg_Velocity += densityA * agentVelocity;
 
 			SharedCell cellB = sharedGrid [x + 1, y];
-			float densityB = Mathf.Pow (Mathf.Min (deltaX, 1 - deltaY), densityExponent);
+			float densityB = Mathf.Pow (Mathf.Min (deltaX, dif - deltaY), densityExponent);
 			cellB.density += densityB;
 
 			SharedCell cellC = sharedGrid [x + 1, y + 1];
@@ -140,7 +179,7 @@ public class logic : MonoBehaviour
 			cellC.density += densityC;
 
 			SharedCell cellD = sharedGrid [x, y + 1];
-			float densityD = Mathf.Pow (Mathf.Min (1 - deltaX, deltaY), densityExponent);
+			float densityD = Mathf.Pow (Mathf.Min (dif - deltaX, deltaY), densityExponent);
 			cellD.density += densityD;
 
 		}
@@ -148,12 +187,12 @@ public class logic : MonoBehaviour
 
 	void OnDrawGizmosSelected ()
 	{
-		drawGrid ();
+		//drawGrid ();
 
 		if (isInitialized && agents.Count>0) {
 			
 			//Start ();
-			drawGrid ();
+			//drawGrid ();
 			Rigidbody rb = agents[agents.Count-1].GetComponent<Rigidbody> ();
 			Vector2 cell = getLeft (rb.position.x, rb.position.z);
 
@@ -285,23 +324,25 @@ public class logic : MonoBehaviour
 
 	void drawGrid ()
 	{
+		clear ();
 		float maxDensity = 5.0f;
 
 		for (int i = 0; i < dim; i++) {
 			for (int j = 0; j < dim; j++) {
 
 				float density = sharedGrid [i, j].density;
-				density = density / maxDensity;
+				density = Mathf.Min(1.0f,density / maxDensity);
 
 				Color d_Color = new Color (density, density, density);
 				Vector2 position = sharedGrid [i, j].position;
 
 				setColor (d_Color);
-				fillRect (position.x, position.y, cell_width, cell_width);
+				fillRectTex (new Vector2(position.x, position.y), cell_width,d_Color);
 				setColor (Color.red);
-				drawRect (position.x, position.y, cell_width, cell_width);
+				//drawRect (position.x, position.y, cell_width, cell_width);
 			}
 		}
+		redraw ();
 	}
 
 
