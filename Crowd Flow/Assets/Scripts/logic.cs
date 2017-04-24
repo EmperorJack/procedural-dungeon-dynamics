@@ -44,9 +44,9 @@ public class logic : MonoBehaviour
 			for (int j = 0; j < dim; j++) {
 				Vector2 pos = new Vector2 (((cell_width/2.0f) * (0.5f + i - (dim/2.0f))),((cell_width/2.0f) * (0.5f+ j - (dim/2.0f))));
 				sharedGrid [i, j] = new SharedCell (pos);
-				cellDic [new Vector2 (Mathf.Round (pos.x), Mathf.Round (pos.y))] = new Vector2 (i, j);
+				cellDic [new Vector2 ((pos.x),(pos.y))] = new Vector2 (i, j);
 
-				print (pos.x + " " + pos.y + " " + Mathf.Round (pos.x) + " " + Mathf.Round (pos.y));
+				print (pos.x + " " + pos.y);
 
 			}
 			//d -= 0.1f;
@@ -92,6 +92,7 @@ public class logic : MonoBehaviour
 			assignDensities ();
 
 			isClicked = true;
+
 		}
 
 		if (Input.GetMouseButtonUp (0)) {
@@ -163,24 +164,28 @@ public class logic : MonoBehaviour
 	{
 
 		// to make all positions positive
-		x += cell_width * (dim / 2);
-		y += cell_width * (dim / 2);
+		//x += cell_width * (dim / 2);
+		//y += cell_width * (dim / 2);
 
-		float x_Rem = x - x % (cell_width / 2);
-		float y_Rem = y - y % (cell_width / 2);
+		print ("Mouse: " + x + " " + y);
 
-		// could be dependant on the grid representation
-		if (x_Rem % cell_width == 0 || x_Rem == 0) {
-			x_Rem -= cell_width / 2;
+		float x_Rem = x - x % (cell_width / 2.0f);
+		float y_Rem = y - y % (cell_width / 2.0f);
+
+		print ("Before: " + x_Rem + " " + y_Rem);
+
+		if (x_Rem % cell_width == 0) {
+			x_Rem -= cell_width / 2.0f;
 		}
 
-		if (y_Rem % cell_width == 0 || y_Rem == 0) {
-			y_Rem -= cell_width / 2;
+		if (y_Rem % cell_width == 0) {
+			y_Rem -= cell_width / 2.0f;
 		}
-
 			
-		x_Rem -= cell_width * (dim / 2);
-		y_Rem -= cell_width * (dim / 2);
+		//x_Rem -= cell_width * (dim / 2);
+		//y_Rem -= cell_width * (dim / 2);
+
+		print (x_Rem + " " + y_Rem);
 			
 		// edge case where there are no cells left
 		x_Rem = Mathf.Max (x_Rem, -(dim / 2) * cell_width + cell_width / 2);
@@ -188,7 +193,13 @@ public class logic : MonoBehaviour
 
 		left_Pos = new Vector2 (x_Rem,y_Rem);
 
-		return cellDic [new Vector2 (Mathf.Round (x_Rem), Mathf.Round (y_Rem))];
+		Vector2 index = new Vector2 ((x_Rem),(y_Rem));
+		if (cellDic.ContainsKey (index)) {
+			return cellDic [index];
+		} else {
+			print ("Could not find index: " + index);
+			return new Vector2(0,0);
+		}
 	}
 
 	////////////////////////////
