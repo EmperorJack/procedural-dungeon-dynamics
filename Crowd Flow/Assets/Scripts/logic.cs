@@ -17,7 +17,6 @@ public class logic : MonoBehaviour
 	private SharedCell[,] sharedGrid;
 	private Dictionary<Vector2, Vector2> cellDic;
 	// position to sharedGrid index
-	private bool redraw = true;
 
 	private Vector2 left_Pos = new Vector2 (float.MaxValue, float.MaxValue);
 
@@ -26,6 +25,7 @@ public class logic : MonoBehaviour
 	List<GameObject> agents = new List<GameObject> ();
 
 	private bool isInitialized = false;
+
 
 
 	// Use this for initialization
@@ -42,9 +42,18 @@ public class logic : MonoBehaviour
 
 		for (int i = 0; i < dim; i++) {
 			for (int j = 0; j < dim; j++) {
-				Vector2 pos = new Vector2 (((cell_width/2.0f) * (0.5f + i - (dim/2.0f))),((cell_width/2.0f) * (0.5f+ j - (dim/2.0f))));
+				
+				Vector2 pos = new Vector2 ((cell_width)*(i - dim/2+0.5f), (cell_width)*(j - dim/2+0.5f));
 				sharedGrid [i, j] = new SharedCell (pos);
 				cellDic [new Vector2 ((pos.x),(pos.y))] = new Vector2 (i, j);
+
+				if (pos.x == 0) {
+					print ("x = 0 at: " + i + " " + j);
+				}
+
+				if (pos.y == 0) {
+					print ("y = 0 at: " + i + " " + j);
+				}
 
 				print (pos.x + " " + pos.y);
 
@@ -86,7 +95,7 @@ public class logic : MonoBehaviour
 			print ("Instantiating Agent at x: " + pos.x + " y: " + pos.y + " z: " + pos.z);
 			GameObject agent = (GameObject)Instantiate (Resources.Load ("Agent"));
 			Rigidbody agentBody = agent.GetComponent<Rigidbody> ();
-			agentBody.position = new Vector3 (pos.x, agent.transform.localScale.y / 2, pos.z);
+			agentBody.position = new Vector3 (pos.x, agent.transform.localScale.y / 4, pos.z);
 			agents.Add (agent);
 
 			assignDensities ();
@@ -140,6 +149,7 @@ public class logic : MonoBehaviour
 	void OnDrawGizmosSelected ()
 	{
 		drawGrid ();
+
 		if (isInitialized && agents.Count>0) {
 			
 			//Start ();
@@ -149,11 +159,13 @@ public class logic : MonoBehaviour
 
 			if (left_Pos.x < float.MaxValue) {
 
-				setColor (Color.red);
-				fillRect (sharedGrid [(int)cell.x, (int)cell.y].position, cell_width, cell_width);
-
-				setColor (Color.blue);
-				fillRect (left_Pos.x, left_Pos.y, 0.1f, 0.1f);
+//				print ("DRAWING");
+//
+//				setColor (Color.red);
+//				fillRect (sharedGrid [(int)cell.x, (int)cell.y].position, cell_width, cell_width);
+//
+//				setColor (Color.blue);
+//				fillRect (left_Pos.x, left_Pos.y, 0.1f, 0.1f);
 			}
 		}
 	}
@@ -164,8 +176,8 @@ public class logic : MonoBehaviour
 	{
 
 		// to make all positions positive
-		//x += cell_width * (dim / 2);
-		//y += cell_width * (dim / 2);
+		x += cell_width * (dim / 2);
+		y += cell_width * (dim / 2);
 
 		print ("Mouse: " + x + " " + y);
 
@@ -182,8 +194,8 @@ public class logic : MonoBehaviour
 			y_Rem -= cell_width / 2.0f;
 		}
 			
-		//x_Rem -= cell_width * (dim / 2);
-		//y_Rem -= cell_width * (dim / 2);
+		x_Rem -= cell_width * (dim / 2);
+	    y_Rem -= cell_width * (dim / 2);
 
 		print (x_Rem + " " + y_Rem);
 			
@@ -277,8 +289,6 @@ public class logic : MonoBehaviour
 
 		for (int i = 0; i < dim; i++) {
 			for (int j = 0; j < dim; j++) {
-				float width = 1;
-				float height = 1;
 
 				float density = sharedGrid [i, j].density;
 				density = density / maxDensity;
@@ -287,9 +297,9 @@ public class logic : MonoBehaviour
 				Vector2 position = sharedGrid [i, j].position;
 
 				setColor (d_Color);
-				fillRect (position.x, position.y, width, height);
+				fillRect (position.x, position.y, cell_width, cell_width);
 				setColor (Color.red);
-				drawRect (position.x, position.y, width, height);
+				drawRect (position.x, position.y, cell_width, cell_width);
 			}
 		}
 	}
