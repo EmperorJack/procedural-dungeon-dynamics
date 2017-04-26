@@ -44,7 +44,7 @@ public class logic : MonoBehaviour
 		pos = (pos / 10) * 1000;
 		size = (size / 10) * 1000;
 		for (int i = (int)(-pos.x-(size/2)-500); i < (int)(-pos.x + (size/2)-500); i++) {
-			for (int j = (int)(-pos.y-(size/2)-500); j < (int)(-pos.y + size/2-500); j++) {
+			for (int j = (int)(-pos.y-Resources.Load ("Agent")(size/2)-500); j < (int)(-pos.y + size/2-500); j++) {
 				tex.SetPixel (i, j, color);
 			}
 		}
@@ -134,11 +134,11 @@ public class logic : MonoBehaviour
 			Vector3 pos = Camera.main.ScreenToWorldPoint (mPos);
 			print ("Instantiating Agent at x: " + pos.x + " y: " + pos.y + " z: " + pos.z);
 			GameObject agent = (GameObject)Instantiate (Resources.Load ("Agent"));
+			// Instantiate(public game object)
 			Rigidbody agentBody = agent.GetComponent<Rigidbody> ();
 			agentBody.position = new Vector3 (pos.x, agent.transform.localScale.y / 4, pos.z);
 			agents.Add (agent);
 			isClicked = true;
-
 		}
 
 		if (Input.GetMouseButtonUp (0)) {
