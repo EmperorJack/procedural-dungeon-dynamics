@@ -7,13 +7,16 @@ public class logic : MonoBehaviour
 
 	public int dim;
 	public float cell_width;
+	public float width;
 
 	public float left;
 	public float top;
 
 	public GameObject agent;
 	public float left2;
+	public GameObject cellObj;
 
+	private GameObject[,] cellObjects;
 	private SharedCell[,] sharedGrid;
 	private Dictionary<Vector2, Vector2> cellDic;
 	// position to sharedGrid index
@@ -28,64 +31,27 @@ public class logic : MonoBehaviour
 
 	public GameObject board;
 
-	private Texture2D tex = new Texture2D (1000,1000, TextureFormat.ARGB32, false);
-
-
-
 	// Use this for initialization
 	void Start ()
 	{
-
 		isInitialized = true;
 		populateGrid ();
 	}
 
-	void fillRectTex(Vector2 pos, float size, Color color){
-		pos = (pos / 10) * 1000;
-		size = (size / 10) * 1000;
-		for (int i = (int)(-pos.x-(size/2)-500); i < (int)(-pos.x + (size/2)-500); i++) {
-			for (int j = (int)(-pos.y-(size/2)-500); j < (int)(-pos.y + size/2-500); j++) {
-				tex.SetPixel (i, j, color);
-			}
-		}
-	}
-
-	void clear(){
-		tex = new Texture2D (1000,1000, TextureFormat.ARGB32, false);
-		for (int i = 0; i < tex.width; i++) {
-			for (int j = 0; j < tex.height; j++) {
-				tex.SetPixel (i, j, Color.black);
-			}
-		}
-	}
-
-	void redraw(){
-		tex.Apply ();
-		board.GetComponent<Renderer> ().material.SetTexture ("_MainTex", tex);
-	}
-
 	void populateGrid ()
 	{
+		print ("Populating Grid");
 		sharedGrid = new SharedCell[dim, dim];
+		cellObjects = new GameObject[dim, dim];
 		cellDic = new Dictionary<Vector2, Vector2> ();
 
 		for (int i = 0; i < dim; i++) {
 			for (int j = 0; j < dim; j++) {
 				
-				Vector2 pos = new Vector2 ((cell_width)*(i - dim/2+0.5f), (cell_width)*(j - dim/2+0.5f));
+				Vector2 pos = new Vector2 ((cell_width) * (i - dim / 2 + 0.5f), (cell_width) * (j - dim / 2 + 0.5f));
 				sharedGrid [i, j] = new SharedCell (pos);
-				cellDic [new Vector2 ((pos.x),(pos.y))] = new Vector2 (i, j);
-
-				if (pos.x == 0) {
-					print ("x = 0 at: " + i + " " + j);
-				}
-
-				if (pos.y == 0) {
-					print ("y = 0 at: " + i + " " + j);
-				}
-
-				print (pos.x + " " + pos.y);
-
+				cellDic [new Vector2 ((pos.x), (pos.y))] = new Vector2 (i, j);
+				cellObjects [i, j] = createCellObj (pos.x, pos.y);
 			}
 			//d -= 0.1f;
 		}
@@ -113,7 +79,7 @@ public class logic : MonoBehaviour
 		}
 	}
 
-	void clearGrid()
+	void clearGrid ()
 	{
 		for (int i = 0; i < dim; i++) {
 			for (int j = 0; j < dim; j++) {
@@ -136,7 +102,7 @@ public class logic : MonoBehaviour
 			GameObject agent = (GameObject)Instantiate (this.agent);
 			// Instantiate(public game object)
 			Rigidbody agentBody = agent.GetComponent<Rigidbody> ();
-			agentBody.position = new Vector3 (pos.x, agent.transform.localScale.y / 4, pos.z);
+			agentBody.position = new Vector3 (pos.x, agent.transform.localScale.y / 2, pos.z);
 			agents.Add (agent);
 			isClicked = true;
 		}
@@ -146,10 +112,10 @@ public class logic : MonoBehaviour
 		}
 
 		clearGrid ();
-	    assignDensities ();
+		assignDensities ();
 
 	}
-		
+
 	void assignDensities ()
 	{
 		
@@ -161,27 +127,55 @@ public class logic : MonoBehaviour
 			int y = (int)cellIndex.y;
 			SharedCell cell = sharedGrid [x, y];
 
-			float dif =1f;
+			float dif = cell_width;
 
-			float deltaX = Mathf.Abs(agentBody.position.x - cell.position.x);
-			float deltaY = Mathf.Abs(agentBody.position.y - cell.position.y);
+			float deltaX = Mathf.Abs (agentBody.position.x - cell.position.x);
+			float deltaY = Mathf.Abs (agentBody.position.y - cell.position.y);
 			float densityExponent = 0.1f;
 			float densityA = Mathf.Pow (Mathf.Min (dif - deltaX, dif - deltaY), densityExponent);
-			cell.density += densityA;
+			float cell_og = cell.density;
+			if (float.IsNaN (cell.density + densityA)) {
+				print ("A: "+dif + " " + deltaX + " " + deltaY + " " + densityExponent);
+				print (cell.density + " " + densityA);
+			} else {
+				cell.density += densityA;
+
+			}
 			//cell.avg_Velocity += densityA * agentVelocity;
 
 			SharedCell cellB = sharedGrid [x + 1, y];
 			float densityB = Mathf.Pow (Mathf.Min (deltaX, dif - deltaY), densityExponent);
-			cellB.density += densityB;
+			float cellB_og = cell.density;
+			if (float.IsNaN (cellB.density + densityB)) {
+				print ("B: "+dif + " " + deltaX + " " + deltaY + " " + densityExponent);
+
+				print (cellB.density + " " + densityB);
+			} else {
+				cellB.density += densityB;
+			}
 
 			SharedCell cellC = sharedGrid [x + 1, y + 1];
 			float densityC = Mathf.Pow (Mathf.Min (deltaX, deltaY), densityExponent);
-			cellC.density += densityC;
+			float cellC_og = cell.density;
+			if (float.IsNaN (cellC.density + densityC)) {
+				print ("C: "+dif + " " + deltaX + " " + deltaY + " " + densityExponent);
+
+				print (cellC.density + " " + densityC);
+			} else {
+				cellC.density += densityC;
+
+			}
 
 			SharedCell cellD = sharedGrid [x, y + 1];
 			float densityD = Mathf.Pow (Mathf.Min (dif - deltaX, deltaY), densityExponent);
-			cellD.density += densityD;
+			float cellD_og = cellD.density;
+			if (float.IsNaN (cellD.density + densityD)) {
+				print ("D: "+dif + " " + deltaX + " " + deltaY + " " + densityExponent);
 
+				print (cellD.density + " " + densityD);
+			} else {
+				cellD.density += densityD;
+			}
 		}
 	}
 
@@ -230,19 +224,19 @@ public class logic : MonoBehaviour
 		}
 			
 		x_Rem -= cell_width * (dim / 2);
-	    y_Rem -= cell_width * (dim / 2);
+		y_Rem -= cell_width * (dim / 2);
 					
 		// edge case where there are no cells left
 		x_Rem = Mathf.Max (x_Rem, -(dim / 2) * cell_width + cell_width / 2);
 		y_Rem = Mathf.Max (y_Rem, -(dim / 2) * cell_width + cell_width / 2);
 
-		left_Pos = new Vector2 (x_Rem,y_Rem);
+		left_Pos = new Vector2 (x_Rem, y_Rem);
 
-		Vector2 index = new Vector2 ((x_Rem),(y_Rem));
+		Vector2 index = new Vector2 ((x_Rem), (y_Rem));
 		if (cellDic.ContainsKey (index)) {
 			return cellDic [index];
 		} else {
-			return new Vector2(0,0);
+			return new Vector2 (0, 0);
 		}
 	}
 
@@ -315,6 +309,20 @@ public class logic : MonoBehaviour
 	// Methods for visualization
 	/// ////////////////////////
 
+	GameObject createCellObj (float x, float y)
+	{
+		GameObject cellObj = Instantiate (this.cellObj);
+		cellObj.transform.position = new Vector3 (x, 0.0f, y);
+		cellObj.transform.localScale = new Vector3 (cell_width, 0.001f, cell_width);
+		cellObj.SetActive (true);
+		cellObj.GetComponent<Renderer> ().material.color = new Color (0f, 0f, 0f);
+
+		print ("Creating cube at: " + x + " " + y);
+
+		return cellObj;
+
+	}
+
 	void drawGrid ()
 	{
 		//clear ();
@@ -324,14 +332,18 @@ public class logic : MonoBehaviour
 			for (int j = 0; j < dim; j++) {
 
 				float density = sharedGrid [i, j].density;
-				density = Mathf.Min(1.0f,density / maxDensity);
+
+				density = Mathf.Min (1.0f, density / maxDensity);
+				density = Mathf.Max (0f, density);
 
 				Color d_Color = new Color (density, density, density);
 				Vector2 position = sharedGrid [i, j].position;
+				cellObjects [i, j].GetComponent<Renderer> ().material.color = d_Color;
 
-				setColor (d_Color);
-				fillRect (position.x, position.y, cell_width, cell_width);
-				setColor (Color.red);
+
+				//setColor (d_Color);
+				//fillRect (position.x, position.y, cell_width, cell_width);
+				//setColor (Color.red);
 				//drawRect (position.x, position.y, cell_width, cell_width);
 			}
 		}
