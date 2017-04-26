@@ -44,7 +44,7 @@ public class logic : MonoBehaviour
 		pos = (pos / 10) * 1000;
 		size = (size / 10) * 1000;
 		for (int i = (int)(-pos.x-(size/2)-500); i < (int)(-pos.x + (size/2)-500); i++) {
-			for (int j = (int)(-pos.y-Resources.Load ("Agent")(size/2)-500); j < (int)(-pos.y + size/2-500); j++) {
+			for (int j = (int)(-pos.y-(size/2)-500); j < (int)(-pos.y + size/2-500); j++) {
 				tex.SetPixel (i, j, color);
 			}
 		}
@@ -126,14 +126,14 @@ public class logic : MonoBehaviour
 	void Update ()
 	{
 
-		drawGrid ();
+		//drawGrid ();
 
 		if (Input.GetMouseButton (0) && !isClicked) {
 			Vector3 mPos = Input.mousePosition;
 			mPos.z = 10;
 			Vector3 pos = Camera.main.ScreenToWorldPoint (mPos);
 			print ("Instantiating Agent at x: " + pos.x + " y: " + pos.y + " z: " + pos.z);
-			GameObject agent = (GameObject)Instantiate (Resources.Load ("Agent"));
+			GameObject agent = (GameObject)Instantiate (this.agent);
 			// Instantiate(public game object)
 			Rigidbody agentBody = agent.GetComponent<Rigidbody> ();
 			agentBody.position = new Vector3 (pos.x, agent.transform.localScale.y / 4, pos.z);
@@ -145,8 +145,8 @@ public class logic : MonoBehaviour
 			isClicked = false;
 		}
 
-		//clearGrid ();
-	    //assignDensities ();
+		clearGrid ();
+	    assignDensities ();
 
 	}
 		
@@ -187,26 +187,26 @@ public class logic : MonoBehaviour
 
 	void OnDrawGizmosSelected ()
 	{
-		//drawGrid ();
+		drawGrid ();
 
-		if (isInitialized && agents.Count>0) {
-			
-			//Start ();
-			//drawGrid ();
-			Rigidbody rb = agents[agents.Count-1].GetComponent<Rigidbody> ();
-			Vector2 cell = getLeft (rb.position.x, rb.position.z);
-
-			if (left_Pos.x < float.MaxValue) {
-
-//				print ("DRAWING");
+//		if (isInitialized && agents.Count>0) {
+//			
+//			//Start ();
+//			//drawGrid ();
+//			Rigidbody rb = agents[agents.Count-1].GetComponent<Rigidbody> ();
+//			Vector2 cell = getLeft (rb.position.x, rb.position.z);
 //
-//				setColor (Color.red);
-//				fillRect (sharedGrid [(int)cell.x, (int)cell.y].position, cell_width, cell_width);
+//			if (left_Pos.x < float.MaxValue) {
 //
-//				setColor (Color.blue);
-//				fillRect (left_Pos.x, left_Pos.y, 0.1f, 0.1f);
-			}
-		}
+////				print ("DRAWING");
+////
+////				setColor (Color.red);
+////				fillRect (sharedGrid [(int)cell.x, (int)cell.y].position, cell_width, cell_width);
+////
+////				setColor (Color.blue);
+////				fillRect (left_Pos.x, left_Pos.y, 0.1f, 0.1f);
+//			}
+//		}
 	}
 
 	// Get the grid coordinate with it's center with
@@ -218,12 +218,8 @@ public class logic : MonoBehaviour
 		x += cell_width * (dim / 2);
 		y += cell_width * (dim / 2);
 
-		print ("Mouse: " + x + " " + y);
-
 		float x_Rem = x - x % (cell_width / 2.0f);
 		float y_Rem = y - y % (cell_width / 2.0f);
-
-		print ("Before: " + x_Rem + " " + y_Rem);
 
 		if (x_Rem % cell_width == 0) {
 			x_Rem -= cell_width / 2.0f;
@@ -235,9 +231,7 @@ public class logic : MonoBehaviour
 			
 		x_Rem -= cell_width * (dim / 2);
 	    y_Rem -= cell_width * (dim / 2);
-
-		print (x_Rem + " " + y_Rem);
-			
+					
 		// edge case where there are no cells left
 		x_Rem = Mathf.Max (x_Rem, -(dim / 2) * cell_width + cell_width / 2);
 		y_Rem = Mathf.Max (y_Rem, -(dim / 2) * cell_width + cell_width / 2);
@@ -248,7 +242,6 @@ public class logic : MonoBehaviour
 		if (cellDic.ContainsKey (index)) {
 			return cellDic [index];
 		} else {
-			print ("Could not find index: " + index);
 			return new Vector2(0,0);
 		}
 	}
@@ -324,7 +317,7 @@ public class logic : MonoBehaviour
 
 	void drawGrid ()
 	{
-		clear ();
+		//clear ();
 		float maxDensity = 5.0f;
 
 		for (int i = 0; i < dim; i++) {
@@ -337,12 +330,12 @@ public class logic : MonoBehaviour
 				Vector2 position = sharedGrid [i, j].position;
 
 				setColor (d_Color);
-				fillRectTex (new Vector2(position.x, position.y), cell_width,d_Color);
+				fillRect (position.x, position.y, cell_width, cell_width);
 				setColor (Color.red);
 				//drawRect (position.x, position.y, cell_width, cell_width);
 			}
 		}
-		redraw ();
+		//redraw ();
 	}
 
 

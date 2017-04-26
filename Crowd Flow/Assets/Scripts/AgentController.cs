@@ -24,21 +24,21 @@ public class AgentController : MonoBehaviour {
 
 	void FixedUpdate()
 	{
-		float moveHorizontal = Input.GetAxis("Horizontal");
-		float moveVertical = Input.GetAxis("Vertical");
-
-		Vector3 movement = new Vector3 (moveHorizontal, 0, moveVertical);
-		if (Input.GetMouseButton(0)) {
-
-			Vector3 mPos = Input.mousePosition;
-			mPos.z = 10;
-			Vector3 pos = Camera.main.ScreenToWorldPoint (mPos);
-
-			//print (pos.x + " " + pos.y + " " + pos.z);
-			rb.position = new Vector3 (pos.x, rb.position.y, pos.z);
-		}
-
-		//rb.AddForce(movement * speed);
+//		float moveHorizontal = Input.GetAxis("Horizontal");
+//		float moveVertical = Input.GetAxis("Vertical");
+//
+//		Vector3 movement = new Vector3 (moveHorizontal, 0, moveVertical);
+//		if (Input.GetMouseButton(0)) {
+//
+//			Vector3 mPos = Input.mousePosition;
+//			mPos.z = 10;
+//			Vector3 pos = Camera.main.ScreenToWorldPoint (mPos);
+//
+//			//print (pos.x + " " + pos.y + " " + pos.z);
+//			rb.position = new Vector3 (pos.x, rb.position.y, pos.z);
+//		}
+//
+//		//rb.AddForce(movement * speed);
 	}
 		
 }
