@@ -51,7 +51,7 @@ public class logic : MonoBehaviour
 				Vector2 pos = new Vector2 ((cell_width) * (i - dim / 2 + 0.5f), (cell_width) * (j - dim / 2 + 0.5f));
 				sharedGrid [i, j] = new SharedCell (pos);
 				cellDic [new Vector2 ((pos.x), (pos.y))] = new Vector2 (i, j);
-				cellObjects [i, j] = createCellObj (pos.x, pos.y);
+				//cellObjects [i, j] = createCellObj (pos.x, pos.y);
 			}
 			//d -= 0.1f;
 		}
@@ -88,6 +88,12 @@ public class logic : MonoBehaviour
 		}
 	}
 
+	bool gridMinMax (Vector2 pos)
+	{
+		bool contained = pos.x > -(dim / 2f) * cell_width && pos.x < (dim / 2f) * cell_width;
+		return contained && pos.y > -(dim / 2f) * cell_width && pos.y < (dim / 2f) * cell_width;
+	}
+
 	// Update is called once per frame
 	void Update ()
 	{
@@ -98,12 +104,15 @@ public class logic : MonoBehaviour
 			Vector3 mPos = Input.mousePosition;
 			mPos.z = 10;
 			Vector3 pos = Camera.main.ScreenToWorldPoint (mPos);
-			print ("Instantiating Agent at x: " + pos.x + " y: " + pos.y + " z: " + pos.z);
-			GameObject agent = (GameObject)Instantiate (this.agent);
-			// Instantiate(public game object)
-			Rigidbody agentBody = agent.GetComponent<Rigidbody> ();
-			agentBody.position = new Vector3 (pos.x, agent.transform.localScale.y / 2, pos.z);
-			agents.Add (agent);
+			if (gridMinMax (new Vector2 (pos.x, pos.z))) {
+				GameObject agent = (GameObject)Instantiate (this.agent);
+				print ("Instantiating Agent at x: " + pos.x + " y: " + agent.transform.localScale.y / 2 + " z: " + pos.z);
+
+				// Instantiate(public game object)
+				Rigidbody agentBody = agent.GetComponent<Rigidbody> ();
+				agentBody.position = new Vector3 (pos.x, agent.transform.localScale.y / 2, pos.z);
+				agents.Add (agent);
+			}
 			isClicked = true;
 		}
 
@@ -130,52 +139,31 @@ public class logic : MonoBehaviour
 			float dif = cell_width;
 
 			float deltaX = Mathf.Abs (agentBody.position.x - cell.position.x);
-			float deltaY = Mathf.Abs (agentBody.position.y - cell.position.y);
+			float deltaY = Mathf.Abs (agentBody.position.z - cell.position.y);
 			float densityExponent = 0.1f;
 			float densityA = Mathf.Pow (Mathf.Min (dif - deltaX, dif - deltaY), densityExponent);
 			float cell_og = cell.density;
-			if (float.IsNaN (cell.density + densityA)) {
-				print ("A: "+dif + " " + deltaX + " " + deltaY + " " + densityExponent);
-				print (cell.density + " " + densityA);
-			} else {
-				cell.density += densityA;
-
-			}
+			cell.density += densityA;
 			//cell.avg_Velocity += densityA * agentVelocity;
 
 			SharedCell cellB = sharedGrid [x + 1, y];
 			float densityB = Mathf.Pow (Mathf.Min (deltaX, dif - deltaY), densityExponent);
 			float cellB_og = cell.density;
-			if (float.IsNaN (cellB.density + densityB)) {
-				print ("B: "+dif + " " + deltaX + " " + deltaY + " " + densityExponent);
-
-				print (cellB.density + " " + densityB);
-			} else {
-				cellB.density += densityB;
-			}
+			cellB.density += densityB;
 
 			SharedCell cellC = sharedGrid [x + 1, y + 1];
 			float densityC = Mathf.Pow (Mathf.Min (deltaX, deltaY), densityExponent);
 			float cellC_og = cell.density;
-			if (float.IsNaN (cellC.density + densityC)) {
-				print ("C: "+dif + " " + deltaX + " " + deltaY + " " + densityExponent);
+		
+			cellC.density += densityC;
 
-				print (cellC.density + " " + densityC);
-			} else {
-				cellC.density += densityC;
 
-			}
 
 			SharedCell cellD = sharedGrid [x, y + 1];
 			float densityD = Mathf.Pow (Mathf.Min (dif - deltaX, deltaY), densityExponent);
 			float cellD_og = cellD.density;
-			if (float.IsNaN (cellD.density + densityD)) {
-				print ("D: "+dif + " " + deltaX + " " + deltaY + " " + densityExponent);
-
-				print (cellD.density + " " + densityD);
-			} else {
-				cellD.density += densityD;
-			}
+		
+			cellD.density += densityD;
 		}
 	}
 
@@ -183,24 +171,29 @@ public class logic : MonoBehaviour
 	{
 		drawGrid ();
 
-//		if (isInitialized && agents.Count>0) {
-//			
-//			//Start ();
-//			//drawGrid ();
-//			Rigidbody rb = agents[agents.Count-1].GetComponent<Rigidbody> ();
-//			Vector2 cell = getLeft (rb.position.x, rb.position.z);
+		if (isInitialized && agents.Count > 0) {
+			
+			//Start ();
+			//drawGrid ();
+			Rigidbody rb = agents [agents.Count - 1].GetComponent<Rigidbody> ();
+			Vector2 cell = getLeft (rb.position.x, rb.position.z);
+
+			if (left_Pos.x < float.MaxValue) {
+
+				foreach (GameObject agent in agents) {
+					setColor (Color.blue);
+					fillRect (agent.transform.position.x, agent.transform.position.z, 0.2f, 0.2f);
+				}
+
+//				print ("DRAWING");
 //
-//			if (left_Pos.x < float.MaxValue) {
+//				setColor (Color.red);
+//				fillRect (sharedGrid [(int)cell.x, (int)cell.y].position, cell_width, cell_width);
 //
-////				print ("DRAWING");
-////
-////				setColor (Color.red);
-////				fillRect (sharedGrid [(int)cell.x, (int)cell.y].position, cell_width, cell_width);
-////
-////				setColor (Color.blue);
-////				fillRect (left_Pos.x, left_Pos.y, 0.1f, 0.1f);
-//			}
-//		}
+//				setColor (Color.blue);
+//				fillRect (left_Pos.x, left_Pos.y, 0.1f, 0.1f);
+			}
+		}
 	}
 
 	// Get the grid coordinate with it's center with
@@ -338,11 +331,11 @@ public class logic : MonoBehaviour
 
 				Color d_Color = new Color (density, density, density);
 				Vector2 position = sharedGrid [i, j].position;
-				cellObjects [i, j].GetComponent<Renderer> ().material.color = d_Color;
+				//cellObjects [i, j].GetComponent<Renderer> ().material.color = d_Color;
 
 
-				//setColor (d_Color);
-				//fillRect (position.x, position.y, cell_width, cell_width);
+				setColor (d_Color);
+				fillRect (position.x, position.y, cell_width, cell_width);
 				//setColor (Color.red);
 				//drawRect (position.x, position.y, cell_width, cell_width);
 			}
