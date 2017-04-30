@@ -6,6 +6,7 @@ public class DungeonGenerator : MonoBehaviour {
 
     // User set fields
     public int gridSize = 10;
+    public int minimumSizeToPartition = 4;
     public GameObject cellPrefab;
 
     // Internal fields
@@ -18,7 +19,6 @@ public class DungeonGenerator : MonoBehaviour {
 
     // BSP fields
     private PartitionCell root;
-    private int minimumCellSize = 2;
     private int nextRoomId;
     private List<Room> rooms;
 
@@ -100,7 +100,7 @@ public class DungeonGenerator : MonoBehaviour {
 
     private void MakeParition(PartitionCell cell)
     {
-        if (cell.width <= minimumCellSize || cell.height <= minimumCellSize) return;
+        if (cell.width <= minimumSizeToPartition || cell.height <= minimumSizeToPartition) return;
 
         bool horizontalCut = true;
         if (Random.value > 0.5) horizontalCut = false;
@@ -110,13 +110,17 @@ public class DungeonGenerator : MonoBehaviour {
 
         if (horizontalCut)
         {
-            partitionA = new PartitionCell(this, cell.x, cell.y, cell.width, cell.height / 2);
-            partitionB = new PartitionCell(this, cell.x, cell.y + cell.height / 2, cell.width, cell.height / 2);
+            int yCut = Random.Range(minimumSizeToPartition, cell.height);
+            if (yCut <= minimumSizeToPartition || cell.height - yCut <= minimumSizeToPartition) return;
+            partitionA = new PartitionCell(this, cell.x, cell.y, cell.width, yCut);
+            partitionB = new PartitionCell(this, cell.x, cell.y + yCut, cell.width, cell.height - yCut);
         }
         else // Vertical cut
         {
-            partitionA = new PartitionCell(this, cell.x, cell.y, cell.width / 2, cell.height);
-            partitionB = new PartitionCell(this, cell.x + cell.width / 2, 0, cell.width / 2, cell.height);
+            int xCut = Random.Range(minimumSizeToPartition, cell.width);
+            if (xCut <= minimumSizeToPartition || cell.width - xCut <= minimumSizeToPartition) return;
+            partitionA = new PartitionCell(this, cell.x, cell.y, xCut, cell.height);
+            partitionB = new PartitionCell(this, cell.x + xCut, cell.y, cell.width - xCut, cell.height);
         }
 
         cell.left = partitionA;

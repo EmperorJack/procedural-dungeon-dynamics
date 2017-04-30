@@ -43,6 +43,9 @@ public class Room
 
     public void Display(GameObject dungeonParent)
     {
+        Material material = new Material(Shader.Find("Diffuse"));
+        material.color = new Color(Random.value, Random.value, Random.value);
+
         gridParent = new GameObject();
         gridParent.name = "Room" + id;
 
@@ -52,6 +55,7 @@ public class Room
             {
                 GameObject instance = grid[i, j].Display();
                 instance.transform.SetParent(gridParent.transform);
+                instance.GetComponent<Renderer>().material = material;
             }
         }
 
