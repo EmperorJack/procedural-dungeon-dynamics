@@ -4,12 +4,8 @@ using UnityEngine;
 
 public abstract class Cell {
 
-    protected Vector3 position;
-
-    public Cell(Vector3 position)
-    {
-        this.position = position;
-    }
+    public Cell()
+    { }
 
     public abstract GameObject Display();
 }

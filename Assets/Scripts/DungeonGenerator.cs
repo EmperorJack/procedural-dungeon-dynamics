@@ -7,6 +7,7 @@ public class DungeonGenerator : MonoBehaviour {
     // User set fields
     public int gridSize = 10;
     public int minimumSizeToPartition = 4;
+	public float minimumRoomToPartitionRatio = 0.5f;
     public GameObject cellPrefab;
 
     // Internal fields
@@ -18,7 +19,7 @@ public class DungeonGenerator : MonoBehaviour {
     private GameObject dungeonParent;
 
     // BSP fields
-    private PartitionCell root;
+    private Partition root;
     private int nextRoomId;
     private List<Room> rooms;
 
@@ -70,6 +71,8 @@ public class DungeonGenerator : MonoBehaviour {
         }
         */
 
+		print (rooms.Count);
+
         foreach (Room room in rooms)
         {
             room.Display(dungeonParent);
@@ -86,7 +89,7 @@ public class DungeonGenerator : MonoBehaviour {
         nextRoomId = 0;
         int worldSize = gridSize * cellSize;
 
-        root = new PartitionCell(this, 0, 0, worldSize, worldSize);
+        root = new Partition(this, 0, 0, worldSize, worldSize);
 
         MakeParition(root);
 
@@ -98,29 +101,29 @@ public class DungeonGenerator : MonoBehaviour {
         //print(rooms.Count);
     }
 
-    private void MakeParition(PartitionCell cell)
+    private void MakeParition(Partition cell)
     {
         if (cell.width <= minimumSizeToPartition || cell.height <= minimumSizeToPartition) return;
 
         bool horizontalCut = true;
         if (Random.value > 0.5) horizontalCut = false;
 
-        PartitionCell partitionA;
-        PartitionCell partitionB;
+        Partition partitionA;
+        Partition partitionB;
 
         if (horizontalCut)
         {
             int yCut = Random.Range(minimumSizeToPartition, cell.height);
             if (yCut <= minimumSizeToPartition || cell.height - yCut <= minimumSizeToPartition) return;
-            partitionA = new PartitionCell(this, cell.x, cell.y, cell.width, yCut);
-            partitionB = new PartitionCell(this, cell.x, cell.y + yCut, cell.width, cell.height - yCut);
+            partitionA = new Partition(this, cell.x, cell.y, cell.width, yCut);
+            partitionB = new Partition(this, cell.x, cell.y + yCut, cell.width, cell.height - yCut);
         }
         else // Vertical cut
         {
             int xCut = Random.Range(minimumSizeToPartition, cell.width);
             if (xCut <= minimumSizeToPartition || cell.width - xCut <= minimumSizeToPartition) return;
-            partitionA = new PartitionCell(this, cell.x, cell.y, xCut, cell.height);
-            partitionB = new PartitionCell(this, cell.x + xCut, cell.y, cell.width - xCut, cell.height);
+            partitionA = new Partition(this, cell.x, cell.y, xCut, cell.height);
+            partitionB = new Partition(this, cell.x + xCut, cell.y, cell.width - xCut, cell.height);
         }
 
         cell.left = partitionA;
@@ -130,53 +133,11 @@ public class DungeonGenerator : MonoBehaviour {
         MakeParition(partitionB);
     }
 
-    private class PartitionCell
-    {
-        DungeonGenerator generator;
+	public float GetGridSpacing() {
+		return gridSpacing;
+	}
 
-        // Worldspace fields
-        public int x;
-        public int y;
-        public int width;
-        public int height;
-
-        // Children fields
-        public PartitionCell left;
-        public PartitionCell right;
-
-        // Room fields
-        public Room room;
-
-        public PartitionCell(DungeonGenerator generator, int x, int y, int width, int height)
-        {
-            this.generator = generator;
-            this.x = x;
-            this.y = y;
-            this.width = width;
-            this.height = height;
-        }
-
-        public void Print()
-        {
-            print(x + ", " + y + " : " + width + ", " + height);
-
-            if (left != null) left.Print();
-            if (right != null) right.Print();
-        }
-
-        public void MakeRoom(List<Room> rooms)
-        {
-            // Intermediate node
-            if (left != null && right != null)
-            {
-                left.MakeRoom(rooms);
-                right.MakeRoom(rooms);
-            }
-            else // Leaf node
-            {
-                room = new Room(generator.nextRoomId++, x, y, width, height, generator.gridSpacing, generator.cellPrefab);
-                rooms.Add(room);
-            }
-        }
-    }
+	public int NextRoomId() {
+		return nextRoomId++;
+	}
 }

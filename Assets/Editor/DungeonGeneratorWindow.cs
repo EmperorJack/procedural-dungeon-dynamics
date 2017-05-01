@@ -13,7 +13,7 @@ public class DungeonGeneratorWindow : EditorWindow {
     [MenuItem("Window/Dungeon Generator")]
 	static void OpenWindow() {
 		DungeonGeneratorWindow window = (DungeonGeneratorWindow) GetWindow(typeof(DungeonGeneratorWindow));
-		window.minSize = new Vector2 (600, 300);
+		window.minSize = new Vector2 (100, 100);
 		window.Show();
 	}
 

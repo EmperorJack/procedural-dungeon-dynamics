@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EmptyCell : Cell {
 
-    public EmptyCell(Vector3 position) : base(position)
+	public EmptyCell()
     { }
 
     public override GameObject Display()
