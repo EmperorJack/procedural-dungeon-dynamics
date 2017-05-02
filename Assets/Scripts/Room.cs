@@ -27,31 +27,28 @@ public class Room
 		this.gridWidth = 0;
 		this.gridHeight = 0;
 
-		while (this.gridWidth / (float) partition.width < generator.minimumRoomToPartitionRatio) {
-			int x1 = Random.Range (partition.x + 1, partition.x + partition.width - 1);
-			int x2 = Random.Range (partition.x + 1, partition.x + partition.width - 1);
+        int minimumSize = generator.minimumRoomSize;
 
-			if (x1 < x2) {
-				this.x = x1;
-				this.gridWidth = x2 - x1 + 1;
-			} else {
-				this.x = x2;
-				this.gridWidth = x1 - x2 + 1;
-			}
-		}
+        int xArea = (partition.width - minimumSize) / 2;
+        int yArea = (partition.height - minimumSize) / 2;
 
-		while (this.gridHeight / (float) partition.height < generator.minimumRoomToPartitionRatio) {
-			int y1 = Random.Range (partition.y + 1, partition.y + partition.height - 1);
-			int y2 = Random.Range (partition.y + 1, partition.y + partition.height - 1);
+        int x1 = partition.x + generator.roomBuffer + Random.Range (0, xArea);
+		int x2 = partition.x + generator.roomBuffer + Random.Range (xArea + generator.minimumRoomSize, partition.width);
 
-			if (y1 < y2) {
-				this.y = y1;
-				this.gridHeight = y2 - y1 + 1;
-			} else {
-				this.y = y2;
-				this.gridHeight = y1 - y2 + 1;
-			}
-		}
+		this.x = x1;
+		this.gridWidth = x2 - x1;
+
+        int y1 = partition.y + generator.roomBuffer + Random.Range(0, yArea);
+        int y2 = partition.y + generator.roomBuffer + Random.Range(yArea + generator.minimumRoomSize, partition.height);
+
+		this.y = y1;
+        this.gridHeight = y2 - y1;
+
+        if (this.gridHeight == 1)
+        {
+            MonoBehaviour.print("Py: " + partition.y + ", " + "Pheight: " + partition.height);
+            MonoBehaviour.print("Ry: " + this.y + ", " + "Rheight: " + this.gridHeight);
+        }
 
         GenerateCells();
     }
@@ -71,11 +68,14 @@ public class Room
 
     public void Display(GameObject dungeonParent)
     {
+        Hide();
+
         Material material = new Material(Shader.Find("Diffuse"));
         material.color = new Color(Random.value, Random.value, Random.value);
 
         gridParent = new GameObject();
         gridParent.name = "Room" + id;
+        gridParent.transform.SetParent(dungeonParent.transform);
 
         for (int i = 0; i < gridWidth; i++)
         {
@@ -87,8 +87,11 @@ public class Room
                 instance.GetComponent<Renderer>().material = material;
             }
         }
+    }
 
-        gridParent.transform.SetParent(dungeonParent.transform);
+    public void Hide()
+    {
+        MonoBehaviour.DestroyImmediate(gridParent);
     }
 
 }

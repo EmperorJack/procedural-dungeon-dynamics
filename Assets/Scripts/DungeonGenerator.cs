@@ -6,12 +6,12 @@ public class DungeonGenerator : MonoBehaviour {
 
     // User set fields
     public int gridSize = 10;
-    public int minimumSizeToPartition = 4;
-	public float minimumRoomToPartitionRatio = 0.5f;
+    public int minimumRoomSize = 4;
+    public int roomBuffer = 1;
+    public float minimumRoomToPartitionRatio = 0.5f;
     public GameObject cellPrefab;
 
     // Internal fields
-    private Cell[,] grid;
     private float gridSpacing;
     private int cellSize = 1;
 
@@ -29,54 +29,22 @@ public class DungeonGenerator : MonoBehaviour {
 
         gridSpacing = 1; // worldSize / gridSize;
 
-        grid = new Cell[gridSize, gridSize];
-
         dungeonParent = new GameObject();
         dungeonParent.name = "DungeonLayout";
 
         PerformBSP();
 
-        /**
-        for (int i = 0; i < gridSize; i++)
-        {
-            for (int j = 0; j < gridSize; j++)
-            {
-                if (Random.value > 0.5)
-                {
-                    grid[i, j] = new FloorCell(new Vector3(i * gridSpacing, 0, j * gridSpacing), cellPrefab);
-                } else {
-                    grid[i, j] = new EmptyCell(new Vector3(i * gridSpacing, 0, j * gridSpacing));
-                }
-                
-            }
-        }
-        */
-
         Display();
     }
 
-    private void Display()
+    public void Display()
     {
-        /**
-        for (int i = 0; i < gridSize; i++)
-        {
-            for (int j = 0; j < gridSize; j++)
-            {
-                GameObject instance = grid[i, j].Display();
-                if (instance != null)
-                {
-                    instance.transform.SetParent(dungeonLayout.transform);
-                }
-            }
-        }
-        */
+        foreach (Room room in rooms) room.Display(dungeonParent);
+    }
 
-		print (rooms.Count);
-
-        foreach (Room room in rooms)
-        {
-            room.Display(dungeonParent);
-        }
+    public void Hide()
+    {
+        foreach (Room room in rooms) room.Hide();
     }
 
     public void Clear()
@@ -96,14 +64,24 @@ public class DungeonGenerator : MonoBehaviour {
         //root.Print();
 
         rooms = new List<Room>();
+
         root.MakeRoom(rooms);
 
         //print(rooms.Count);
     }
 
-    private void MakeParition(Partition cell)
+    private void MakeParition(Partition partition)
     {
-        if (cell.width <= minimumSizeToPartition || cell.height <= minimumSizeToPartition) return;
+        bool debug = false;
+
+        int minimumSize = minimumRoomSize + roomBuffer * 2;
+        if (debug) print("Minimum size: " + minimumSize + ", " + "PWidth: " + partition.width + ", " + "PHeight: " + partition.height);
+
+        if (partition.width <= minimumSize * 2 || partition.height <= minimumSize * 2)
+        {
+            if (debug) print("No cut");
+            return;
+        }
 
         bool horizontalCut = true;
         if (Random.value > 0.5) horizontalCut = false;
@@ -113,21 +91,21 @@ public class DungeonGenerator : MonoBehaviour {
 
         if (horizontalCut)
         {
-            int yCut = Random.Range(minimumSizeToPartition, cell.height);
-            if (yCut <= minimumSizeToPartition || cell.height - yCut <= minimumSizeToPartition) return;
-            partitionA = new Partition(this, cell.x, cell.y, cell.width, yCut);
-            partitionB = new Partition(this, cell.x, cell.y + yCut, cell.width, cell.height - yCut);
+            int yCut = Random.Range(minimumRoomSize + roomBuffer * 2, partition.height - minimumRoomSize - roomBuffer * 2 + 1);
+            if (debug) print("Y cut: " + yCut);
+            partitionA = new Partition(this, partition.x, partition.y, partition.width, yCut);
+            partitionB = new Partition(this, partition.x, partition.y + yCut, partition.width, partition.height - yCut);
         }
         else // Vertical cut
         {
-            int xCut = Random.Range(minimumSizeToPartition, cell.width);
-            if (xCut <= minimumSizeToPartition || cell.width - xCut <= minimumSizeToPartition) return;
-            partitionA = new Partition(this, cell.x, cell.y, xCut, cell.height);
-            partitionB = new Partition(this, cell.x + xCut, cell.y, cell.width - xCut, cell.height);
+            int xCut = Random.Range(minimumRoomSize + roomBuffer * 2, partition.width - minimumRoomSize - roomBuffer * 2 + 1);
+            if (debug) print("X cut: " + xCut);
+            partitionA = new Partition(this, partition.x, partition.y, xCut, partition.height);
+            partitionB = new Partition(this, partition.x + xCut, partition.y, partition.width - xCut, partition.height);
         }
 
-        cell.left = partitionA;
-        cell.right = partitionB;
+        partition.left = partitionA;
+        partition.right = partitionB;
 
         MakeParition(partitionA);
         MakeParition(partitionB);
