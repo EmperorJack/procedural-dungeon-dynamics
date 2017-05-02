@@ -20,6 +20,7 @@ public class DungeonGenerator : MonoBehaviour {
 
     // BSP fields
     private Partition root;
+    private int nextPartitionId;
     private int nextRoomId;
     private List<Room> rooms;
 
@@ -34,40 +35,48 @@ public class DungeonGenerator : MonoBehaviour {
 
         PerformBSP();
 
-        Display();
+        DisplayRooms();
     }
 
-    public void Display()
+    public void DisplayRooms()
     {
         foreach (Room room in rooms) room.Display(dungeonParent);
     }
 
-    public void Hide()
+    public void HideRooms()
     {
         foreach (Room room in rooms) room.Hide();
+    }
+
+    public void DisplayPartitions()
+    {
+        if (root != null) root.Display(dungeonParent);
+    }
+
+    public void HidePartitions()
+    {
+        if (root != null) root.Hide();
     }
 
     public void Clear()
     {
         DestroyImmediate(dungeonParent);
+        root = null;
+        rooms = null;
     }
 
     private void PerformBSP()
     {
+        nextPartitionId = 0;
         nextRoomId = 0;
         int worldSize = gridSize * cellSize;
+        rooms = new List<Room>();
 
-        root = new Partition(this, 0, 0, worldSize, worldSize);
+        root = new Partition(this, 0, 0, worldSize, worldSize, 0);
 
         MakeParition(root);
 
-        //root.Print();
-
-        rooms = new List<Room>();
-
         root.MakeRoom(rooms);
-
-        //print(rooms.Count);
     }
 
     private void MakeParition(Partition partition)
@@ -93,15 +102,15 @@ public class DungeonGenerator : MonoBehaviour {
         {
             int yCut = Random.Range(minimumRoomSize + roomBuffer * 2, partition.height - minimumRoomSize - roomBuffer * 2 + 1);
             if (debug) print("Y cut: " + yCut);
-            partitionA = new Partition(this, partition.x, partition.y, partition.width, yCut);
-            partitionB = new Partition(this, partition.x, partition.y + yCut, partition.width, partition.height - yCut);
+            partitionA = new Partition(this, partition.x, partition.y, partition.width, yCut, partition.depth + 1);
+            partitionB = new Partition(this, partition.x, partition.y + yCut, partition.width, partition.height - yCut, partition.depth + 1);
         }
         else // Vertical cut
         {
             int xCut = Random.Range(minimumRoomSize + roomBuffer * 2, partition.width - minimumRoomSize - roomBuffer * 2 + 1);
             if (debug) print("X cut: " + xCut);
-            partitionA = new Partition(this, partition.x, partition.y, xCut, partition.height);
-            partitionB = new Partition(this, partition.x + xCut, partition.y, partition.width - xCut, partition.height);
+            partitionA = new Partition(this, partition.x, partition.y, xCut, partition.height, partition.depth + 1);
+            partitionB = new Partition(this, partition.x + xCut, partition.y, partition.width - xCut, partition.height, partition.depth + 1);
         }
 
         partition.left = partitionA;
@@ -115,7 +124,12 @@ public class DungeonGenerator : MonoBehaviour {
 		return gridSpacing;
 	}
 
-	public int NextRoomId() {
+    public int NextPartitionId()
+    {
+        return nextPartitionId++;
+    }
+
+    public int NextRoomId() {
 		return nextRoomId++;
 	}
 }

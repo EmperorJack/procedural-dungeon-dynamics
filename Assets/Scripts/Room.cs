@@ -4,28 +4,26 @@ using UnityEngine;
 
 public class Room
 {
+    private DungeonGenerator generator;
     public int id;
 
     // Worldspace fields
     private int x;
     private int y;
+    private int width;
+    private int height;
 
     // Grid fields
-    private int gridWidth;
-    private int gridHeight;
-	private Cell[,] grid;
-
+    private Cell[,] grid;
     private GameObject gridParent;
-
-	private DungeonGenerator generator;
 
 	public Room(DungeonGenerator generator, Partition partition)
     {
 		this.generator = generator;
 		this.id = generator.NextRoomId();
 
-		this.gridWidth = 0;
-		this.gridHeight = 0;
+		this.width = 0;
+		this.height = 0;
 
         int minimumSize = generator.minimumRoomSize;
 
@@ -36,18 +34,18 @@ public class Room
 		int x2 = partition.x + generator.roomBuffer + Random.Range (xArea + generator.minimumRoomSize, partition.width);
 
 		this.x = x1;
-		this.gridWidth = x2 - x1;
+		this.width = x2 - x1;
 
         int y1 = partition.y + generator.roomBuffer + Random.Range(0, yArea);
         int y2 = partition.y + generator.roomBuffer + Random.Range(yArea + generator.minimumRoomSize, partition.height);
 
 		this.y = y1;
-        this.gridHeight = y2 - y1;
+        this.height = y2 - y1;
 
-        if (this.gridHeight == 1)
+        if (this.height == 1)
         {
             MonoBehaviour.print("Py: " + partition.y + ", " + "Pheight: " + partition.height);
-            MonoBehaviour.print("Ry: " + this.y + ", " + "Rheight: " + this.gridHeight);
+            MonoBehaviour.print("Ry: " + this.y + ", " + "Rheight: " + this.height);
         }
 
         GenerateCells();
@@ -55,11 +53,11 @@ public class Room
 
     private void GenerateCells()
     {
-        grid = new FloorCell[gridWidth, gridHeight];
+        grid = new FloorCell[width, height];
 
-        for (int i = 0; i < gridWidth; i++)
+        for (int i = 0; i < width; i++)
         {
-            for (int j = 0; j < gridHeight; j++)
+            for (int j = 0; j < height; j++)
             {
                 grid[i, j] = new FloorCell(generator.cellPrefab);
             }
@@ -77,9 +75,9 @@ public class Room
         gridParent.name = "Room" + id;
         gridParent.transform.SetParent(dungeonParent.transform);
 
-        for (int i = 0; i < gridWidth; i++)
+        for (int i = 0; i < width; i++)
         {
-            for (int j = 0; j < gridHeight; j++)
+            for (int j = 0; j < height; j++)
             {
                 GameObject instance = grid[i, j].Display();
                 instance.transform.SetParent(gridParent.transform);
