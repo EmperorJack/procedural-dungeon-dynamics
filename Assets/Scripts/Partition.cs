@@ -18,6 +18,7 @@ public class Partition
     public int depth;
 	public Partition left;
 	public Partition right;
+	public bool horizontalCut;
 
     // Grid fields
     private Cell[,] grid;
@@ -57,6 +58,47 @@ public class Partition
 		if (right != null) right.Print();
 	}
 
+	public void MakeParition()
+	{
+		bool debug = false;
+
+		int minimumSize = generator.minimumRoomSize + generator.roomBuffer * 2;
+		if (debug) MonoBehaviour.print("Minimum size: " + minimumSize + ", " + "PWidth: " + this.width + ", " + "PHeight: " + this.height);
+
+		if (this.width <= minimumSize * 2 || this.height <= minimumSize * 2)
+		{
+			if (debug) MonoBehaviour.print("No cut");
+			return;
+		}
+
+		horizontalCut = true;
+		if (Random.value > 0.5) horizontalCut = false;
+
+		Partition partitionA;
+		Partition partitionB;
+
+		if (horizontalCut)
+		{
+						int yCut = Random.Range(generator.minimumRoomSize + generator.roomBuffer * 2, this.height - generator.minimumRoomSize - generator.roomBuffer * 2 + 1);
+			if (debug) MonoBehaviour.print("Y cut: " + yCut);
+			partitionA = new Partition(generator, this.x, this.y, this.width, yCut, this.depth + 1);
+			partitionB = new Partition(generator, this.x, this.y + yCut, this.width, this.height - yCut, this.depth + 1);
+		}
+		else // Vertical cut
+		{
+			int xCut = Random.Range(generator.minimumRoomSize + generator.roomBuffer * 2, this.width - generator.minimumRoomSize - generator.roomBuffer * 2 + 1);
+			if (debug) MonoBehaviour.print("X cut: " + xCut);
+			partitionA = new Partition(generator, this.x, this.y, xCut, this.height, this.depth + 1);
+			partitionB = new Partition(generator, this.x + xCut, this.y, this.width - xCut, this.height, this.depth + 1);
+		}
+
+		this.left = partitionA; // Also top
+		this.right = partitionB; // Also bottom
+
+		left.MakeParition();
+		right.MakeParition();
+	}
+
 	public void MakeRoom(List<Room> rooms)
 	{
 		// Intermediate node
@@ -69,6 +111,24 @@ public class Partition
 		{
 			room = new Room(generator, this);
 			rooms.Add(room);
+		}
+	}
+
+	public void MakeCorridors(List<Corridor> corridors)
+	{
+		// Intermediate node
+		if (left != null && right != null)
+		{
+			left.MakeCorridors(corridors);
+			right.MakeCorridors(corridors);
+
+			// Connect left and right partitions by corridor
+			Corridor corridor = new Corridor(generator, left, right, horizontalCut);
+			corridors.Add(corridor);
+		}
+		else // Leaf node
+		{
+			return;
 		}
 	}
 

@@ -8,7 +8,6 @@ public class DungeonGenerator : MonoBehaviour {
     public int gridSize = 10;
     public int minimumRoomSize = 4;
     public int roomBuffer = 1;
-    public float minimumRoomToPartitionRatio = 0.5f;
     public GameObject cellPrefab;
 
     // Internal fields
@@ -22,7 +21,9 @@ public class DungeonGenerator : MonoBehaviour {
     private Partition root;
     private int nextPartitionId;
     private int nextRoomId;
+	private int nextCorridorId;
     private List<Room> rooms;
+	private List<Corridor> corridors;
 
     public void Generate()
     {
@@ -36,6 +37,7 @@ public class DungeonGenerator : MonoBehaviour {
         PerformBSP();
 
         DisplayRooms();
+		DisplayCorridors();
     }
 
     public void DisplayRooms()
@@ -58,6 +60,16 @@ public class DungeonGenerator : MonoBehaviour {
         if (root != null) root.Hide();
     }
 
+	public void DisplayCorridors()
+	{
+		foreach (Corridor corridor in corridors) corridor.Display(dungeonParent);
+	}
+
+	public void HideCorridors()
+	{
+		foreach (Corridor corridor in corridors) corridor.Hide();
+	}
+
     public void Clear()
     {
         DestroyImmediate(dungeonParent);
@@ -69,55 +81,19 @@ public class DungeonGenerator : MonoBehaviour {
     {
         nextPartitionId = 0;
         nextRoomId = 0;
+		nextCorridorId = 0;
+
         int worldSize = gridSize * cellSize;
         rooms = new List<Room>();
+		corridors = new List<Corridor> ();
 
         root = new Partition(this, 0, 0, worldSize, worldSize, 0);
 
-        MakeParition(root);
+		root.MakeParition();
 
         root.MakeRoom(rooms);
-    }
 
-    private void MakeParition(Partition partition)
-    {
-        bool debug = false;
-
-        int minimumSize = minimumRoomSize + roomBuffer * 2;
-        if (debug) print("Minimum size: " + minimumSize + ", " + "PWidth: " + partition.width + ", " + "PHeight: " + partition.height);
-
-        if (partition.width <= minimumSize * 2 || partition.height <= minimumSize * 2)
-        {
-            if (debug) print("No cut");
-            return;
-        }
-
-        bool horizontalCut = true;
-        if (Random.value > 0.5) horizontalCut = false;
-
-        Partition partitionA;
-        Partition partitionB;
-
-        if (horizontalCut)
-        {
-            int yCut = Random.Range(minimumRoomSize + roomBuffer * 2, partition.height - minimumRoomSize - roomBuffer * 2 + 1);
-            if (debug) print("Y cut: " + yCut);
-            partitionA = new Partition(this, partition.x, partition.y, partition.width, yCut, partition.depth + 1);
-            partitionB = new Partition(this, partition.x, partition.y + yCut, partition.width, partition.height - yCut, partition.depth + 1);
-        }
-        else // Vertical cut
-        {
-            int xCut = Random.Range(minimumRoomSize + roomBuffer * 2, partition.width - minimumRoomSize - roomBuffer * 2 + 1);
-            if (debug) print("X cut: " + xCut);
-            partitionA = new Partition(this, partition.x, partition.y, xCut, partition.height, partition.depth + 1);
-            partitionB = new Partition(this, partition.x + xCut, partition.y, partition.width - xCut, partition.height, partition.depth + 1);
-        }
-
-        partition.left = partitionA;
-        partition.right = partitionB;
-
-        MakeParition(partitionA);
-        MakeParition(partitionB);
+		root.MakeCorridors(corridors);
     }
 
 	public float GetGridSpacing() {
@@ -131,5 +107,10 @@ public class DungeonGenerator : MonoBehaviour {
 
     public int NextRoomId() {
 		return nextRoomId++;
+	}
+
+	public int NextCorridorId()
+	{
+		return nextCorridorId++;
 	}
 }

@@ -30,23 +30,17 @@ public class Room
         int xArea = (partition.width - minimumSize) / 2;
         int yArea = (partition.height - minimumSize) / 2;
 
-        int x1 = partition.x + generator.roomBuffer + Random.Range (0, xArea);
-		int x2 = partition.x + generator.roomBuffer + Random.Range (xArea + generator.minimumRoomSize, partition.width);
+		int x1 = partition.x + Random.Range (generator.roomBuffer, xArea);
+		int x2 = partition.x + Random.Range (xArea + generator.minimumRoomSize, partition.width - generator.roomBuffer);
 
 		this.x = x1;
 		this.width = x2 - x1;
 
-        int y1 = partition.y + generator.roomBuffer + Random.Range(0, yArea);
-        int y2 = partition.y + generator.roomBuffer + Random.Range(yArea + generator.minimumRoomSize, partition.height);
+		int y1 = partition.y + Random.Range(generator.roomBuffer, yArea);
+		int y2 = partition.y + Random.Range(yArea + generator.minimumRoomSize, partition.height - generator.roomBuffer);
 
 		this.y = y1;
         this.height = y2 - y1;
-
-        if (this.height == 1)
-        {
-            MonoBehaviour.print("Py: " + partition.y + ", " + "Pheight: " + partition.height);
-            MonoBehaviour.print("Ry: " + this.y + ", " + "Rheight: " + this.height);
-        }
 
         GenerateCells();
     }
@@ -91,5 +85,4 @@ public class Room
     {
         MonoBehaviour.DestroyImmediate(gridParent);
     }
-
 }

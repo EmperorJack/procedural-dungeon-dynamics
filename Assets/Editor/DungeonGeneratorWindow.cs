@@ -11,6 +11,8 @@ public class DungeonGeneratorWindow : EditorWindow {
     private string hideRoomsButton = "Hide Rooms";
     private string displayPartitionsButton = "Display Partitions";
     private string hidePartitionsButton = "Hide Partitions";
+	private string displayCorridorsButton = "Display Corridors";
+	private string hideCorridorsButton = "Hide Corridors";
     private string clearButton = "Clear";
 
     private GameObject generatorObject = null;
@@ -32,12 +34,13 @@ public class DungeonGeneratorWindow : EditorWindow {
         if (GUILayout.Button(generateButton)) GetGenerator().Generate();
 
         if (GUILayout.Button(displayRoomsButton)) GetGenerator().DisplayRooms();
-
         if (GUILayout.Button(hideRoomsButton)) GetGenerator().HideRooms();
 
         if (GUILayout.Button(displayPartitionsButton)) GetGenerator().DisplayPartitions();
-
         if (GUILayout.Button(hidePartitionsButton)) GetGenerator().HidePartitions();
+
+		if (GUILayout.Button(displayCorridorsButton)) GetGenerator ().DisplayCorridors();
+		if (GUILayout.Button(hideCorridorsButton)) GetGenerator().HideCorridors();
 
         if (GUILayout.Button(clearButton)) GetGenerator().Clear();
     }
