@@ -26,46 +26,65 @@ public class logic : MonoBehaviour
 	private bool isInitialized = false;
 
 	public GameObject board;
-	private SharedGrid grid;
+	private GroupGrid grid;
+	private SharedGrid shared_grid;
+	private SpeedField speed_field;
+
+	public bool show_Potential = false;
 
 	// Use this for initialization
 	void Start ()
 	{
 		isInitialized = true;
-		grid = new SharedGrid (cell_width, dim, agents);
+		shared_grid = new SharedGrid (cell_width, dim, agents);
+		speed_field = new SpeedField (shared_grid);
+		grid = new GroupGrid (cell_width, dim, agents);
 	}
 
 	// Update is called once per frame
 	void Update ()
 	{
-		if (Input.GetMouseButton (0) && !isClicked) {
-			Vector3 mPos = Input.mousePosition;
-			mPos.z = 10;
-			Vector3 pos = Camera.main.ScreenToWorldPoint (mPos);
-			if (grid.contains(new Vector2 (pos.x, pos.z))) {
-				GameObject agent = (GameObject)Instantiate (this.agent);
-				print ("Instantiating Agent at x: " + pos.x + " y: " + agent.transform.localScale.y / 2 + " z: " + pos.z);
+		Vector3 mPos = Input.mousePosition;
+		mPos.z = 10;
+		Vector3 pos = Camera.main.ScreenToWorldPoint (mPos);
+		if (isClicked == false) {
+			if (Input.GetMouseButton (0)) {
+				if (grid.contains (new Vector2 (pos.x, pos.z))) {
+					GameObject agent = (GameObject)Instantiate (this.agent);
+					print ("Instantiating Agent at x: " + pos.x + " y: " + agent.transform.localScale.y / 2 + " z: " + pos.z);
 
-				// Instantiate(public game object)
-				Rigidbody agentBody = agent.GetComponent<Rigidbody> ();
-				agentBody.position = new Vector3 (pos.x, agent.transform.localScale.y / 2, pos.z);
+					// Instantiate(public game object)
+					Rigidbody agentBody = agent.GetComponent<Rigidbody> ();
+					agent.transform.localScale = new Vector3 (0, 0, 0);
+					agentBody.position = new Vector3 (pos.x, agent.transform.localScale.y / 2, pos.z);
 
-				float x = agentBody.position.x;
-				float y = agentBody.position.y;
-											
-				agents.Add (agent);
+
+					float x = agentBody.position.x;
+					float y = agentBody.position.y;
+										
+					agents.Add (agent);
+				}
+				isClicked = true;
+
 			}
-			isClicked = true;
 		}
 
 		if (Input.GetMouseButtonUp (0)) {
 			isClicked = false;
 		}
 
-		grid.update ();
+		if (Input.GetMouseButton (1)) {
+			GroupCell cell = (GroupCell)grid.getCell (new Vector2 (pos.x, pos.z));
+			cell.isGoal = true;
+		}
+
+		if (agents.Count > 0) {
+			shared_grid.update ();
+			grid.update ();
+		}
 
 	}
-		
+
 
 	void OnDrawGizmosSelected ()
 	{
@@ -108,29 +127,48 @@ public class logic : MonoBehaviour
 		for (int i = 0; i < dim; i++) {
 			for (int j = 0; j < dim; j++) {
 
-				float density = grid.density(i, j);
 
+				GroupCell groupCell = (GroupCell)grid.grid2 [i, j];
+				SharedCell sharedCell = (SharedCell)shared_grid.grid2 [i, j];
+
+				float density = sharedCell.density;
+					
+
+				float color_var = density;
 				density = Mathf.Min (1.0f, density / maxDensity);
-				density = Mathf.Max (0f, density);
+				color_var = Mathf.Max (0f, density);
 
-				Color d_Color = new Color (density, density, density);
-				Vector2 position = grid.position(i, j);
+				if (show_Potential) {
+					float potential = groupCell.potential;
+					color_var = potential / grid.max_potential;
+
+				}
+					
+				Color color = new Color (color_var, color_var, color_var);
+
+				Vector2 position = groupCell.position;
 				//cellObjects [i, j].GetComponent<Renderer> ().material.color = d_Color;
 			
-				setColor (d_Color);
+
+				if (groupCell.isGoal) {
+					setColor (Color.green);
+				} else {
+					setColor (color);
+				}
 				fillRect (position.x, position.y, cell_width, cell_width);
+
 				setColor (Color.red);
 				drawRect (position.x, position.y, cell_width, cell_width);
 			}
 		}
 
 		for (int i = 0; i < agents.Count; i++) {
-			Rigidbody rb = agents[i].GetComponent<Rigidbody> ();
+			Rigidbody rb = agents [i].GetComponent<Rigidbody> ();
 			float x = rb.position.x;
 			float y = rb.position.z;
 
 			setColor (Color.red);
-			fillRect (new Vector2(x,y), 0.2f, 0.2f);
+			fillRect (new Vector2 (x, y), 0.2f, 0.2f);
 
 			if (i == agents.Count - 1) {
 				Vector2 cellPos = new Vector2 (Mathf.Floor (x / cell_width - cell_width / 2), Mathf.Floor (y / cell_width - cell_width / 2));

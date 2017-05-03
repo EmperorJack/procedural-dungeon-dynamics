@@ -32,6 +32,7 @@ public abstract class Grid
 				instantiateCell (i, j, pos);
 			}
 		}
+			
 	}
 
 	protected  abstract void instantiateCell(int i, int j, Vector2 pos);
@@ -43,7 +44,30 @@ public abstract class Grid
 		bool contained = pos.x > -(dim / 2f) * cell_width && pos.x < (dim / 2f) * cell_width;
 		return contained && pos.y > -(dim / 2f) * cell_width && pos.y < (dim / 2f) * cell_width;
 	}
+
+	public Cell getCell(Vector2 pos)
+	{
+		for (int i = 0; i < dim; i ++) {
+			for (int j = 0; j < dim; j ++) {
+				Cell cell = grid [i, j];
+				Vector2 cellPos = cell.position;
+
+				if (pos.x < cellPos.x + cell_width / 2 && pos.x > cellPos.x - cell_width / 2) {
+					if (pos.y < cellPos.y + cell_width / 2 && pos.y > cellPos.y - cell_width / 2) {
+						return cell;
+					}
+				}
+			}
+		}
+
+		return null;
+	}
 		
+	public Cell[,] grid2 {
+		get {
+			return grid;
+		}
+	}
 }
 
 

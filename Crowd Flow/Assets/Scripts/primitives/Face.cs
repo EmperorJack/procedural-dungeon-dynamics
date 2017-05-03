@@ -7,6 +7,8 @@ public class Face
 {
 	public float velocity;
 	public float grad_Height;
+	public float cost;
+
 
 	public Cell cell;
 	public Cell neighbour;

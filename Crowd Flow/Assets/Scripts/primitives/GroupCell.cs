@@ -5,13 +5,17 @@ using UnityEngine;
 
 // Group cell information, i.e. for each goal, and hence it's potential
 
-public class GroupCell : SharedCell
+public class GroupCell : Cell
 {
 	public float potential;
+	public float temporary_potential;
 
-	public List<GroupFace> groupCellFaces = new List<GroupFace> ();
+	public Boolean isCandidate = false;
+	public Boolean isGoal = false;
+	public Boolean isKnown = false;
+	public Boolean isUnknown = false;
 
-	public GroupCell (Vector2 pos) : base (pos)
+	public GroupCell (Vector2 pos, Vector2 index) : base (pos, index)
 	{
 
 	}
