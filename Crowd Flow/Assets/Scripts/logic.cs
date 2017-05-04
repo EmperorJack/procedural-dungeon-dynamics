@@ -38,7 +38,7 @@ public class logic : MonoBehaviour
 		isInitialized = true;
 		shared_grid = new SharedGrid (cell_width, dim, agents);
 		speed_field = new SpeedField (shared_grid);
-		grid = new GroupGrid (cell_width, dim, agents);
+		grid = new GroupGrid (cell_width, dim, agents, shared_grid);
 	}
 
 	// Update is called once per frame
@@ -51,7 +51,7 @@ public class logic : MonoBehaviour
 			if (Input.GetMouseButton (0)) {
 				if (grid.contains (new Vector2 (pos.x, pos.z))) {
 					GameObject agent = (GameObject)Instantiate (this.agent);
-					print ("Instantiating Agent at x: " + pos.x + " y: " + agent.transform.localScale.y / 2 + " z: " + pos.z);
+					//print ("Instantiating Agent at x: " + pos.x + " y: " + agent.transform.localScale.y / 2 + " z: " + pos.z);
 
 					// Instantiate(public game object)
 					Rigidbody agentBody = agent.GetComponent<Rigidbody> ();
@@ -79,6 +79,7 @@ public class logic : MonoBehaviour
 		}
 
 		if (agents.Count > 0) {
+			speed_field.assignSpeeds ();
 			shared_grid.update ();
 			grid.update ();
 		}
@@ -140,7 +141,7 @@ public class logic : MonoBehaviour
 
 				if (show_Potential) {
 					float potential = groupCell.potential;
-					color_var = potential / grid.max_potential;
+					color_var = 1f - potential / grid.max_potential;
 
 				}
 					
@@ -157,8 +158,8 @@ public class logic : MonoBehaviour
 				}
 				fillRect (position.x, position.y, cell_width, cell_width);
 
-				setColor (Color.red);
-				drawRect (position.x, position.y, cell_width, cell_width);
+				//setColor (Color.red);
+				//drawRect (position.x, position.y, cell_width, cell_width);
 			}
 		}
 

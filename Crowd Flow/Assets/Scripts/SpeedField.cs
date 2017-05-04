@@ -30,16 +30,22 @@ public class SpeedField
 
 	}
 
-	public void assignSpeeds(List<GroupGrid> groups){
-		foreach (Grid group_grid in groups) {
-			GroupCell[,] grid = (GroupCell[,])group_grid.grid2;
-			foreach (GroupCell cell in grid) {
-				GroupFace[] faces = (GroupFace[])cell.faces;
-				foreach (GroupFace face in faces) {
+	public void assignSpeeds ()
+	{
+		foreach (SharedCell cell in grid.grid2) {
+			Face[] faces = cell.faces;
+			foreach (Face face in faces) {
+				if (face != null) {
+					Face shared_face = (Face)face;
+
+					if (face.neighbour == null) {
+						shared_face.velocity = 0.0f;
+						continue;
+					}
 					float max_density = 5.0f;
 					float min_density = 0.1f;
 
-					float terr_speed = getTerrSpeed (0.5f,0.0f,0f,0f,0f);
+					float terr_speed = getTerrSpeed (0.5f, 0.0f, 0f, 0f, 0f);
 					float flow_speed = getFlowSpeed (face);
 
 					SharedCell neighbour = (SharedCell)face.neighbour;
@@ -52,17 +58,16 @@ public class SpeedField
 					} else if (density <= min_density) {
 						final_speed = terr_speed;
 					} else {
-						final_speed = terr_speed + ((density-min_density)/(max_density-min_density)*(flow_speed-terr_speed));
+						final_speed = terr_speed + ((density - min_density) / (max_density - min_density) * (flow_speed - terr_speed));
 					}
 
-					Face shared_face = (Face)face;
 					shared_face.velocity = final_speed;
-
 				}
+			
 			}
 		}
-	}
 
+	}
 }
 
 

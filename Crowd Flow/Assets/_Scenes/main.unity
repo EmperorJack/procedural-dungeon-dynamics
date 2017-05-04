@@ -181,7 +181,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad754e4b1519dd649a65a6292f87aac5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dim: 10
+  dim: 40
   cell_width: 1
   width: 0
   left: 0
@@ -189,6 +189,7 @@ MonoBehaviour:
   agent: {fileID: 1845141050}
   left2: 0
   board: {fileID: 1190878780}
+  show_Potential: 0
 --- !u!4 &346346746
 Transform:
   m_ObjectHideFlags: 0
@@ -417,7 +418,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d438ddcdbf597146abe8eec62a51946, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  agent: {fileID: 0}
 --- !u!23 &1190878782
 MeshRenderer:
   m_ObjectHideFlags: 0

@@ -7,14 +7,16 @@ public class GroupGrid : Grid
 {
 	public float max_potential = float.MinValue;
 
+	private SharedGrid shared_grid;
 
-	public GroupGrid (float cell_width, int dim, List<GameObject> agents ) : base (cell_width, dim)
+	public GroupGrid (float cell_width, int dim, List<GameObject> agents, SharedGrid shared_grid ) : base (cell_width, dim)
 	{
+		this.shared_grid = shared_grid;
 
 		for (int i = 0; i < dim; i++) {
 			for (int j = 0; j < dim; j++) {
 				GroupCell cell = (GroupCell)grid [i, j];
-				foreach (GroupFace face in cell.faces) {
+				foreach (Face face in cell.faces) {
 					if (face != null) {
 						face.neighbour = grid [(int)face.neighbourIndex.x, (int)face.neighbourIndex.y];
 					}
@@ -55,119 +57,124 @@ public class GroupGrid : Grid
 	private void fastMarch ()
 	{
 		List<GroupCell> known_cells = new List<GroupCell> ();
-		List<GroupCell> candidate_cells = new List<GroupCell> ();
 
 		for (int i = 0; i < dim; i++) {
 			for (int j = 0; j < dim; j++) {
 				GroupCell cell = (GroupCell)grid [i, j];
 				if (cell.isGoal) {
-					cell.potential = 0;
+					cell.potential = 0f;
 					known_cells.Add (cell);
-
-					foreach (GroupFace face in cell.faces) {
-						GroupCell candidate = (GroupCell)face.neighbour;
-						candidate.temporary_potential = float.MaxValue;
-						candidate_cells.Add (candidate);
-
-					}
 				} else {
 					cell.potential = float.MaxValue;
+					cell.temporary_potential = float.MaxValue;
 				}
 			}
 		}
 
-		if (candidate_cells.Count == 0) {
-			return;
-		}
-
+		int count = 0;
 
 		while (known_cells.Count != dim * dim) {
 			GroupCell min_candidate = null;
 			float min_pot = float.MaxValue;
-			foreach (GroupCell candidate in candidate_cells) {
-				if (candidate.temporary_potential == float.MaxValue) {
-					candidate.temporary_potential = getCellPotential (candidate);
-					Printer.message ("Potential: "+getCellPotential (candidate));
-				}
 
-				if (candidate.temporary_potential < min_pot) {
-					min_pot = candidate.temporary_potential;
-					min_candidate = candidate;
+			List<GroupCell> candidate_cells = new List<GroupCell> ();
+
+			foreach (GroupCell known in known_cells) {
+				foreach (Face face in known.faces) {
+					if (face != null && face.neighbour!=null) {
+						GroupCell candidate = (GroupCell)face.neighbour;
+						if (candidate_cells.Contains (candidate) == false && known_cells.Contains(candidate) == false) {
+							candidate.temporary_potential = getCellPotential(candidate);
+							if (candidate.index.x == 7 && candidate.index.y == 6) {
+								Printer.message (candidate.temporary_potential+"");
+							}
+							candidate_cells.Add (candidate);
+							if (candidate.temporary_potential < min_pot) {
+								min_pot = candidate.temporary_potential;
+								min_candidate = candidate;
+							}
+						}
+					}
 				}
 			}
+				
+			//Printer.message ("C: " + count+" "+known_cells.Count);
+			count = count + 1;
 
 			min_candidate.potential = min_candidate.temporary_potential;
 			max_potential = Mathf.Max (min_candidate.potential, max_potential);
 			known_cells.Add (min_candidate);
-
-			foreach (GroupFace face in min_candidate.faces) {
-				if (face != null) {
-					GroupCell neighbour_cell = (GroupCell)face.neighbour;
-					neighbour_cell.temporary_potential = float.MaxValue;
-					if (known_cells.Contains (neighbour_cell) == false) {
-						candidate_cells.Add (neighbour_cell);
-					}
-				}
-			}
 		}
 			
 	}
-
-	private enum Dir
-	{
-		Horizontal,
-		Vertical}
-
-	;
-
+		
 	float getCellPotential (GroupCell cell)
 	{
-		GroupFace least_x = null;
+		GroupCell least_x = null;
+		Face least_x_shared = null;
+
+		SharedCell shared_cell = (SharedCell)shared_grid.grid2 [(int)cell.index.x, (int)cell.index.y];
 
 		float east_cost = adjCost (GroupCell.Dir.east, cell);
 		float west_cost = adjCost (GroupCell.Dir.west, cell);
 
-		if (east_cost <= west_cost) {
-			least_x = (GroupFace)cell.getFace (GroupCell.Dir.east);
-		} else {
-			least_x = (GroupFace)cell.getFace (GroupCell.Dir.west);
+		if (cell.index.x == 7 && cell.index.y == 6) {
+			Printer.message (east_cost + " " + west_cost);
 		}
+		//Printer.message ("HOR"+east_cost + " " + west_cost+" "+cell.index.x+" "+cell.index.y);
 
-		GroupFace least_y = null;
+		if (east_cost < west_cost) {
+			least_x = (GroupCell)cell.getFace (GroupCell.Dir.east).neighbour;
+			least_x_shared = shared_cell.getFace (GroupCell.Dir.east);
+		} else if (west_cost < east_cost) {
+			least_x = (GroupCell)cell.getFace (GroupCell.Dir.west).neighbour;
+			least_x_shared = shared_cell.getFace (GroupCell.Dir.west);
+		} 
+
+		GroupCell least_y = null;
+		Face least_y_shared = null;
 
 		float north_cost = adjCost (GroupCell.Dir.north, cell);
 		float south_cost = adjCost (GroupCell.Dir.south, cell);
 
-		if (north_cost <= south_cost) {
-			least_y = (GroupFace)cell.getFace (GroupCell.Dir.north);
-		} else {
-			least_y = (GroupFace)cell.getFace (GroupCell.Dir.south);
-		}
+		//Printer.message ("VER"+north_cost + " " + south_cost);
 
-		return doubleFiniteDif (cell, least_x, least_y);
+		if (north_cost < south_cost) {
+			least_y = (GroupCell)cell.getFace (GroupCell.Dir.north).neighbour;
+			least_y_shared = shared_cell.getFace (GroupCell.Dir.north);
+
+		} else if(south_cost < north_cost) {
+			least_y = (GroupCell)cell.getFace (GroupCell.Dir.south).neighbour;
+			least_y_shared = shared_cell.getFace (GroupCell.Dir.south);
+
+		}
+			
+		return doubleFiniteDif (cell, least_x, least_y, least_x_shared,least_y_shared);
 	}
 
-	private float adjCost (Cell.Dir dir, GroupCell cell)
+	private float adjCost (Cell.Dir dir, Cell cell)
 	{
+		float cost = float.MaxValue;
+
 		if (cell.faces [(int)dir] == null) {
-			return float.MaxValue;
+			return cost;
 		}
 
 		GroupCell adj_cell = (GroupCell)cell.faces [(int)dir].neighbour;
 
-		float cost = float.MaxValue;
+		cell = shared_grid.grid2 [(int)cell.index.x, (int)cell.index.y];
+	
 
 		if (adj_cell != null) {
-			GroupFace face = (GroupFace)cell.faces [(int)dir];
+			Face face = (Face)cell.faces [(int)dir];
 			cost = adj_cell.potential + face.cost;
 		}
-
+			
 		return cost;
 	}
 
-	float singleFiniteDif (GroupCell cell, GroupFace f)
+	float singleFiniteDif (GroupCell cell, Face f)
 	{
-		GroupCell neighbour = (GroupCell)f.neighbour;
 
 		float cost = f.cost;
 		float potential = cell.potential;
@@ -175,41 +182,38 @@ public class GroupGrid : Grid
 		return Mathf.Max (potential + cost, potential - cost);
 	}
 
-	float doubleFiniteDif (GroupCell cell, GroupFace face_one, GroupFace face_two)
+	float doubleFiniteDif (GroupCell cell, GroupCell adj_one, GroupCell adj_two, Face face_one, Face face_two)
 	{
 
-		GroupCell adj_one = null;
 		float cost_one = 0;
 		float potential_one = 0;
 		if (face_one != null) {
-			adj_one = (GroupCell)face_one.neighbour;
 			cost_one = face_one.cost;
 			potential_one = adj_one.potential;
 		}
 
 
-		GroupCell adj_two = null;
 		float cost_two = 0;
 		float potential_two = 0;
 		if (face_two != null) {
-			adj_two = (GroupCell)face_two.neighbour;
 			cost_two = face_two.cost;
 			potential_two = adj_two.potential;
 		}
-
-		if (adj_two == null) {
+			
+		if (adj_two == null || potential_two == float.MaxValue) {
 			return singleFiniteDif (adj_one, face_one);
 		}
 
-		if (adj_one == null) {
+		if (adj_one == null || potential_one == float.MaxValue) {
 			return singleFiniteDif (adj_two, face_two);
 		}
-
+			
 		float a = (cost_one * cost_one) + (cost_two * cost_two);
 		float b = -2 * ((cost_one * cost_one * potential_two) + (cost_two * cost_two * potential_one));
 		float c = (cost_one * cost_one * potential_two * potential_two) + (cost_two * cost_two * potential_one * potential_one);
 
 		float under_root = (b * b) - (4 * a * c);
+
 
 		float arg_one = (-b + Mathf.Sqrt (under_root)) / (2 * a);
 		float arg_two = (-b - Mathf.Sqrt (under_root)) / (2 * a);
