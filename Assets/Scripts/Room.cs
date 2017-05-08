@@ -8,10 +8,10 @@ public class Room
     public int id;
 
     // Worldspace fields
-    private int x;
-    private int y;
-    private int width;
-    private int height;
+    public int x;
+    public int y;
+    public int width;
+    public int height;
 
     // Grid fields
     private Cell[,] grid;

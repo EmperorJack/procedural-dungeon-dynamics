@@ -5,7 +5,7 @@ using UnityEngine;
 public class Partition
 {
 	private DungeonGenerator generator;
-    private int id;
+    public int id;
     private Room room;
 
     // Worldspace fields
@@ -79,7 +79,7 @@ public class Partition
 
 		if (horizontalCut)
 		{
-						int yCut = Random.Range(generator.minimumRoomSize + generator.roomBuffer * 2, this.height - generator.minimumRoomSize - generator.roomBuffer * 2 + 1);
+			int yCut = Random.Range(generator.minimumRoomSize + generator.roomBuffer * 2, this.height - generator.minimumRoomSize - generator.roomBuffer * 2 + 1);
 			if (debug) MonoBehaviour.print("Y cut: " + yCut);
 			partitionA = new Partition(generator, this.x, this.y, this.width, yCut, this.depth + 1);
 			partitionB = new Partition(generator, this.x, this.y + yCut, this.width, this.height - yCut, this.depth + 1);
@@ -131,6 +131,20 @@ public class Partition
 			return;
 		}
 	}
+
+    public void GetRooms(List<Room> rooms)
+    {
+        // Intermediate node
+        if (left != null && right != null)
+        {
+            left.GetRooms(rooms);
+            right.GetRooms(rooms);
+        }
+        else // Leaf node
+        {
+            rooms.Add(room);
+        }
+    }
 
     public void Display(GameObject dungeonParent)
     {

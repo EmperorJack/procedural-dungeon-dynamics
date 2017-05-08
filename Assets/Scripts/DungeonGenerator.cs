@@ -25,6 +25,14 @@ public class DungeonGenerator : MonoBehaviour {
     private List<Room> rooms;
 	private List<Corridor> corridors;
 
+    public void FixedUpdate()
+    {
+        if (Time.frameCount % 60 == 0)
+        {
+            Generate();
+        }
+    }
+
     public void Generate()
     {
         Clear();
@@ -38,6 +46,7 @@ public class DungeonGenerator : MonoBehaviour {
 
         DisplayRooms();
 		DisplayCorridors();
+        //DisplayPartitions();
     }
 
     public void DisplayRooms()
