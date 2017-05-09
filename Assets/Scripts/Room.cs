@@ -17,30 +17,14 @@ public class Room
     private Cell[,] grid;
     private GameObject gridParent;
 
-	public Room(DungeonGenerator generator, Partition partition)
+	public Room(int id, DungeonGenerator generator, int x, int y, int width, int height)
     {
-		this.generator = generator;
-		this.id = generator.NextRoomId();
-
-		this.width = 0;
-		this.height = 0;
-
-        int minimumSize = generator.minimumRoomSize;
-
-        int xArea = (partition.width - minimumSize) / 2;
-        int yArea = (partition.height - minimumSize) / 2;
-
-		int x1 = partition.x + Random.Range (generator.roomBuffer, xArea);
-		int x2 = partition.x + Random.Range (xArea + generator.minimumRoomSize, partition.width - generator.roomBuffer);
-
-		this.x = x1;
-		this.width = x2 - x1;
-
-		int y1 = partition.y + Random.Range(generator.roomBuffer, yArea);
-		int y2 = partition.y + Random.Range(yArea + generator.minimumRoomSize, partition.height - generator.roomBuffer);
-
-		this.y = y1;
-        this.height = y2 - y1;
+        this.id = id;
+        this.generator = generator;
+        this.x = x;
+        this.y = y;
+		this.width = width;
+		this.height = height;
 
         GenerateCells();
     }
