@@ -2,53 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Partition
+public class Partition : GridArea
 {
-	private DungeonGenerator generator;
-    public int id;
-    private Room room;
-
-    // Worldspace fields
-    public int x;
-	public int y;
-	public int width;
-	public int height;
-
+    
     // Tree fields
     public int depth;
-	public Partition left;
+    public bool horizontalCut;
+    public Partition left;
 	public Partition right;
-	public bool horizontalCut;
+    private Room room;
 
-    // Grid fields
-    private Cell[,] grid;
-    private GameObject gridParent;
-
-    public Partition(DungeonGenerator generator, int x, int y, int width, int height, int depth)
-	{
-		this.generator = generator;
-        this.id = generator.NextPartitionId();
-        this.x = x;
-		this.y = y;
-		this.width = width;
-		this.height = height;
-        this.depth = depth;
-
-        GenerateCells();
-    }
-
-    private void GenerateCells()
-    {
-        grid = new FloorCell[width, height];
-
-        for (int i = 0; i < width; i++)
-        {
-            for (int j = 0; j < height; j++)
-            {
-                grid[i, j] = new FloorCell(generator.cellPrefab);
-            }
-        }
-    }
+    public Partition(DungeonGenerator generator, int x, int y, int width, int height, int depth) : base(generator.NextPartitionId(), generator, x, y, width, height)
+    { }
 
     public void Print()
 	{
@@ -138,35 +103,17 @@ public class Partition
         }
     }
 
-    public void Display(GameObject dungeonParent)
+    public new void Display(GameObject dungeonParent)
     {
-        Hide();
-
-        Material material = new Material(Shader.Find("Diffuse"));
-        material.color = new Color(Random.value, Random.value, Random.value);
-
-        gridParent = new GameObject();
-        gridParent.name = "Partition" + id;
-        gridParent.transform.SetParent(dungeonParent.transform);
-
-        for (int i = 0; i < width; i++)
-        {
-            for (int j = 0; j < height; j++)
-            {
-                GameObject instance = grid[i, j].Display();
-                instance.transform.SetParent(gridParent.transform);
-                instance.transform.Translate((x + i) * generator.GetGridSpacing(), (y + j) * generator.GetGridSpacing(), -2.0f * depth + 15.0f);
-                instance.GetComponent<Renderer>().material = material;
-            }
-        }
+        base.Display(dungeonParent);
 
         if (left != null) left.Display(dungeonParent);
         if (right != null) right.Display(dungeonParent);
     }
 
-    public void Hide()
+    public new void Hide()
     {
-        MonoBehaviour.DestroyImmediate(gridParent);
+        base.Hide();
 
         if (left != null) left.Hide();
         if (right != null) right.Hide();
