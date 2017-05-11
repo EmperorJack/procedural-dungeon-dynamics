@@ -14,6 +14,9 @@ namespace DungeonGeneration {
 	    public int width;
 	    public int height;
 
+        public Vector2 position;
+        public Vector2 dimension;
+
 	    // Grid fields
 	    protected Cell[,] grid;
 	    protected GameObject gridParent;
@@ -26,8 +29,11 @@ namespace DungeonGeneration {
 	        this.y = y;
 	        this.width = width;
 	        this.height = height;
+            
+            this.position = new Vector2(x, y);
+            this.dimension = new Vector2(width, height);
 
-	        GenerateCells();
+            GenerateCells();
 	    }
 
 	    public void GenerateCells()

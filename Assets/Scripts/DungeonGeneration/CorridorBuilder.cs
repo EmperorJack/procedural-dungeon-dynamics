@@ -31,7 +31,13 @@ namespace DungeonGeneration {
 	        List<Vector2> rangeA = new List<Vector2>();
 	        List<Vector2> rangeB = new List<Vector2>();
 
-	        if (horizontalCut)
+            int axisIndex = 0;
+            int otherIndex = 1;
+
+            ComputeRanges(roomsA, roomsB, rangeA, rangeB, horizontalCut);
+            
+            /**
+            if (horizontalCut)
 	        {
 	            foreach (Room room in roomsA)
 	            {
@@ -97,6 +103,7 @@ namespace DungeonGeneration {
 	                }
 	            }
 	        }
+            */
 
             List<PossibleOverlap> overlap = new List<PossibleOverlap>();
 
@@ -117,23 +124,58 @@ namespace DungeonGeneration {
 
             int xFinal = (int) chosenOverlap.posA.x;
             int yFinal = (int) chosenOverlap.posA.y;
-            int widthFinal;
-            int heightFinal;
-
-            if (horizontalCut)
-            {
-                widthFinal = 1;
-                heightFinal = (int)(chosenOverlap.posB.y - chosenOverlap.posA.y);
-            }
-            else // Vertical cut
-            {
-                widthFinal = (int)(chosenOverlap.posB.x - chosenOverlap.posA.x);
-                heightFinal = 1;
-            }
+            int widthFinal = horizontalCut ? 1 : (int)(chosenOverlap.posB.x - chosenOverlap.posA.x);
+            int heightFinal = horizontalCut ? (int)(chosenOverlap.posB.y - chosenOverlap.posA.y) : 1;
 
             int id = generator.NextCorridorId();
 
 	        return new Corridor(id, generator, xFinal, yFinal, widthFinal, heightFinal);
 	    }
-	}
+
+        private static void ComputeRanges(List<Room> roomsA, List<Room> roomsB, List<Vector2> rangeA, List<Vector2> rangeB, bool horizontalCut)
+        {
+            // 0 is x / width, 1 is y / height
+            int axisIndex = horizontalCut ? 0 : 1;
+            int otherIndex = horizontalCut ? 1 : 0;
+
+            foreach (Room room in roomsA)
+            {
+                for (int z = (int) room.position[axisIndex]; z < room.position[axisIndex] + room.dimension[axisIndex]; z++)
+                {
+                    int xMatchIndex = rangeA.FindIndex(v => v[axisIndex] == z);
+                    if (xMatchIndex != -1)
+                    {
+                        if (room.position[otherIndex] + room.dimension[otherIndex] > rangeA[xMatchIndex][otherIndex]) rangeA[xMatchIndex] = AxisAlignedPosition(horizontalCut, z, room.position[otherIndex] + room.dimension[otherIndex]);
+                    }
+                    else
+                    {
+                        rangeA.Add(AxisAlignedPosition(horizontalCut, z, room.position[otherIndex] + room.dimension[otherIndex]));
+                    }
+                }
+            }
+            foreach (Room room in roomsB)
+            {
+                for (int z = (int) room.position[axisIndex]; z < room.position[axisIndex] + room.dimension[axisIndex]; z++)
+                {
+                    int xMatchIndex = rangeB.FindIndex(v => v[axisIndex] == z);
+                    if (xMatchIndex != -1)
+                    {
+                        if (room.position[otherIndex] < rangeB[xMatchIndex][otherIndex]) rangeB[xMatchIndex] = AxisAlignedPosition(horizontalCut, z, room.position[otherIndex]);
+                    }
+                    else
+                    {
+                        rangeB.Add(AxisAlignedPosition(horizontalCut, z, room.position[otherIndex]));
+                    }
+                }
+            }
+        }
+
+        private static Vector2 AxisAlignedPosition(bool horizontalCut, float valueA, float valueB)
+        {
+            if (horizontalCut)
+                return new Vector2(valueA, valueB);
+            else
+                return new Vector2(valueB, valueA);
+        }
+    }
 }
