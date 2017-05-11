@@ -32,7 +32,11 @@ public class DungeonGeneratorWindow : EditorWindow {
 	void OnGUI() {
         generatorObject = (GameObject) EditorGUILayout.ObjectField("Dungeon Generator:", generatorObject, typeof(GameObject), true);
 
-        if (GUILayout.Button(generateButton)) GetGenerator().Generate();
+        if (GUILayout.Button(generateButton))
+        {
+            GetGenerator().Generate();
+            GetGenerator().Display();
+        }
 
         if (GUILayout.Button(displayRoomsButton)) GetGenerator().DisplayRooms();
         if (GUILayout.Button(hideRoomsButton)) GetGenerator().HideRooms();

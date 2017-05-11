@@ -30,7 +30,7 @@ namespace DungeonGeneration {
 	    {
 	        if (Time.frameCount % 60 == 0)
 	        {
-	            Generate();
+	            //Generate();
 	        }
 	    }
 
@@ -38,53 +38,9 @@ namespace DungeonGeneration {
 	    {
 	        Clear();
 
-	        gridSpacing = 1; // worldSize / gridSize;
-
-	        dungeonParent = new GameObject();
-	        dungeonParent.name = "DungeonLayout";
+	        gridSpacing = 1;
 
 	        PerformBSP();
-
-	        DisplayRooms();
-			DisplayCorridors();
-	        //DisplayPartitions();
-	    }
-
-	    public void DisplayRooms()
-	    {
-	        foreach (Room room in rooms) room.Display(dungeonParent);
-	    }
-
-	    public void HideRooms()
-	    {
-	        foreach (Room room in rooms) room.Hide();
-	    }
-
-	    public void DisplayPartitions()
-	    {
-	        if (root != null) root.Display(dungeonParent);
-	    }
-
-	    public void HidePartitions()
-	    {
-	        if (root != null) root.Hide();
-	    }
-
-		public void DisplayCorridors()
-		{
-			foreach (Corridor corridor in corridors) corridor.Display(dungeonParent);
-		}
-
-		public void HideCorridors()
-		{
-			foreach (Corridor corridor in corridors) corridor.Hide();
-		}
-
-	    public void Clear()
-	    {
-	        DestroyImmediate(dungeonParent);
-	        root = null;
-	        rooms = null;
 	    }
 
 	    private void PerformBSP()
@@ -106,11 +62,47 @@ namespace DungeonGeneration {
 			root.MakeCorridors(corridors);
 	    }
 
-		public float GetGridSpacing() {
-			return gridSpacing;
-		}
+        public Cell[,] GetSimpleLayout()
+        {
+            Cell[,] layout = new Cell[gridSize, gridSize];
+            for (int i = 0; i < gridSize; i++)
+            {
+                for (int j = 0; j < gridSize; j++)
+                {
+                    layout[i, j] = new EmptyCell();
+                }
+            }
 
-	    public int NextPartitionId()
+            foreach (Room room in rooms)
+            {
+                AddAreaToLayout(room, layout);
+            }
+
+            foreach (Corridor corridor in corridors)
+            {
+                AddAreaToLayout(corridor, layout);
+            }
+
+            return layout;
+        }
+
+        private void AddAreaToLayout(GridArea area, Cell[,] layout)
+        {
+            for (int i = area.x; i < area.x + area.width; i++)
+            {
+                for (int j = area.y; j < area.y + area.height; j++)
+                {
+                    layout[i, j] = new FloorCell(cellPrefab);
+                }
+            }
+        }
+
+        public float GetGridSpacing()
+        {
+            return gridSpacing;
+        }
+
+        public int NextPartitionId()
 	    {
 	        return nextPartitionId++;
 	    }
@@ -123,5 +115,52 @@ namespace DungeonGeneration {
 		{
 			return nextCorridorId++;
 		}
-	}
+
+        public void Display()
+        {
+            dungeonParent = new GameObject();
+            dungeonParent.name = "DungeonLayout";
+
+            DisplayRooms();
+            DisplayCorridors();
+            //DisplayPartitions();
+        }
+
+        public void DisplayRooms()
+        {
+            foreach (Room room in rooms) room.Display(dungeonParent);
+        }
+
+        public void HideRooms()
+        {
+            foreach (Room room in rooms) room.Hide();
+        }
+
+        public void DisplayPartitions()
+        {
+            if (root != null) root.Display(dungeonParent);
+        }
+
+        public void HidePartitions()
+        {
+            if (root != null) root.Hide();
+        }
+
+        public void DisplayCorridors()
+        {
+            foreach (Corridor corridor in corridors) corridor.Display(dungeonParent);
+        }
+
+        public void HideCorridors()
+        {
+            foreach (Corridor corridor in corridors) corridor.Hide();
+        }
+
+        public void Clear()
+        {
+            DestroyImmediate(dungeonParent);
+            root = null;
+            rooms = null;
+        }
+    }
 }
