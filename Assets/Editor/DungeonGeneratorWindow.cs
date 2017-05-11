@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using System;
+using DungeonGeneration;
 
 public class DungeonGeneratorWindow : EditorWindow {
 
