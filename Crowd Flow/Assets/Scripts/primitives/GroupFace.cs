@@ -7,7 +7,7 @@ public class GroupFace : Face
 {
 	public float grad_Potential;
 
-	public GroupFace (Cell cell, Vector2 neighbourIndex) : base (cell, neighbourIndex)
+	public GroupFace (Cell cell, Vector2 neighbourIndex, int index) : base (cell, neighbourIndex, index)
 	{
 	}
 }

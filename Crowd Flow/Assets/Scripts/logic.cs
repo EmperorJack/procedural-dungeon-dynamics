@@ -31,6 +31,7 @@ public class logic : MonoBehaviour
 	private SpeedField speed_field;
 
 	public bool show_Potential = false;
+	public bool show_Speed = false;
 
 	// Use this for initialization
 	void Start ()
@@ -92,11 +93,7 @@ public class logic : MonoBehaviour
 		drawGrid ();
 
 		if (isInitialized && agents.Count > 0) {
-			
-			//Start ();
-			//drawGrid ();
 			Rigidbody rb = agents [agents.Count - 1].GetComponent<Rigidbody> ();
-			//Vector2 cell = getLeft (rb.position.x, rb.position.z);
 
 			if (left_Pos.x < float.MaxValue) {
 
@@ -104,14 +101,7 @@ public class logic : MonoBehaviour
 					setColor (Color.blue);
 					fillRect (agent.transform.position.x, agent.transform.position.z, 0.2f, 0.2f);
 				}
-
-//				print ("DRAWING");
-//
-//				setColor (Color.red);
-//				fillRect (sharedGrid [(int)cell.x, (int)cell.y].position, cell_width, cell_width);
-//
-//				setColor (Color.blue);
-//				fillRect (left_Pos.x, left_Pos.y, 0.1f, 0.1f);
+					
 			}
 		}
 	}
@@ -142,14 +132,12 @@ public class logic : MonoBehaviour
 				if (show_Potential) {
 					float potential = groupCell.potential;
 					color_var = 1f - potential / grid.max_potential;
+				} 
 
-				}
-					
 				Color color = new Color (color_var, color_var, color_var);
 
 				Vector2 position = groupCell.position;
 				//cellObjects [i, j].GetComponent<Renderer> ().material.color = d_Color;
-			
 
 				if (groupCell.isGoal) {
 					setColor (Color.green);
@@ -158,8 +146,38 @@ public class logic : MonoBehaviour
 				}
 				fillRect (position.x, position.y, cell_width, cell_width);
 
-				//setColor (Color.red);
-				//drawRect (position.x, position.y, cell_width, cell_width);
+				if (show_Speed) {
+					for (int face_index = 0; face_index < sharedCell.faces.Length; face_index++) {
+						Face e_face = sharedCell.getFace (SharedCell.Dir.east);
+						Face s_face = sharedCell.getFace (SharedCell.Dir.south);
+						Face w_face = sharedCell.getFace (SharedCell.Dir.west);
+						Face n_face = sharedCell.getFace (SharedCell.Dir.north);
+
+						float small_width = cell_width / 4;
+
+						if (e_face != null) {
+							setColor (new Color (speed_field.max_speed / e_face.velocity, speed_field.max_speed / e_face.velocity, speed_field.max_speed / e_face.velocity));
+							fillRect (position.x + cell_width / 2 - small_width / 2, position.y, small_width, small_width);
+						}
+
+						if (s_face != null) {
+							setColor (new Color (speed_field.max_speed / s_face.velocity, speed_field.max_speed / s_face.velocity, speed_field.max_speed / s_face.velocity));
+							fillRect (position.x, position.y + cell_width/2 - small_width/2, small_width, small_width);
+						}
+
+						if (w_face != null) {
+							setColor (new Color (speed_field.max_speed / w_face.velocity, speed_field.max_speed / w_face.velocity, speed_field.max_speed / w_face.velocity));
+							fillRect (position.x - cell_width / 2 + small_width / 2, position.y, small_width, small_width);
+						}
+
+						if (n_face != null) {
+							setColor (new Color (speed_field.max_speed / n_face.velocity, speed_field.max_speed / n_face.velocity, speed_field.max_speed / n_face.velocity));
+							fillRect (position.x , position.y - cell_width/2 + small_width/2, small_width, small_width);
+						}
+
+					}
+				}
+
 			}
 		}
 

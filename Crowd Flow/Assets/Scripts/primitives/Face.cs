@@ -14,8 +14,11 @@ public class Face
 	public Cell neighbour;
 	public Vector2 neighbourIndex;
 
-	public Face (Cell cell, Vector2 neighbourIndex)
+	public int index;
+
+	public Face (Cell cell, Vector2 neighbourIndex, int index)
 	{
+		this.index = index;
 		this.cell = cell;
 		this.neighbourIndex = neighbourIndex;
 	}

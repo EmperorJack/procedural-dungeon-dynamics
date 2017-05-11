@@ -20,6 +20,11 @@ public abstract class Grid
 		populateGrid ();
 	}
 
+	public Cell getCell(Cell other_cell){
+		Vector2 index = other_cell.index;
+		return grid [(int)index.x, (int)index.y];
+	}
+
 	void populateGrid ()
 	{
 		grid = new Cell[dim, dim];

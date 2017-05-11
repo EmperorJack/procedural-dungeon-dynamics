@@ -38,19 +38,19 @@ public class SharedGrid : Grid
 		cellDic [new Vector2 ((pos.x), (pos.y))] = new Vector2 (i, j);
 
 		if (i < dim - 1) {
-			cell.setFace (SharedCell.Dir.east, new Face (cell, new Vector2 (i + 1, j)));
+			cell.setFace (SharedCell.Dir.east, new Face (cell, new Vector2 (i + 1, j), (int)SharedCell.Dir.east));
 		} 
 		//add bottom face
 		if (j < dim - 1) {
-			cell.setFace (SharedCell.Dir.south, new Face (cell, new Vector2 (i, j + 1)));
+			cell.setFace (SharedCell.Dir.south, new Face (cell, new Vector2 (i, j + 1), (int)SharedCell.Dir.south));
 		} 
 		//add left face
 		if (i > 0) {
-			cell.setFace (SharedCell.Dir.west, new Face (cell, new Vector2 (i - 1, j)));
+			cell.setFace (SharedCell.Dir.west, new Face (cell, new Vector2 (i - 1, j), (int)SharedCell.Dir.west));
 		} 
 		//add top face
 		if (j > 0) {
-			cell.setFace (SharedCell.Dir.north, new Face (cell, new Vector2 (i, j - 1)));
+			cell.setFace (SharedCell.Dir.north, new Face (cell, new Vector2 (i, j - 1), (int)SharedCell.Dir.north));
 		}
 	}
 

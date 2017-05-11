@@ -6,6 +6,7 @@ using UnityEngine;
 public class SpeedField
 {
 	Grid grid;
+	public float max_speed;
 
 	public SpeedField (Grid grid)
 	{
@@ -60,6 +61,8 @@ public class SpeedField
 					} else {
 						final_speed = terr_speed + ((density - min_density) / (max_density - min_density) * (flow_speed - terr_speed));
 					}
+
+					max_speed = Mathf.Max (final_speed, max_speed);
 
 					shared_face.velocity = final_speed;
 				}

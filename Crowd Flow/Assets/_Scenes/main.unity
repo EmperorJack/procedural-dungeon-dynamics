@@ -181,7 +181,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad754e4b1519dd649a65a6292f87aac5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dim: 40
+  dim: 20
   cell_width: 1
   width: 0
   left: 0
@@ -190,6 +190,7 @@ MonoBehaviour:
   left2: 0
   board: {fileID: 1190878780}
   show_Potential: 0
+  show_Speed: 0
 --- !u!4 &346346746
 Transform:
   m_ObjectHideFlags: 0
