@@ -2,28 +2,32 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Primitives;
 
-public class AgentController : MonoBehaviour {
-
-	public float speed;
-	public Text countText;
-	public Text winText;
-
-	private Rigidbody rb;
-	private int count;
-
-	void Start()
-	{
-		rb = GetComponent<Rigidbody>();
-	}
-
-	void Updat()
+namespace CrowdSim
+{
+	public class AgentController : MonoBehaviour
 	{
 
-	}
+		public float speed;
+		public Text countText;
+		public Text winText;
 
-	void FixedUpdate()
-	{
+		private Rigidbody rb;
+		private int count;
+
+		void Start ()
+		{
+			rb = GetComponent<Rigidbody> ();
+		}
+
+		void Updat ()
+		{
+
+		}
+
+		void FixedUpdate ()
+		{
 //		float moveHorizontal = Input.GetAxis("Horizontal");
 //		float moveVertical = Input.GetAxis("Vertical");
 //
@@ -39,6 +43,7 @@ public class AgentController : MonoBehaviour {
 //		}
 //
 //		//rb.AddForce(movement * speed);
-	}
+		}
 		
+	}
 }
