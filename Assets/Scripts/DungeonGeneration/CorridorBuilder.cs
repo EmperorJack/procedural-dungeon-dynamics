@@ -1,12 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 namespace DungeonGeneration {
+
 	public static class CorridorBuilder
 	{
 
-	    public struct PossibleOverlap
+	    private struct PossibleOverlap
 	    {
 	        public Vector2 posA;
 	        public Vector2 posB;
@@ -20,11 +22,6 @@ namespace DungeonGeneration {
 
 	    public static Corridor CreateCorridor(DungeonGenerator generator, Partition partitionA, Partition partitionB, bool horizontalCut)
 	    {
-	        int xFinal;
-	        int yFinal;
-	        int widthFinal;
-	        int heightFinal;
-
 	        List<Room> roomsA = new List<Room>();
 	        partitionA.GetRooms(roomsA);
 
@@ -33,7 +30,6 @@ namespace DungeonGeneration {
 
 	        List<Vector2> rangeA = new List<Vector2>();
 	        List<Vector2> rangeB = new List<Vector2>();
-	        List<PossibleOverlap> overlap = new List<PossibleOverlap>();
 
 	        if (horizontalCut)
 	        {
@@ -67,22 +63,6 @@ namespace DungeonGeneration {
 	                    }
 	                }
 	            }
-
-	            foreach (Vector2 posA in rangeA)
-	            {
-	                foreach (Vector2 posB in rangeB)
-	                {
-	                    if (posA.x == posB.x) overlap.Add(new PossibleOverlap(posA, posB));
-	                }
-	            }
-
-	            PossibleOverlap chosenOverlap = overlap[Random.Range(0, overlap.Count)];
-
-	            xFinal = (int)chosenOverlap.posA.x;
-	            yFinal = (int)chosenOverlap.posA.y;
-
-	            widthFinal = 1;
-	            heightFinal = (int)(chosenOverlap.posB.y - chosenOverlap.posA.y);
 	        }
 	        else // Vertical cut
 	        {
@@ -116,25 +96,42 @@ namespace DungeonGeneration {
 	                    }
 	                }
 	            }
-
-	            foreach (Vector2 posA in rangeA)
-	            {
-	                foreach (Vector2 posB in rangeB)
-	                {
-	                    if (posA.y == posB.y) overlap.Add(new PossibleOverlap(posA, posB));
-	                }
-	            }
-
-	            PossibleOverlap chosenOverlap = overlap[Random.Range(0, overlap.Count)];
-
-	            xFinal = (int)chosenOverlap.posA.x;
-	            yFinal = (int)chosenOverlap.posA.y;
-
-	            widthFinal = (int)(chosenOverlap.posB.x - chosenOverlap.posA.x);
-	            heightFinal = 1;
 	        }
 
-	        int id = generator.NextCorridorId();
+            List<PossibleOverlap> overlap = new List<PossibleOverlap>();
+
+            foreach (Vector2 posA in rangeA)
+            {
+                foreach (Vector2 posB in rangeB)
+                {
+                    if ((horizontalCut && posA.x == posB.x) || (!horizontalCut && posA.y == posB.y)) overlap.Add(new PossibleOverlap(posA, posB));
+                }
+            }
+
+            if (overlap.Count == 0)
+            {
+                throw new Exception("No possible was overlap found for corridor placement!");
+            }
+
+            PossibleOverlap chosenOverlap = overlap[UnityEngine.Random.Range(0, overlap.Count)];
+
+            int xFinal = (int) chosenOverlap.posA.x;
+            int yFinal = (int) chosenOverlap.posA.y;
+            int widthFinal;
+            int heightFinal;
+
+            if (horizontalCut)
+            {
+                widthFinal = 1;
+                heightFinal = (int)(chosenOverlap.posB.y - chosenOverlap.posA.y);
+            }
+            else // Vertical cut
+            {
+                widthFinal = (int)(chosenOverlap.posB.x - chosenOverlap.posA.x);
+                heightFinal = 1;
+            }
+
+            int id = generator.NextCorridorId();
 
 	        return new Corridor(id, generator, xFinal, yFinal, widthFinal, heightFinal);
 	    }
