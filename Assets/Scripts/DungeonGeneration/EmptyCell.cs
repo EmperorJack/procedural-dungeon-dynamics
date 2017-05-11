@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EmptyCell : Cell {
+namespace DungeonGeneration {
+	public class EmptyCell : Cell {
 
-	public EmptyCell()
-    { }
+		public EmptyCell()
+	    { }
 
-    public override GameObject Display()
-    {
-        return null;
-    }
+	    public override GameObject Display()
+	    {
+	        return null;
+	    }
+	}
 }
