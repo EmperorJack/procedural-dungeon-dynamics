@@ -1,9 +1,10 @@
-﻿using UnityEngine;
-using UnityEditor;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace DungeonGeneration {
 
-	public class GridArea
+	public abstract class GridArea
 	{
 	    protected DungeonGenerator generator;
 	    public int id;
@@ -48,7 +49,7 @@ namespace DungeonGeneration {
 	        Hide();
 
 	        Material material = new Material(Shader.Find("Diffuse"));
-	        material.color = new Color(Random.value, Random.value, Random.value);
+            material.color = DisplayColor();
 
 	        gridParent = new GameObject();
 	        gridParent.name = this.GetType().Name + id;
@@ -65,6 +66,8 @@ namespace DungeonGeneration {
 	            }
 	        }
 	    }
+
+        public abstract Color DisplayColor();
 
 	    public void Hide()
 	    {

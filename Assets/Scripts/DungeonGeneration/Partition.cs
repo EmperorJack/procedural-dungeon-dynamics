@@ -83,7 +83,7 @@ namespace DungeonGeneration {
 
 				// Connect left and right partitions by corridor
 				Corridor corridor = CorridorBuilder.CreateCorridor(generator, left, right, horizontalCut);
-				corridors.Add(corridor);
+                corridors.Add(corridor);
 			}
 			else // Leaf node
 			{
@@ -113,7 +113,12 @@ namespace DungeonGeneration {
 	        if (right != null) right.Display(dungeonParent);
 	    }
 
-	    public new void Hide()
+        public override Color DisplayColor()
+        {
+            return new Color(Random.value, Random.value, Random.value);
+        }
+
+        public new void Hide()
 	    {
 	        base.Hide();
 

@@ -98,13 +98,74 @@ namespace DungeonGeneration {
 	            }
 	        }
 
+            List<Vector2> removeFromRangeA = new List<Vector2>();
+            List<Vector2> removeFromRangeB = new List<Vector2>();
+
+            if (horizontalCut)
+            {
+                foreach (Vector2 pos in rangeA)
+                {
+                    foreach (Room room in roomsA)
+                    {
+                        if (room.y > pos.y &&
+                            ((room.x - generator.roomBuffer <= pos.x && pos.x < room.x) ||
+                            (room.x + room.width <= pos.x && pos.x < room.x + room.width + generator.roomBuffer)))
+                        {
+                            removeFromRangeA.Add(pos);
+                        }
+                    }
+                }
+                foreach (Vector2 pos in rangeB)
+                {
+                    foreach (Room room in roomsB)
+                    {
+                        if (room.y + room.height < pos.y &&
+                            ((room.x - generator.roomBuffer <= pos.x && pos.x < room.x) ||
+                            (room.x + room.width <= pos.x && pos.x < room.x + room.width + generator.roomBuffer)))
+                        {
+                            removeFromRangeB.Add(pos);
+                        }
+                    }
+                }
+            }
+            else // Vertical cut
+            {
+                foreach (Vector2 pos in rangeA)
+                {
+                    foreach (Room room in roomsA)
+                    {
+                        if (room.x > pos.x &&
+                            ((room.y - generator.roomBuffer <= pos.y && pos.y < room.y) ||
+                            (room.y + room.height <= pos.y && pos.y < room.y + room.height + generator.roomBuffer)))
+                        {
+                            removeFromRangeA.Add(pos);
+                        }
+                    }
+                }
+                foreach (Vector2 pos in rangeB)
+                {
+                    foreach (Room room in roomsB)
+                    {
+                        if (room.x + room.width < pos.x &&
+                            ((room.y - generator.roomBuffer <= pos.y && pos.y < room.y) ||
+                            (room.y + room.height <= pos.y && pos.y < room.y + room.height + generator.roomBuffer)))
+                        {
+                            removeFromRangeB.Add(pos);
+                        }
+                    }
+                }
+            }
+
+            rangeA.RemoveAll(v => removeFromRangeA.Contains(v));
+            rangeB.RemoveAll(v => removeFromRangeB.Contains(v));
+
             List<PossibleOverlap> overlap = new List<PossibleOverlap>();
 
             foreach (Vector2 posA in rangeA)
             {
                 foreach (Vector2 posB in rangeB)
                 {
-                    if ((horizontalCut && posA.x == posB.x) || (!horizontalCut && posA.y == posB.y)) overlap.Add(new PossibleOverlap(posA, posB));
+					if ((horizontalCut && posA.x == posB.x) || (!horizontalCut && posA.y == posB.y)) overlap.Add(new PossibleOverlap(posA, posB));
                 }
             }
 
@@ -115,8 +176,8 @@ namespace DungeonGeneration {
 
             PossibleOverlap chosenOverlap = overlap[UnityEngine.Random.Range(0, overlap.Count)];
 
-            int xFinal = (int) chosenOverlap.posA.x;
-            int yFinal = (int) chosenOverlap.posA.y;
+            int xFinal = (int)chosenOverlap.posA.x;
+            int yFinal = (int)chosenOverlap.posA.y;
             int widthFinal;
             int heightFinal;
 
@@ -133,7 +194,7 @@ namespace DungeonGeneration {
 
             int id = generator.NextCorridorId();
 
-	        return new Corridor(id, generator, xFinal, yFinal, widthFinal, heightFinal);
+            return new Corridor(id, generator, xFinal, yFinal, widthFinal, heightFinal);
 	    }
 	}
 }

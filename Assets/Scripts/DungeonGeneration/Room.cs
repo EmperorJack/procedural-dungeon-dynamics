@@ -10,5 +10,10 @@ namespace DungeonGeneration {
 	    public Room(int id, DungeonGenerator generator, int x, int y, int width, int height) : base(id, generator, x, y, width, height)
 	    { }
 
-	}
+        public override Color DisplayColor()
+        {
+            return new Color(Random.value + 0.5f, 0.0f, 0.0f);
+        }
+
+    }
 }
