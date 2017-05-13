@@ -13,9 +13,12 @@ namespace DungeonGeneration {
 	    public Partition left;
 		public Partition right;
 	    private Room room;
+        private Corridor corridor;
 
-	    public Partition(DungeonGenerator generator, int x, int y, int width, int height, int depth) : base(generator.NextPartitionId(), generator, x, y, width, height)
-	    { }
+        public Partition(DungeonGenerator generator, int x, int y, int width, int height, int depth) : base(generator.NextPartitionId(), generator, x, y, width, height)
+	    {
+            this.depth = depth;
+        }
 
 	    public void Print()
 		{
@@ -82,7 +85,7 @@ namespace DungeonGeneration {
 				right.MakeCorridors(corridors);
 
 				// Connect left and right partitions by corridor
-				Corridor corridor = CorridorBuilder.CreateCorridor(generator, left, right, horizontalCut);
+				corridor = CorridorBuilder.CreateCorridor(generator, left, right, horizontalCut);
                 corridors.Add(corridor);
 			}
 			else // Leaf node
@@ -91,21 +94,37 @@ namespace DungeonGeneration {
 			}
 		}
 
-	    public void GetRooms(List<Room> rooms)
+	    public void GetRooms(List<GridArea> areas)
 	    {
 	        // Intermediate node
 	        if (left != null && right != null)
 	        {
-	            left.GetRooms(rooms);
-	            right.GetRooms(rooms);
+	            left.GetRooms(areas);
+	            right.GetRooms(areas);
 	        }
 	        else // Leaf node
 	        {
-	            rooms.Add(room);
+                areas.Add(room);
 	        }
 	    }
 
-	    public new void Display(GameObject dungeonParent)
+        public void GetCorridors(List<GridArea> areas)
+        {
+            // Intermediate node
+            if (left != null && right != null)
+            {
+                left.GetCorridors(areas);
+                right.GetCorridors(areas);
+            }
+            else // Leaf node
+            {
+                return;
+            }
+
+            areas.Add(corridor);
+        }
+
+        public new void Display(GameObject dungeonParent)
 	    {
 	        base.Display(dungeonParent);
 
@@ -113,17 +132,22 @@ namespace DungeonGeneration {
 	        if (right != null) right.Display(dungeonParent);
 	    }
 
+        public new void Hide()
+        {
+            base.Hide();
+
+            if (left != null) left.Hide();
+            if (right != null) right.Hide();
+        }
+
         public override Color DisplayColor()
         {
             return new Color(Random.value, Random.value, Random.value);
         }
 
-        public new void Hide()
-	    {
-	        base.Hide();
-
-	        if (left != null) left.Hide();
-	        if (right != null) right.Hide();
-	    }
-	}
+        public override int DisplayHeight()
+        {
+            return 20 - depth;
+        }
+    }
 }

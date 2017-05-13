@@ -14,5 +14,10 @@ namespace DungeonGeneration {
         {
             return new Color(0.0f, 0.0f, Random.value + 0.5f);
         }
+
+        public override int DisplayHeight()
+        {
+            return 0;
+        }
     }
 }

@@ -61,17 +61,18 @@ namespace DungeonGeneration {
 	            {
 	                GameObject instance = grid[i, j].Display();
 	                instance.transform.SetParent(gridParent.transform);
-	                instance.transform.Translate((x + i) * generator.GetGridSpacing(), (y + j) * generator.GetGridSpacing(), 0.0f);
+	                instance.transform.Translate((x + i) * generator.GetGridSpacing(), (y + j) * generator.GetGridSpacing(), DisplayHeight());
 	                instance.GetComponent<Renderer>().material = material;
 	            }
 	        }
 	    }
 
-        public abstract Color DisplayColor();
+        public void Hide()
+        {
+            MonoBehaviour.DestroyImmediate(gridParent);
+        }
 
-	    public void Hide()
-	    {
-	        MonoBehaviour.DestroyImmediate(gridParent);
-	    }
+        public abstract Color DisplayColor();
+        public abstract int DisplayHeight();
 	}
 }
