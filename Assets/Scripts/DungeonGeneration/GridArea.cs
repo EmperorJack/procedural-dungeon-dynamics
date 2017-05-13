@@ -2,6 +2,7 @@
 using UnityEditor;
 
 namespace DungeonGeneration {
+
 	public class GridArea
 	{
 	    protected DungeonGenerator generator;

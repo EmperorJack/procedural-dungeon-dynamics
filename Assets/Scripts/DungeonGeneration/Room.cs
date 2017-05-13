@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace DungeonGeneration {
+
 	public class Room : GridArea
 	{
 
