@@ -23,5 +23,11 @@ namespace Primitives
 
 		}
 
+		public String print(){
+			String text = "GroupCell: " + index.x + " " + index.y;
+			text = text + "\nPot: " + potential + " TempPot: " + temporary_potential;
+			return text;
+		}
+
 	}
 }

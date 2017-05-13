@@ -74,9 +74,7 @@ namespace CrowdSim
 		private void fastMarch ()
 		{
 			List<GroupCell> known_cells = new List<GroupCell> ();
-
-			float min_potential = float.MaxValue;
-			GroupCell min_candidate = null;
+			List<GroupCell> candidates = new List<GroupCell> ();
 
 			for (int i = 0; i < dim; i++) {
 				for (int j = 0; j < dim; j++) {
@@ -85,22 +83,6 @@ namespace CrowdSim
 						cell.potential = 0f;
 						cell.temporary_potential = 0f;
 						known_cells.Add (cell);
-
-						// add neighbours to candidates
-						for (int f_index = 0; f_index < cell.faces.Length; f_index++) {
-							GroupFace face = (GroupFace)cell.faces [f_index];
-							if (face != null && face.neighbour != null) {
-								GroupCell candidate = (GroupCell)face.neighbour;
-								float aprox_potential = getCellPotential (candidate);
-								candidate.temporary_potential = getCellPotential (candidate);
-
-								if (candidate.temporary_potential < min_potential) {
-									min_potential = candidate.temporary_potential;
-									min_candidate = candidate;
-								}
-							}
-						}
-						// add candidates, approximate potentials
 					} else {
 						cell.temporary_potential = float.MaxValue;
 						cell.potential = float.MaxValue;
@@ -108,35 +90,60 @@ namespace CrowdSim
 				}
 			}
 
-			// TODO: THIS IS DIFFERENT EACH ITERATION
-			// 3 ON FIRST AND THEN MAX ON OTHERS
-			Printer.message ("min: " + min_potential);
+			if (known_cells.Count > 0) {
 
-			while (known_cells.Count < dim * dim) {
-				// add candidate with min potential
-				min_candidate.potential = min_candidate.temporary_potential;
-				//Printer.message ("POT: "+min_candidate.potential);
-				max_potential = Mathf.Max (max_potential, min_candidate.potential);
-				known_cells.Add (min_candidate);
+				foreach (GroupCell knownCell in known_cells) {
+					// add neighbours to candidates
+					for (int f_index = 0; f_index < knownCell.faces.Length; f_index++) {
+						GroupFace face = (GroupFace)knownCell.faces [f_index];
+						if (face != null && face.neighbour != null) {
+							GroupCell candidate = (GroupCell)face.neighbour;
+							float aprox_potential = getCellPotential (candidate);
+							candidate.temporary_potential = aprox_potential;
+							candidates.Add (candidate);
+						}
+					}
+				}
 
-				// add candidates neighbours
-				foreach (GroupFace face in min_candidate.faces) {
-					if (face != null && face.neighbour != null) {
-						GroupCell candidate = (GroupCell)face.neighbour;
-						float aprox_potential = getCellPotential (candidate);
-						// TODO: THIS IS ALWAYS FLOAT.MAX
-						//Printer.message ("APROX: " + aprox_potential);
-						candidate.temporary_potential = aprox_potential;
+				while (known_cells.Count < dim * dim) {
 
+					float min_potential = float.MaxValue;
+					GroupCell min_candidate = null;
+
+					foreach (GroupCell candidate in candidates) {
 						if (candidate.temporary_potential <= min_potential) {
+							//Printer.message ("TEMPPOT(" + candidate.index.x + ", " + candidate.index.y + ") = " + candidate.temporary_potential);
 							min_potential = candidate.temporary_potential;
 							min_candidate = candidate;
 						}
 					}
+
+					// add candidate with min potential
+					min_candidate.potential = min_candidate.temporary_potential;
+					candidates.Remove (min_candidate);
+					//Printer.message ("POT("+min_candidate.index.x+", "+min_candidate.index.y+") = "+min_candidate.potential);
+					max_potential = Mathf.Max (max_potential, min_candidate.potential);
+					known_cells.Add (min_candidate);
+
+
+					// add candidates neighbours
+					foreach (GroupFace face in min_candidate.faces) {
+						if (face != null && face.neighbour != null) {
+							GroupCell candidate = (GroupCell)face.neighbour;
+							if (known_cells.Contains (candidate) == false) {
+								//Printer.message ("ATTEMPTING: " + candidate.index.x + ", " + candidate.index.y);
+								float aprox_potential = getCellPotential (candidate);
+								// TODO: THIS IS ALWAYS FLOAT.MAX
+								//Printer.message ("APROX("+candidate.index.x+", "+candidate.index.y+") = "+aprox_potential);
+								candidate.temporary_potential = aprox_potential;
+								if (candidates.Contains (candidate) == false) {
+									candidates.Add (candidate);
+								}
+							}
+						}
+					}
 				}
 			}
-
-			max_potential = 5;
 		}
 
 		float getCellPotential (GroupCell cell)
@@ -148,6 +155,8 @@ namespace CrowdSim
 			float west_cost = adjCost (Cell.Dir.west, cell);
 			float north_cost = adjCost (Cell.Dir.north, cell);
 			float south_cost = adjCost (Cell.Dir.south, cell);
+
+
 
 			if (east_cost < west_cost) {
 				min_x = (GroupFace)cell.faces [(int)Cell.Dir.east];
@@ -165,33 +174,30 @@ namespace CrowdSim
 				min_y = (GroupFace)cell.faces [(int)Cell.Dir.south];
 			}
 
+			if (cell.index.x == 4 && cell.index.y == 4) {
+				if (min_y == null) {
+					//Printer.message ("min_y: null");
+				} else {
+					GroupCell neighbour = (GroupCell)min_y.neighbour;
+					//Printer.message (neighbour.index.x +", "+neighbour.index.y+"POT: "+neighbour.potential);				
+				}
+			}
+
 			//Printer.message (east_cost + " " + west_cost + " " + north_cost + " " + south_cost);
 
-//		if (min_x == null) {
-//			Printer.message ("X: null");
-//		} else {
-//			Printer.message ("X: not null");
-//		}
-//
-//		if (min_y == null) {
-//			Printer.message ("Y: null");
-//		} else {
-//			Printer.message ("Y: not null");
-//		}
-//
-//		if (min_x == null && min_y != null) {
-//			return singleFiniteDif (cell, min_y);
-//		}
-//
-//		if (min_y == null && min_x != null) {
-//			return singleFiniteDif (cell, min_x);
-//		}
+			if (min_x == null && min_y != null) {
+				return singleFiniteDif (cell, min_y);
+			}
+
+			if (min_y == null && min_x != null) {
+				return singleFiniteDif (cell, min_x);
+			}
 
 			// TODO this condition is almost always false
 
 			if (min_x != null && min_y != null) {
 				//Printer.message ("DF: " + doubleFiniteDif (cell, (GroupCell)min_x.neighbour, (GroupCell)min_y.neighbour, (Face)min_x, (Face)min_y));
-				return doubleFiniteDif (cell, (GroupCell)min_x.neighbour, (GroupCell)min_y.neighbour, (Face)min_x, (Face)min_y);
+				return doubleFiniteDif (cell, (GroupCell)min_x.neighbour, (GroupCell)min_y.neighbour, min_x, min_y);
 			} else {
 				//Printer.message ("MAX VALUE");
 				return float.MaxValue;
@@ -212,7 +218,13 @@ namespace CrowdSim
 	
 
 			if (adj_cell != null) {
+				
 				Face face = (Face)cell.faces [(int)dir];
+
+				if (cell.index.x == 6 && cell.index.y == 5) {
+					//Printer.message (face.cost + " + " + adj_cell.potential + ": " + dir);
+				}
+
 				cost = adj_cell.potential + face.cost;
 			}
 			
@@ -221,9 +233,12 @@ namespace CrowdSim
 
 		float singleFiniteDif (GroupCell cell, Face f)
 		{
+			GroupCell neighbour = (GroupCell)f.neighbour;
+			SharedCell sharedCell = (SharedCell)shared_grid.grid2 [(int)cell.index.x, (int)cell.index.y];
 
-			float cost = f.cost;
-			float potential = cell.potential;
+			Face sharedFace = sharedCell.faces [f.index];
+			float cost = sharedFace.cost;
+			float potential = neighbour.potential;
 
 			return Mathf.Max (potential + cost, potential - cost);
 		}
@@ -233,8 +248,11 @@ namespace CrowdSim
 			SharedCell shared_one = (SharedCell)shared_grid.getCell (adj_one); // get the corresponding cell from the shared grid
 			SharedCell shared_two = (SharedCell)shared_grid.getCell (adj_two);
 
-			face_one = shared_one.faces [face_one.index]; // get the corresponding faces from the shared cell
-			face_two = shared_two.faces [face_two.index];
+			GroupFace orignalFace_one = (GroupFace)face_one;
+			GroupFace orignalFace_two = (GroupFace)face_two;
+
+			face_one = (Face)shared_one.faces [face_one.index]; // get the corresponding faces from the shared cell
+			face_two = (Face)shared_two.faces [face_two.index];
 
 			//Printer.message (face_one.cost + " : " + face_two.cost);
 
@@ -262,17 +280,17 @@ namespace CrowdSim
 			// TODO: Sometimes a is 0	
 			float a = (cost_one * cost_one) + (cost_two * cost_two);
 			float b = -2 * ((cost_one * cost_one * potential_two) + (cost_two * cost_two * potential_one));
-			float c = (cost_one * cost_one * potential_two * potential_two) + (cost_two * cost_two * potential_one * potential_one);
+			float c = (cost_one * cost_one * potential_two * potential_two) + (cost_two * cost_two * potential_one * potential_one)-1;
 
 			// TODO: potential_one and Potential_two seem to be zero
 			float under_root = (b * b) - (4 * a * c);
 			//Printer.message ("(" + b + " * " + b + ") - ( 4" + " * " + a + " * " + c + " ) = " + under_root);
 
-			if (under_root <= 0) {
+			if (under_root < 0) {
 				if (potential_one < potential_two) {
-					return singleFiniteDif (cell, face_one);
+					return singleFiniteDif (cell, orignalFace_one);
 				} else {
-					return singleFiniteDif (cell, face_two);
+					return singleFiniteDif (cell, orignalFace_two);
 				}
 			}
 
