@@ -32,26 +32,29 @@ namespace DungeonGeneration {
 		{
 			int minimumSize = generator.minimumRoomSize + generator.roomBuffer * 2;
 
-	        // Check if this partition is big enough to cut
-	        if (this.width <= minimumSize * 2 || this.height <= minimumSize * 2) return;
+            float widthHeightRatio = width / (float) height;
 
-	        horizontalCut = true;
-			if (Random.value > 0.5) horizontalCut = false;
+            // Check if this partition is big enough to cut
+            if (width <= minimumSize * 2 || height <= minimumSize * 2) return;
+
+            if (widthHeightRatio > generator.roomWidthHeightRatio) horizontalCut = false;
+            else if (widthHeightRatio < generator.roomWidthHeightRatio) horizontalCut = true;
+            else horizontalCut = Random.value > 0.5f;
 
 			Partition partitionA;
 			Partition partitionB;
 
 			if (horizontalCut)
 			{
-				int yCut = Random.Range(generator.minimumRoomSize + generator.roomBuffer * 2, this.height - generator.minimumRoomSize - generator.roomBuffer * 2 + 1);
-				partitionA = new Partition(generator, this.x, this.y, this.width, yCut, this.depth + 1);
-				partitionB = new Partition(generator, this.x, this.y + yCut, this.width, this.height - yCut, this.depth + 1);
+				int yCut = Random.Range(generator.minimumRoomSize + generator.roomBuffer * 2, height - generator.minimumRoomSize - generator.roomBuffer * 2 + 1);
+				partitionA = new Partition(generator, x, y, width, yCut, depth + 1);
+				partitionB = new Partition(generator, x, y + yCut, width, height - yCut, depth + 1);
 			}
 			else // Vertical cut
 			{
-				int xCut = Random.Range(generator.minimumRoomSize + generator.roomBuffer * 2, this.width - generator.minimumRoomSize - generator.roomBuffer * 2 + 1);
-				partitionA = new Partition(generator, this.x, this.y, xCut, this.height, this.depth + 1);
-				partitionB = new Partition(generator, this.x + xCut, this.y, this.width - xCut, this.height, this.depth + 1);
+				int xCut = Random.Range(generator.minimumRoomSize + generator.roomBuffer * 2, width - generator.minimumRoomSize - generator.roomBuffer * 2 + 1);
+				partitionA = new Partition(generator, x, y, xCut, height, depth + 1);
+				partitionB = new Partition(generator, x + xCut, y, width - xCut, height, depth + 1);
 			}
 
 			this.left = partitionA; // Also top
