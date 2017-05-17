@@ -9,10 +9,10 @@ class face:
     vertices = ()
     center = ()
     normal = np.array()
-    def __init__(self, vertices, tetCenter):
+    def __init__(self, vertices):
         self.center = findCenter(vertices)
         self.normal = calcNormal(vertices[0], vertices[1], vertices[2])
-
+        self.vertices = clockwise(vertices[0],vertices[1],vertices[2],self.center,self.normal)
 
 
 class tetra:
@@ -25,13 +25,12 @@ class tetra:
     neighbours = {}
     def __init__(self, vertices):
         self.vertices = vertices
-        # center = sum(x)/4, sum(y)/4, sum(z)/4
-        # self.center = (a/4 for a in [sum(x) for x in zip(vertices)])
         self.center = findCenter(vertices)
         # faces are all possible 3 vertex combinations of the 4 points
-        faces = itools.permutations(vertices, 3)
-        # need to make sure vertices are always clockwise, Left Hand Rule
-        # --- CLOCKWISE CODE ---
+        faces = []
+        for f in itools.permutations(vertices, 3):
+            faces.append(face(f))
+        self.faces = tuple(faces)
 
 def insertPoint(p,dt):
 
@@ -116,12 +115,17 @@ def projectPoint(p,normal):
     return 0
 
 def clockwise(v1,v2,v3,center, normal):
-    # normalX = rotate normal 90 around y
-    # normalY = rotate normal 90 around x
-    # project each vertex onto the x and y axis (using dot product)
-    # then use atan2 to find angles
-    # sort by angles
-    return 0
+        vSorted = [v1,v2,v3]
+        # Bubble sort
+        for i in range(1,-1):
+            for x in range(0,i+1):
+                a = vSorted[x]
+                b = vSorted[x + 1]
+                ab = np.linalg.dot(normal, np.cross(a - center, b - center))
+                if ab > 0:
+                    vSorted[x] = b
+                    vSorted[x+1] = a
+        return tuple(vSorted)
 
 
 def orient(a, b, c, p):
