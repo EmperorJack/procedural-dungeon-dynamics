@@ -61,7 +61,7 @@ namespace DungeonGeneration {
 	            {
 	                GameObject instance = grid[i, j].Display();
 	                instance.transform.SetParent(gridParent.transform);
-	                instance.transform.Translate((x + i) * generator.GetGridSpacing(), (y + j) * generator.GetGridSpacing(), DisplayHeight());
+	                instance.transform.Translate((x + i) * generator.GetGridSpacing(), DisplayHeight(), (y + j) * generator.GetGridSpacing());
 	                instance.GetComponent<Renderer>().material = material;
 	            }
 	        }
