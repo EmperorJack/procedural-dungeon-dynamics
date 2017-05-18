@@ -10,5 +10,14 @@ namespace DungeonGeneration {
 	    public Corridor(int id, DungeonGenerator generator, int x, int y, int width, int height) : base(id, generator, x, y, width, height)
 	    { }
 
-	}
+        public override Color DisplayColor()
+        {
+            return new Color(0.0f, 0.0f, 1.0f);
+        }
+
+        public override int DisplayHeight()
+        {
+            return 0;
+        }
+    }
 }
