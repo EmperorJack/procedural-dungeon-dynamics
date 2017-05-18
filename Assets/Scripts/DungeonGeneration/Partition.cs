@@ -35,10 +35,16 @@ namespace DungeonGeneration {
             float widthHeightRatio = width / (float) height;
 
             // Check if this partition is big enough to cut
-            if (width <= minimumSize * 2 || height <= minimumSize * 2) return;
+            if (width <= minimumSize * 2 && height <= minimumSize * 2) return;
 
-            if (widthHeightRatio > generator.roomWidthHeightRatio) horizontalCut = false;
-            else if (widthHeightRatio < generator.roomWidthHeightRatio) horizontalCut = true;
+            if (widthHeightRatio > generator.maxRoomWidthHeightRatio)
+            {
+                horizontalCut = false;
+            }
+            else if (widthHeightRatio < generator.minRoomWidthHeightRatio)
+            {
+                horizontalCut = true;
+            }
             else horizontalCut = Random.value > 0.5f;
 
 			Partition partitionA;
@@ -46,13 +52,17 @@ namespace DungeonGeneration {
 
 			if (horizontalCut)
 			{
-				int yCut = Random.Range(generator.minimumRoomSize + generator.roomBuffer * 2, height - generator.minimumRoomSize - generator.roomBuffer * 2 + 1);
+                if (height <= minimumSize * 2) return;
+
+                int yCut = Random.Range(generator.minimumRoomSize + generator.roomBuffer * 2, height - generator.minimumRoomSize - generator.roomBuffer * 2 + 1);
 				partitionA = new Partition(generator, x, y, width, yCut, depth + 1);
 				partitionB = new Partition(generator, x, y + yCut, width, height - yCut, depth + 1);
 			}
 			else // Vertical cut
 			{
-				int xCut = Random.Range(generator.minimumRoomSize + generator.roomBuffer * 2, width - generator.minimumRoomSize - generator.roomBuffer * 2 + 1);
+                if (width <= minimumSize * 2) return;
+
+                int xCut = Random.Range(generator.minimumRoomSize + generator.roomBuffer * 2, width - generator.minimumRoomSize - generator.roomBuffer * 2 + 1);
 				partitionA = new Partition(generator, x, y, xCut, height, depth + 1);
 				partitionB = new Partition(generator, x + xCut, y, width - xCut, height, depth + 1);
 			}

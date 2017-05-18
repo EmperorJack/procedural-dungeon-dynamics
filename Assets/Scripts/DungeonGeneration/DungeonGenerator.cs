@@ -10,7 +10,8 @@ namespace DungeonGeneration {
 	    public int gridSize = 10;
 	    public int minimumRoomSize = 4;
 	    public int roomBuffer = 1;
-        public float roomWidthHeightRatio = 1.0f;
+        public float minRoomWidthHeightRatio = 1.0f;
+        public float maxRoomWidthHeightRatio = 1.0f;
         public GameObject cellPrefab;
 
 	    // Internal fields
