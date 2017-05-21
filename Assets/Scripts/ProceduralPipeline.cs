@@ -71,5 +71,7 @@ public class ProceduralPipeline : MonoBehaviour {
         complexLayoutParent.name = "ComplexLayout";
 
         dungeonAssetPopulator.Populate(complexLayoutParent);
+
+        complexLayoutParent.transform.localScale = new Vector3(2.0f, 2.0f, 2.0f);
     }
 }
