@@ -14,10 +14,15 @@ namespace DungeonGeneration {
 	        public Vector2 posA;
 	        public Vector2 posB;
 
-	        public PossibleOverlap(Vector2 posA, Vector2 posB)
+            public Room roomA;
+            public Room roomB;
+
+	        public PossibleOverlap(Vector2 posA, Vector2 posB, Room roomA, Room roomB)
 	        {
 	            this.posA = posA;
 	            this.posB = posB;
+                this.roomA = roomA;
+                this.roomB = roomB;
 	        }
 	    }
 
@@ -187,7 +192,7 @@ namespace DungeonGeneration {
             {
                 foreach (Vector2 posB in rangeB)
                 {
-					if ((horizontalCut && posA.x == posB.x) || (!horizontalCut && posA.y == posB.y)) overlap.Add(new PossibleOverlap(posA, posB));
+					if ((horizontalCut && posA.x == posB.x) || (!horizontalCut && posA.y == posB.y)) overlap.Add(new PossibleOverlap(posA, posB, null, null));
                 }
             }
 
@@ -217,7 +222,7 @@ namespace DungeonGeneration {
 
             int id = generator.NextCorridorId();
 
-            return new Corridor(id, generator, xFinal, yFinal, widthFinal, heightFinal);
+            return new Corridor(id, generator, xFinal, yFinal, widthFinal, heightFinal, !horizontalCut);
 	    }
 	}
 }

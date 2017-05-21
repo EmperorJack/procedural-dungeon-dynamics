@@ -164,5 +164,15 @@ namespace DungeonGeneration {
             root = null;
             rooms = null;
         }
+
+        public List<Room> GetRooms()
+        {
+            return rooms;
+        }
+
+        public List<Corridor> GetCorridors()
+        {
+            return corridors;
+        }
     }
 }

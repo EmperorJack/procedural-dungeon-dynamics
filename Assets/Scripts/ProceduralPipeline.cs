@@ -5,6 +5,7 @@ using UnityEngine;
 public class ProceduralPipeline : MonoBehaviour {
 
     public DungeonGeneration.DungeonGenerator dungeonGenerator;
+    public DungeonGeneration.DungeonAssetPopulator dungeonAssetPopulator;
 
     private GameObject simpleLayoutParent;
     private DungeonGeneration.Cell[,] simpleLayout;
@@ -19,7 +20,9 @@ public class ProceduralPipeline : MonoBehaviour {
 
         simpleLayout = dungeonGenerator.GetSimpleLayout();
 
-        DisplaySimpleLayout();
+        dungeonAssetPopulator.Setup(dungeonGenerator.GetRooms(), dungeonGenerator.GetCorridors());
+
+        DisplayComplexLayout();
     }
 
     public void Reset()
@@ -51,7 +54,7 @@ public class ProceduralPipeline : MonoBehaviour {
                     GameObject instance = simpleLayout[i, j].Display();
                     instance.transform.SetParent(simpleLayoutParent.transform);
                     instance.transform.Translate((i) * dungeonGenerator.GetGridSpacing(), 0.0f, (j) * dungeonGenerator.GetGridSpacing());
-                    instance.transform.Rotate(new Vector3(90, 0, 0));
+                    instance.transform.Rotate(90, 0, 0);
                     instance.GetComponent<Renderer>().material = material;
                 }
             }
@@ -67,6 +70,6 @@ public class ProceduralPipeline : MonoBehaviour {
         complexLayoutParent = new GameObject();
         complexLayoutParent.name = "ComplexLayout";
 
-        //dungeonGenerator.DisplayComplex();
+        dungeonAssetPopulator.Populate(complexLayoutParent);
     }
 }

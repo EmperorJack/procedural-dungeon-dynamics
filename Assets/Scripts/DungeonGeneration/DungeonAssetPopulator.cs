@@ -34,12 +34,12 @@ namespace DungeonGeneration
 
         private void PopulateRooms(GameObject parent)
         {
-            foreach (Room room in rooms) room.Populate(parent);
+            foreach (Room room in rooms) room.Populate(this, parent);
         }
 
         private void PopulateCorridors(GameObject parent)
         {
-            foreach (Corridor corridor in corridors) corridor.Populate(parent);
+            foreach (Corridor corridor in corridors) corridor.Populate(this, parent);
         }
     }
 }

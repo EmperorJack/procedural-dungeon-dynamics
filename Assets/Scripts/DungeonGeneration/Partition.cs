@@ -164,7 +164,7 @@ namespace DungeonGeneration {
             return 20 - depth;
         }
 
-        public override void Populate(GameObject parent)
+        public override void Populate(DungeonAssetPopulator dungeonAssetPopulator, GameObject parent)
         {
             throw new Exception("Can't populate a partition with assets!");
         }

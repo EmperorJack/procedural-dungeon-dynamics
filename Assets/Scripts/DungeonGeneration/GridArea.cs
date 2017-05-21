@@ -62,7 +62,7 @@ namespace DungeonGeneration {
 	                GameObject instance = grid[i, j].Display();
 	                instance.transform.SetParent(gridParent.transform);
 	                instance.transform.Translate((x + i) * generator.GetGridSpacing(), DisplayHeight(), (y + j) * generator.GetGridSpacing());
-                    instance.transform.Rotate(new Vector3(90, 0, 0));
+                    instance.transform.Rotate(90, 0, 0);
                     instance.GetComponent<Renderer>().material = material;
 	            }
 	        }
@@ -76,6 +76,6 @@ namespace DungeonGeneration {
         public abstract Color DisplayColor();
         public abstract int DisplayHeight();
 
-        public abstract void Populate(GameObject parent);
+        public abstract void Populate(DungeonAssetPopulator dungeonAssetPopulator, GameObject parent);
 	}
 }
