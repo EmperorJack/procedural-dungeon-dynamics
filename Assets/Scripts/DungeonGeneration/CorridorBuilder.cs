@@ -9,42 +9,55 @@ namespace DungeonGeneration {
 	public static class CorridorBuilder
 	{
 
-	    private struct PossibleOverlap
+        private struct PossiblePlacement
+        {
+            public int x;
+            public int y;
+            public ConnectableGridArea area;
+
+            public PossiblePlacement(int x, int y, ConnectableGridArea area)
+            {
+                this.x = x;
+                this.y = y;
+                this.area = area;
+            }
+        }
+
+        private struct PossibleOverlap
 	    {
 	        public Vector2 posA;
 	        public Vector2 posB;
+            public ConnectableGridArea areaA;
+            public ConnectableGridArea areaB;
 
-            public Room roomA;
-            public Room roomB;
-
-	        public PossibleOverlap(Vector2 posA, Vector2 posB, Room roomA, Room roomB)
+	        public PossibleOverlap(Vector2 posA, Vector2 posB, ConnectableGridArea areaA, ConnectableGridArea areaB)
 	        {
 	            this.posA = posA;
 	            this.posB = posB;
-                this.roomA = roomA;
-                this.roomB = roomB;
+                this.areaA = areaA;
+                this.areaB = areaB;
 	        }
 	    }
 
 	    public static Corridor CreateCorridor(DungeonGenerator generator, Partition partitionA, Partition partitionB, bool horizontalCut)
 	    {
-	        List<GridArea> areasA = new List<GridArea>();
+	        List<ConnectableGridArea> areasA = new List<ConnectableGridArea>();
 	        partitionA.GetRooms(areasA);
             partitionA.GetCorridors(areasA);
 
-	        List<GridArea> areasB = new List<GridArea>();
+	        List<ConnectableGridArea> areasB = new List<ConnectableGridArea>();
 	        partitionB.GetRooms(areasB);
             partitionB.GetCorridors(areasB);
 
-            List<Vector2> rangeA = new List<Vector2>();
-	        List<Vector2> rangeB = new List<Vector2>();
+            List<PossiblePlacement> rangeA = new List<PossiblePlacement>();
+	        List<PossiblePlacement> rangeB = new List<PossiblePlacement>();
 
             // Compute the possible placement points for both partitions
 	        if (horizontalCut)
 	        {
                 int xStart;
                 int xEnd;
-	            foreach (GridArea area in areasA)
+	            foreach (ConnectableGridArea area in areasA)
 	            {
                     xStart = area.GetType() == typeof(Room) ? area.x : area.x + 1;
                     xEnd = area.GetType() == typeof(Room) ? area.x + area.width : area.x + area.width - 1;
@@ -54,15 +67,15 @@ namespace DungeonGeneration {
 	                    int xMatchIndex = rangeA.FindIndex(v => v.x == x);
 	                    if (xMatchIndex != -1)
 	                    {
-	                        if (area.y + area.height > rangeA[xMatchIndex].y) rangeA[xMatchIndex] = new Vector2(x, area.y + area.height);
+	                        if (area.y + area.height > rangeA[xMatchIndex].y) rangeA[xMatchIndex] = new PossiblePlacement(x, area.y + area.height, area);
 	                    }
 	                    else
 	                    {
-	                        rangeA.Add(new Vector2(x, area.y + area.height));
+	                        rangeA.Add(new PossiblePlacement(x, area.y + area.height, area));
 	                    }
 	                }
 	            }
-	            foreach (GridArea area in areasB)
+	            foreach (ConnectableGridArea area in areasB)
 	            {
                     xStart = area.GetType() == typeof(Room) ? area.x : area.x + 1;
                     xEnd = area.GetType() == typeof(Room) ? area.x + area.width : area.x + area.width - 1;
@@ -72,11 +85,11 @@ namespace DungeonGeneration {
 	                    int xMatchIndex = rangeB.FindIndex(v => v.x == x);
 	                    if (xMatchIndex != -1)
 	                    {
-	                        if (area.y < rangeB[xMatchIndex].y) rangeB[xMatchIndex] = new Vector2(x, area.y);
+	                        if (area.y < rangeB[xMatchIndex].y) rangeB[xMatchIndex] = new PossiblePlacement(x, area.y, area);
 	                    }
 	                    else
 	                    {
-	                        rangeB.Add(new Vector2(x, area.y));
+	                        rangeB.Add(new PossiblePlacement(x, area.y, area));
 	                    }
 	                }
 	            }
@@ -85,7 +98,7 @@ namespace DungeonGeneration {
 	        {
                 int yStart;
                 int yEnd;
-                foreach (GridArea area in areasA)
+                foreach (ConnectableGridArea area in areasA)
 	            {
                     yStart = area.GetType() == typeof(Room) ? area.y : area.y + 1;
                     yEnd = area.GetType() == typeof(Room) ? area.y + area.height : area.y + area.height - 1;
@@ -95,15 +108,15 @@ namespace DungeonGeneration {
 	                    int yMatchIndex = rangeA.FindIndex(v => v.y == y);
 	                    if (yMatchIndex != -1)
 	                    {
-	                        if (area.x + area.width > rangeA[yMatchIndex].x) rangeA[yMatchIndex] = new Vector2(area.x + area.width, y);
+	                        if (area.x + area.width > rangeA[yMatchIndex].x) rangeA[yMatchIndex] = new PossiblePlacement(area.x + area.width, y, area);
 	                    }
 	                    else
 	                    {
-	                        rangeA.Add(new Vector2(area.x + area.width, y));
+	                        rangeA.Add(new PossiblePlacement(area.x + area.width, y, area));
 	                    }
 	                }
 	            }
-	            foreach (GridArea area in areasB)
+	            foreach (ConnectableGridArea area in areasB)
 	            {
                     yStart = area.GetType() == typeof(Room) ? area.y : area.y + 1;
                     yEnd = area.GetType() == typeof(Room) ? area.y + area.height : area.y + area.height - 1;
@@ -113,23 +126,23 @@ namespace DungeonGeneration {
 	                    int yMatchIndex = rangeB.FindIndex(v => v.y == y);
 	                    if (yMatchIndex != -1)
 	                    {
-	                        if (area.x < rangeB[yMatchIndex].x) rangeB[yMatchIndex] = new Vector2(area.x, y);
+	                        if (area.x < rangeB[yMatchIndex].x) rangeB[yMatchIndex] = new PossiblePlacement(area.x, y, area);
 	                    }
 	                    else
 	                    {
-	                        rangeB.Add(new Vector2(area.x, y));
+	                        rangeB.Add(new PossiblePlacement(area.x, y, area));
 	                    }
 	                }
 	            }
 	        }
 
-            List<Vector2> removeFromRangeA = new List<Vector2>();
-            List<Vector2> removeFromRangeB = new List<Vector2>();
+            List<PossiblePlacement> removeFromRangeA = new List<PossiblePlacement>();
+            List<PossiblePlacement> removeFromRangeB = new List<PossiblePlacement>();
 
             // Compute and remove any possible placements that overlap with the room buffer
             if (horizontalCut)
             {
-                foreach (Vector2 pos in rangeA)
+                foreach (PossiblePlacement pos in rangeA)
                 {
                     foreach (GridArea area in areasA.Where(a => a.GetType() == typeof(Room)))
                     {
@@ -141,7 +154,7 @@ namespace DungeonGeneration {
                         }
                     }
                 }
-                foreach (Vector2 pos in rangeB)
+                foreach (PossiblePlacement pos in rangeB)
                 {
                     foreach (GridArea area in areasB.Where(a => a.GetType() == typeof(Room)))
                     {
@@ -156,7 +169,7 @@ namespace DungeonGeneration {
             }
             else // Vertical cut
             {
-                foreach (Vector2 pos in rangeA)
+                foreach (PossiblePlacement pos in rangeA)
                 {
                     foreach (GridArea area in areasA.Where(a => a.GetType() == typeof(Room)))
                     {
@@ -168,7 +181,7 @@ namespace DungeonGeneration {
                         }
                     }
                 }
-                foreach (Vector2 pos in rangeB)
+                foreach (PossiblePlacement pos in rangeB)
                 {
                     foreach (GridArea area in areasB.Where(a => a.GetType() == typeof(Room)))
                     {
@@ -188,11 +201,12 @@ namespace DungeonGeneration {
             List<PossibleOverlap> overlap = new List<PossibleOverlap>();
 
             // Compute the intersection points between the two partitions
-            foreach (Vector2 posA in rangeA)
+            foreach (PossiblePlacement posA in rangeA)
             {
-                foreach (Vector2 posB in rangeB)
+                foreach (PossiblePlacement posB in rangeB)
                 {
-					if ((horizontalCut && posA.x == posB.x) || (!horizontalCut && posA.y == posB.y)) overlap.Add(new PossibleOverlap(posA, posB, null, null));
+					if ((horizontalCut && posA.x == posB.x) || (!horizontalCut && posA.y == posB.y))
+                        overlap.Add(new PossibleOverlap(new Vector3(posA.x, posA.y), new Vector3(posB.x, posB.y), posA.area, posB.area));
                 }
             }
 
@@ -222,7 +236,13 @@ namespace DungeonGeneration {
 
             int id = generator.NextCorridorId();
 
-            return new Corridor(id, generator, xFinal, yFinal, widthFinal, heightFinal, !horizontalCut);
-	    }
+            Corridor corridor = new Corridor(id, generator, xFinal, yFinal, widthFinal, heightFinal, !horizontalCut);
+
+            // Setup connection relationships between areas
+            chosenOverlap.areaA.AddConnectedCorridor(corridor);
+            chosenOverlap.areaB.AddConnectedCorridor(corridor);
+
+            return corridor;
+        }
 	}
 }

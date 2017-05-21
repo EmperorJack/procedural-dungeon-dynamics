@@ -5,8 +5,8 @@ using UnityEngine;
 
 namespace DungeonGeneration {
 
-	public class Corridor : GridArea
-	{
+	public class Corridor : ConnectableGridArea
+    {
 
         public bool horiztonal;
 
@@ -25,58 +25,47 @@ namespace DungeonGeneration {
             return 0;
         }
 
-        public override void Populate(DungeonAssetPopulator dungeonAssetPopulator, GameObject parent)
-        {
-            GameObject roomParent = new GameObject();
-            roomParent.name = this.GetType().Name + id;
-            roomParent.transform.SetParent(parent.transform);
-
-            PopulateFloor(roomParent, dungeonAssetPopulator.floorPrefab);
-            PopulateWalls(roomParent, dungeonAssetPopulator.wallPrefab);
-        }
-
-        private void PopulateFloor(GameObject parent, GameObject floorPrefab)
-        {
-            for (int i = 0; i < width; i++)
-            {
-                for (int j = 0; j < height; j++)
-                {
-                    GameObject instance = MonoBehaviour.Instantiate(floorPrefab);
-                    instance.transform.SetParent(parent.transform);
-                    instance.transform.Translate((x + i) * generator.GetGridSpacing(), DisplayHeight(), (y + j) * generator.GetGridSpacing());
-                }
-            }
-        }
-
-        private void PopulateWalls(GameObject parent, GameObject wallPrefab)
+        protected override void PopulateWalls(GameObject parent, GameObject wallPrefab)
         {
             if (horiztonal)
             {
                 for (int i = 0; i < width; i++)
                 {
-                    GameObject instance = MonoBehaviour.Instantiate(wallPrefab);
-                    instance.transform.SetParent(parent.transform);
-                    instance.transform.Translate((x + i) * generator.GetGridSpacing(), DisplayHeight(), (y) * generator.GetGridSpacing());
+                    if (connectedCorridors.Find(c => c.x == x + i && c.y + c.height == y) == null)
+                    {
+                        GameObject instance = MonoBehaviour.Instantiate(wallPrefab);
+                        instance.transform.SetParent(parent.transform);
+                        instance.transform.Translate((x + i) * generator.GetGridSpacing(), DisplayHeight(), (y) * generator.GetGridSpacing());
+                    }
 
-                    instance = MonoBehaviour.Instantiate(wallPrefab);
-                    instance.transform.SetParent(parent.transform);
-                    instance.transform.Translate((x + i) * generator.GetGridSpacing(), DisplayHeight(), (y + height - 1) * generator.GetGridSpacing());
-                    instance.transform.Rotate(0, 180, 0);
+                    if (connectedCorridors.Find(c => c.x == x + i && c.y == y + height) == null)
+                    {
+                        GameObject instance = MonoBehaviour.Instantiate(wallPrefab);
+                        instance.transform.SetParent(parent.transform);
+                        instance.transform.Translate((x + i) * generator.GetGridSpacing(), DisplayHeight(), (y + height - 1) * generator.GetGridSpacing());
+                        instance.transform.Rotate(0, 180, 0);
+                    }
                 }
             }
             else // Vertical
             {
                 for (int j = 0; j < height; j++)
                 {
-                    GameObject instance = MonoBehaviour.Instantiate(wallPrefab);
-                    instance.transform.SetParent(parent.transform);
-                    instance.transform.Translate((x) * generator.GetGridSpacing(), DisplayHeight(), (y + j) * generator.GetGridSpacing());
-                    instance.transform.Rotate(0, 90, 0);
+                    if (connectedCorridors.Find(c => c.y == y + j && c.x + c.width == x) == null)
+                    {
+                        GameObject instance = MonoBehaviour.Instantiate(wallPrefab);
+                        instance.transform.SetParent(parent.transform);
+                        instance.transform.Translate((x) * generator.GetGridSpacing(), DisplayHeight(), (y + j) * generator.GetGridSpacing());
+                        instance.transform.Rotate(0, 90, 0);
+                    }
 
-                    instance = MonoBehaviour.Instantiate(wallPrefab);
-                    instance.transform.SetParent(parent.transform);
-                    instance.transform.Translate((x + width - 1) * generator.GetGridSpacing(), DisplayHeight(), (y + j) * generator.GetGridSpacing());
-                    instance.transform.Rotate(0, 270, 0);
+                    if (connectedCorridors.Find(c => c.y == y + j && c.x == x + width) == null)
+                    {
+                        GameObject instance = MonoBehaviour.Instantiate(wallPrefab);
+                        instance.transform.SetParent(parent.transform);
+                        instance.transform.Translate((x + width - 1) * generator.GetGridSpacing(), DisplayHeight(), (y + j) * generator.GetGridSpacing());
+                        instance.transform.Rotate(0, 270, 0);
+                    }
                 }
             }
         }

@@ -9,19 +9,24 @@ ModelImporter:
     100002: //RootNode
     100004: polySurface1_wall_wall2_wall3_wall4_wall5_polySurface1_polySurface1_polySurface1_polySurface1
     100006: wall_wall2_wall3_wall4_wall5_polySurface2_polySurface2_polySurface2_polySurface2_polySurface2
+    100008: wall_polySurface3
     400000: wall
     400002: //RootNode
     400004: polySurface1_wall_wall2_wall3_wall4_wall5_polySurface1_polySurface1_polySurface1_polySurface1
     400006: wall_wall2_wall3_wall4_wall5_polySurface2_polySurface2_polySurface2_polySurface2_polySurface2
+    400008: wall_polySurface3
     2300000: wall
     2300002: polySurface1_wall_wall2_wall3_wall4_wall5_polySurface1_polySurface1_polySurface1_polySurface1
     2300004: wall_wall2_wall3_wall4_wall5_polySurface2_polySurface2_polySurface2_polySurface2_polySurface2
+    2300006: wall_polySurface3
     3300000: wall
     3300002: polySurface1_wall_wall2_wall3_wall4_wall5_polySurface1_polySurface1_polySurface1_polySurface1
     3300004: wall_wall2_wall3_wall4_wall5_polySurface2_polySurface2_polySurface2_polySurface2_polySurface2
+    3300006: wall_polySurface3
     4300000: wall
     4300002: polySurface1_wall_wall2_wall3_wall4_wall5_polySurface1_polySurface1_polySurface1_polySurface1
     4300004: wall_wall2_wall3_wall4_wall5_polySurface2_polySurface2_polySurface2_polySurface2_polySurface2
+    4300006: wall_polySurface3
   materials:
     importMaterials: 1
     materialName: 0

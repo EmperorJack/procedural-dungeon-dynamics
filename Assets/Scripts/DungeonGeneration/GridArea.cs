@@ -76,6 +76,6 @@ namespace DungeonGeneration {
         public abstract Color DisplayColor();
         public abstract int DisplayHeight();
 
-        public abstract void Populate(DungeonAssetPopulator dungeonAssetPopulator, GameObject parent);
+        //public abstract void Populate(DungeonAssetPopulator dungeonAssetPopulator, GameObject parent);
 	}
 }

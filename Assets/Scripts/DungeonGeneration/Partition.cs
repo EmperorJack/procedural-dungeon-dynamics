@@ -108,7 +108,7 @@ namespace DungeonGeneration {
 			}
 		}
 
-	    public void GetRooms(List<GridArea> areas)
+	    public void GetRooms(List<ConnectableGridArea> areas)
 	    {
 	        // Intermediate node
 	        if (left != null && right != null)
@@ -122,7 +122,7 @@ namespace DungeonGeneration {
 	        }
 	    }
 
-        public void GetCorridors(List<GridArea> areas)
+        public void GetCorridors(List<ConnectableGridArea> areas)
         {
             // Intermediate node
             if (left != null && right != null)
@@ -162,11 +162,6 @@ namespace DungeonGeneration {
         public override int DisplayHeight()
         {
             return 20 - depth;
-        }
-
-        public override void Populate(DungeonAssetPopulator dungeonAssetPopulator, GameObject parent)
-        {
-            throw new Exception("Can't populate a partition with assets!");
         }
     }
 }
