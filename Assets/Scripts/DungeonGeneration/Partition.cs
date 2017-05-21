@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -45,7 +46,7 @@ namespace DungeonGeneration {
             {
                 horizontalCut = true;
             }
-            else horizontalCut = Random.value > 0.5f;
+            else horizontalCut = UnityEngine.Random.value > 0.5f;
 
 			Partition partitionA;
 			Partition partitionB;
@@ -54,7 +55,7 @@ namespace DungeonGeneration {
 			{
                 if (height <= minimumSize * 2) return;
 
-                int yCut = Random.Range(generator.minimumRoomSize + generator.roomBuffer * 2, height - generator.minimumRoomSize - generator.roomBuffer * 2 + 1);
+                int yCut = UnityEngine.Random.Range(generator.minimumRoomSize + generator.roomBuffer * 2, height - generator.minimumRoomSize - generator.roomBuffer * 2 + 1);
 				partitionA = new Partition(generator, x, y, width, yCut, depth + 1);
 				partitionB = new Partition(generator, x, y + yCut, width, height - yCut, depth + 1);
 			}
@@ -62,7 +63,7 @@ namespace DungeonGeneration {
 			{
                 if (width <= minimumSize * 2) return;
 
-                int xCut = Random.Range(generator.minimumRoomSize + generator.roomBuffer * 2, width - generator.minimumRoomSize - generator.roomBuffer * 2 + 1);
+                int xCut = UnityEngine.Random.Range(generator.minimumRoomSize + generator.roomBuffer * 2, width - generator.minimumRoomSize - generator.roomBuffer * 2 + 1);
 				partitionA = new Partition(generator, x, y, xCut, height, depth + 1);
 				partitionB = new Partition(generator, x + xCut, y, width - xCut, height, depth + 1);
 			}
@@ -155,12 +156,17 @@ namespace DungeonGeneration {
 
         public override Color DisplayColor()
         {
-            return new Color(Random.value, Random.value, Random.value);
+            return new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value);
         }
 
         public override int DisplayHeight()
         {
             return 20 - depth;
+        }
+
+        public override void Populate(GameObject parent)
+        {
+            throw new Exception("Can't populate a partition with assets!");
         }
     }
 }

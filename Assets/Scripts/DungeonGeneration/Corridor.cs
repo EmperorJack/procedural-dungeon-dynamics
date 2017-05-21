@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,6 +19,11 @@ namespace DungeonGeneration {
         public override int DisplayHeight()
         {
             return 0;
+        }
+
+        public override void Populate(GameObject parent)
+        {
+            throw new NotImplementedException();
         }
     }
 }

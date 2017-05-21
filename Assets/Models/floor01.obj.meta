@@ -7,11 +7,16 @@ ModelImporter:
   fileIDToRecycleName:
     100000: floor
     100002: //RootNode
+    100004: floor_floor2_floor3_floor4
     400000: floor
     400002: //RootNode
+    400004: floor_floor2_floor3_floor4
     2300000: floor
+    2300002: floor_floor2_floor3_floor4
     3300000: floor
+    3300002: floor_floor2_floor3_floor4
     4300000: floor
+    4300002: floor_floor2_floor3_floor4
   materials:
     importMaterials: 1
     materialName: 0
