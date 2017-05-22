@@ -128,10 +128,12 @@ class triangulation:
             #tet.center = None
 
         for f in tet.faces:
-            f.tetras.remove(tet)
+            if tet in f.tetras:
+                f.tetras.remove(tet)
         for f, n in tet.neighbours.items():
             #f.tetras.remove(tet)
-            del n.neighbours[f]
+            if f in n.neighbours:
+                del n.neighbours[f]
             if len(f.tetras) == 0:
                 for v in f.vertices:
                     v.faces.remove(f)
@@ -388,12 +390,33 @@ def inSphere(a, b, c, d, p):
     return determinant
 
 
-object = cmds.ls(sl=True)
+def sample(object):
+    # vertices = cmds.ls('%s.vtx[:]' % object[0], fl=True)
+    vertPosTemp = cmds.xform(object + '.vtx[*]', q=True, ws=True, t=True)
+    vertices = zip(*[iter(vertPosTemp)] * 3)
+    print "Number of vertices:"
+    print len(vertices)
+    samplePercent = 1
+    #sampleAmount = int(round(len(vertices) * (samplePercent / 100)))
+    sampleAmount = 2
+    print "Amount to sample:"
+    print sampleAmount
+    samplePositions = np.random.random_integers(0, len(vertices)-1, sampleAmount)
+    points = [vertices[x] for x in samplePositions]
+    print "Points sampled:"
+    print len(points)
+    return points
+
+
+
 #points = [[0,0,0],[2,2,2],[-1.5,-1.5,-1.5]]
 #points = [[0,0,0]]
-points = [[0,0,0],[2,2,2],[1,0,1],[-1,0,-1]]
+#points = [[0,0,0],[2,2,2],[1,0,1],[-1,0,-1]]
 #points = []
+
+object = cmds.ls(sl=True)
 for obj in object:
+    points = sample(obj)
     dt = triangulation(obj,points)
     for t in dt.tetras:
         t.makeGeo()
