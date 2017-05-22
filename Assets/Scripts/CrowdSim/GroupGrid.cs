@@ -294,9 +294,37 @@ namespace CrowdSim
 			}
 		}
 
+		float lerp(float t, float a, float b){
+			return (1.0f - t) * a + t * b;
+		}
+
+		Vector2 getCenterVelocity(GroupCell cell){
+			float northVel = cell.faces [(int)GroupCell.Dir.north].velocity;
+			float southVel = cell.faces [(int)GroupCell.Dir.south].velocity;
+			float eastVel = cell.faces [(int)GroupCell.Dir.east].velocity;
+			float westVel = cell.faces [(int)GroupCell.Dir.west].velocity;
+
+
+			return new Vector2 (lerp (0.5f, southVel, northVel), lerp (0.5f, eastVel, westVel));
+			
+		}
+		 
+		Vector2 interpolateVelocity(Vector2 pos){
+
+		}
+
 		void computeVelocity ()
 		{
-
+			foreach (GroupCell cell in grid) {
+				normaliseGrads (cell);
+				SharedCell sharedCell = (SharedCell)shared_grid.grid2[(int)cell.index.x, (int)cell.index.y];
+				for (int i = 0; i < cell.faces.Length; i++) {
+					Face sharedFace = sharedCell.faces [i];
+					float sharedVelocity = sharedFace.velocity;
+					GroupFace groupFace = (GroupFace)cell.faces [i];
+					groupFace.velocity = - sharedVelocity * groupFace.grad_Potential;
+				}
+			}
 		}
 
 		// Returns the upwind directions from this cell
