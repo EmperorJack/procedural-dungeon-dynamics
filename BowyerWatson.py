@@ -41,10 +41,11 @@ class tetra:
             print f[1].coords
             print f[2].coords
             newFace = makeFace(f[0], f[1], f[2])
-            if len(newFace.tetras) == 1 and self not in newFace.tetras:
+            if newFace.tetras:
                 neighbour = newFace.tetras[0]
                 self.neighbours[newFace] = neighbour
                 neighbour.neighbours[newFace] = self
+            if self not in newFace.tetras:
                 newFace.tetras.append(self)
             faces.append(newFace)
         self.faces = tuple(faces)
@@ -80,9 +81,9 @@ class triangulation:
 
     def __init__(self, object,points):
         self.tetras = []
-        insertPoints = []
+        self.vertices = []
         for p in points:
-            insertPoints.append(vertex(p[0], p[1], p[2]))
+            self.vertices.append(vertex(p[0], p[1], p[2]))
 
         bBox = cmds.exactWorldBoundingBox(object)
         center = cmds.objectCenter(object)
@@ -91,7 +92,7 @@ class triangulation:
         self.boundingTetra.printFaces()
         self.tetras.append(self.boundingTetra)
         # self.faces.append(self.boundingTet.faces)  THIS MIGHT BE WRONG
-        self.Tessalate(insertPoints)
+        self.Tessalate(self.vertices)
 
     def makeBigTriangle(self, center, bBox):
         """
@@ -123,13 +124,22 @@ class triangulation:
         :param tet: Tetra to be removed
         :return: void
         """
-        tet.faces = []
-        tet.center = ()
+        if tet != self.boundingTetra:
+            tet.faces = []
+            tet.center = None
+
+        for f in tet.faces:
+            f.tetras.remove(tet)
         for f, n in tet.neighbours.items():
             f.tetras.remove(tet)
-            n.neighbours.remove(f)
+            del n.neighbours[f]
+            if len(f.tetras) == 0:
+                for v in f.vertices:
+                    v.faces.remove(f)
+
         tet.neighbours = {}
-        self.tetras.remove(tet)
+        if (tet in self.tetras):
+            self.tetras.remove(tet)
 
     def Tessalate(self,points):
         for p in points:
@@ -177,6 +187,9 @@ class triangulation:
                 newTetra = tetra([f.vertices[0], f.vertices[1], f.vertices[2], p])
                 # newTetra.printCoords()
                 self.tetras.append(newTetra)
+
+            print "\nNumber of tetras in dt after point insertion: "
+            print len(self.tetras)
 
 def makeFace(v1,v2,v3):
     #print "Making face at"
@@ -230,7 +243,7 @@ def tetsInSphere(p,tet, inSphereList, visited):
     :return: a list of tetraherons
     """
     visited.append(tet)
-    if inSphere(tet.vertices[0], tet.vertices[1], tet.vertices[2], tet.vertices[3], p):
+    if inSphere(tet.vertices[0], tet.vertices[1], tet.vertices[2], tet.vertices[3], p) >= 0:
         inSphereList.append(tet)
         for f in tet.faces:
             for n in f.tetras:
@@ -243,11 +256,11 @@ def contains(p, tet, visited):
     neighbours = tet.neighbours
     if len(neighbours) > 0:
         for face, neighbour in tet.neighbours.iteritems():
-            a = orient(face[0], face[1], face[2], tet.center)
-            b = orient(face[0], face[1], face[2], p)
+            a = orient(face.vertices[0], face.vertices[1], face.vertices[2], tet.center)
+            b = orient(face.vertices[0], face.vertices[1], face.vertices[2], p)
             if a != b and neighbour not in visited:
                 visited.append(tet)
-                return contains(p, neighbour)
+                return contains(p, neighbour,visited)
     return tet
 
 
@@ -260,7 +273,6 @@ def walk(p, dt):
     if len(dt.tetras) == 1:
         print "Only bounding box found"
         return dt.boundingTetra
-
     else:
         return contains(p, tet, visited)
 
@@ -276,7 +288,7 @@ def findCenter(vertices):
     # you
     center = [a / vertCount for a in sumVert]
     # return (a / vertCount for a in [sum(x) for x in zip(vertices)])
-    return center
+    return vertex(center[0],center[1],center[2])
 
 
 def calcClockwise(vertices, triFace, tetCenter):
@@ -335,7 +347,7 @@ def orient(a, b, c, p):
         if p is under the plane; and exactly 0 if p is directly on
         the plane.
     """
-
+    test = p.coords[0]
     matrix = np.matrix([[a.coords[0], a.coords[1], a.coords[2], 1],
                         [b.coords[0], b.coords[1], b.coords[2], 1],
                         [c.coords[0], c.coords[1], c.coords[2], 1],
@@ -373,7 +385,8 @@ def inSphere(a, b, c, d, p):
 
 
 object = cmds.ls(sl=True)
-points = [[0,0,0], [0.2,0.2,0.2]]
+points = [[0,0,0],[2,2,2],[-1.5,-1.5,-1.5]]
+#points = [[0,0,0]]
 #points = []
 for obj in object:
     dt = triangulation(obj,points)
