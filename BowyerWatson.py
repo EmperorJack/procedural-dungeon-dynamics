@@ -28,7 +28,6 @@ class face:
 
 class tetra:
     def __init__(self, vertices):
-        print "########################################"
         self.neighbours = {}
         self.vertices = vertices
         self.center = findCenter(vertices)
@@ -124,14 +123,14 @@ class triangulation:
         :param tet: Tetra to be removed
         :return: void
         """
-        if tet != self.boundingTetra:
-            tet.faces = []
-            tet.center = None
+        #if tet != self.boundingTetra:
+            #tet.faces = []
+            #tet.center = None
 
         for f in tet.faces:
             f.tetras.remove(tet)
         for f, n in tet.neighbours.items():
-            f.tetras.remove(tet)
+            #f.tetras.remove(tet)
             del n.neighbours[f]
             if len(f.tetras) == 0:
                 for v in f.vertices:
@@ -143,6 +142,7 @@ class triangulation:
 
     def Tessalate(self,points):
         for p in points:
+            print "########################################"
             # All tetrahedra whose circumscribed spheres contain the point p are removed from the triangulation.
             print "Inserting point"
             print p.coords
@@ -254,6 +254,10 @@ def tetsInSphere(p,tet, inSphereList, visited):
 
 def contains(p, tet, visited):
     neighbours = tet.neighbours
+    if not tet.center:
+        print "TET WITHOUT CENTER FOUND:"
+        tet.printCoords()
+
     if len(neighbours) > 0:
         for face, neighbour in tet.neighbours.iteritems():
             a = orient(face.vertices[0], face.vertices[1], face.vertices[2], tet.center)
@@ -385,8 +389,9 @@ def inSphere(a, b, c, d, p):
 
 
 object = cmds.ls(sl=True)
-points = [[0,0,0],[2,2,2],[-1.5,-1.5,-1.5]]
+#points = [[0,0,0],[2,2,2],[-1.5,-1.5,-1.5]]
 #points = [[0,0,0]]
+points = [[0,0,0],[2,2,2],[1,0,1],[-1,0,-1]]
 #points = []
 for obj in object:
     dt = triangulation(obj,points)
