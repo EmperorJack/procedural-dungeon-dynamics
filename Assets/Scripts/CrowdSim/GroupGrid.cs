@@ -310,7 +310,24 @@ namespace CrowdSim
 		}
 		 
 		Vector2 interpolateVelocity(Vector2 pos){
-
+			// get cell left and down of pos
+			
+			// Velocity a,b,c,d = getCenterVelocity(a,b,c,d)
+			
+			// A -- B
+			// |    |
+			// C -- D
+			
+			// float t = (pos.x - cell.x) / cell_width
+			// cdX = (1f - t) * c.x + d.x * t;
+			// abX = (1f - t) * a.x + b.x * t;
+			// cdZ = (1f - t) * c.z + d.z * t;
+			// abZ = (1f - t) * a.z + b.z * t;
+			
+			// t = (pos.z - cell.z) / cell_width
+			// terpX = (1 - t) * cdX + t * abX;
+			// terpZ = (1 - t) * cdZ + t * abZ;
+			// return vector(terpX, terpZ);
 		}
 
 		void computeVelocity ()
