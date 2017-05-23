@@ -11,10 +11,12 @@ namespace CrowdSim
 		public float max_potential = float.MinValue;
 
 		private SharedGrid shared_grid;
+		private List<GameObject> agents;
 
 		public GroupGrid (float cell_width, int dim, List<GameObject> agents, SharedGrid shared_grid) : base (cell_width, dim)
 		{
 			this.shared_grid = shared_grid;
+			this.agents = agents;
 
 			for (int i = 0; i < dim; i++) {
 				for (int j = 0; j < dim; j++) {
@@ -33,6 +35,15 @@ namespace CrowdSim
 			max_potential = float.MinValue;
 			fastMarch ();
 			//testMach();
+			computeVelocity();
+			foreach (GameObject agent in agents) {
+				Rigidbody rb = agent.GetComponent<Rigidbody> ();
+				Vector2 interpVel = interpolateVelocity (new Vector2 (rb.position.x, rb.position.z));
+				//Printer.message ("INTERP: " + interpVel.x + " " + interpVel.y);
+
+				// move agent
+				rb.position = new Vector3(rb.position.x + interpVel.x, 0, rb.position.z + interpVel.y);
+			}
 		}
 
 		public void testMach ()
@@ -70,86 +81,6 @@ namespace CrowdSim
 				cell.setFace (GroupCell.Dir.north, new GroupFace (cell, new Vector2 (i, j - 1), (int)GroupCell.Dir.north));
 			}
 		}
-
-		//		private void fastMarch ()
-		//		{
-		//			List<GroupCell> known_cells = new List<GroupCell> ();
-		//
-		//			for (int i = 0; i < dim; i++) {
-		//				for (int j = 0; j < dim; j++) {
-		//					GroupCell cell = (GroupCell)grid [i, j];
-		//					if (cell.isGoal) {
-		//						cell.potential = 0f;
-		//						cell.temporary_potential = 0f;
-		//						known_cells.Add (cell);
-		//					} else {
-		//						cell.temporary_potential = float.MaxValue;
-		//						cell.potential = float.MaxValue;
-		//					}
-		//				}
-		//			}
-		//
-		//			SortedList<float, List<GroupCell>> potentials = new SortedList<float, List<GroupCell>> ();
-		//
-		//			foreach (GroupCell knownCell in known_cells) {
-		//				// add neighbours
-		//				foreach (Face face in knownCell.faces) {
-		//					if (face != null && face.neighbour != null) {
-		//						GroupCell candidate = (GroupCell)face.neighbour;
-		//						float estimate = getCellPotential (candidate);
-		//						candidate.temporary_potential = Mathf.Min (candidate.temporary_potential, estimate);
-		//						if (potentials.ContainsKey (candidate.temporary_potential)) {
-		//							potentials [candidate.temporary_potential].Add (candidate);
-		//						} else {
-		//							List<GroupCell> newBucket = new List<GroupCell> ();
-		//							newBucket.Add (candidate);
-		//							potentials.Add (candidate.temporary_potential, newBucket);
-		//						}
-		//					}
-		//				}
-		//				// find min neighbour
-		//			}
-		//
-		//			while (known_cells.Count < dim * dim) {
-		//				// add neighbours of min
-		//				float minKey = potentials.Keys [0];
-		//
-		//				GroupCell minCandidate = (GroupCell)potentials [minKey] [0];
-		//				known_cells.Add (minCandidate);
-		//				// not the right syntax.
-		//				potentials [minKey].Remove (minCandidate);
-		//				if (potentials [minKey].Count == 0) {
-		//					potentials.Remove (minKey);
-		//				}
-		//				minCandidate.potential = minCandidate.temporary_potential;
-		//
-		//				foreach (Face face in minCandidate.faces) {
-		//					if (face != null && face.neighbour != null) {
-		//						GroupCell neighbour = (GroupCell)face.neighbour;
-		//						if (known_cells.Contains (neighbour) == false) {
-		//							float estimate = getCellPotential (neighbour);
-		//							// Remove the old potential value
-		//							if (potentials.ContainsKey (neighbour.temporary_potential)) {
-		//								potentials [neighbour.temporary_potential].Remove (neighbour);
-		//								if (potentials [neighbour.temporary_potential].Count == 0) {
-		//									potentials.Remove (neighbour.temporary_potential);
-		//								}
-		//							}
-		//							// Add the new potential
-		//							neighbour.temporary_potential = Mathf.Min (neighbour.temporary_potential, estimate);
-		//							if (potentials.ContainsKey (neighbour.temporary_potential)) {
-		//								potentials [neighbour.temporary_potential].Add (neighbour);
-		//							} else {
-		//								List<GroupCell> newBucket = new List<GroupCell> ();
-		//								newBucket.Add (neighbour);
-		//								potentials.Add (neighbour.temporary_potential, newBucket);
-		//							}
-		//						}
-		//					}
-		//				}
-		//				// find min
-		//			}
-		//		}
 
 		private void fastMarch ()
 		{
@@ -299,12 +230,30 @@ namespace CrowdSim
 		}
 
 		Vector2 getCenterVelocity(GroupCell cell){
-			float northVel = cell.faces [(int)GroupCell.Dir.north].velocity;
-			float southVel = cell.faces [(int)GroupCell.Dir.south].velocity;
-			float eastVel = cell.faces [(int)GroupCell.Dir.east].velocity;
-			float westVel = cell.faces [(int)GroupCell.Dir.west].velocity;
+			float northVel = 0;
 
+			if (cell.faces [(int)GroupCell.Dir.north] != null) {
+				northVel = cell.faces [(int)GroupCell.Dir.north].velocity;
+			}
 
+			float southVel = 0;
+
+			if (cell.faces [(int)GroupCell.Dir.south] != null) {
+				southVel = cell.faces [(int)GroupCell.Dir.south].velocity;
+			}
+
+			float eastVel = 0;
+
+			if (cell.faces [(int)GroupCell.Dir.east] != null) {
+				eastVel = cell.faces [(int)GroupCell.Dir.east].velocity;
+			}
+
+			float westVel = 0;
+
+			if (cell.faces [(int)GroupCell.Dir.west] != null) {
+				westVel = cell.faces [(int)GroupCell.Dir.west].velocity;
+			}
+				
 			return new Vector2 (lerp (0.5f, southVel, northVel), lerp (0.5f, eastVel, westVel));
 			
 		}
@@ -313,21 +262,35 @@ namespace CrowdSim
 			// get cell left and down of pos
 			
 			// Velocity a,b,c,d = getCenterVelocity(a,b,c,d)
-			
+			Vector2 leftPos = getLeft(pos.x, pos.y);
+			GroupCell leftCell = (GroupCell)grid2 [(int)leftPos.x, (int)leftPos.y];
+
+			Vector2 c = new Vector2 (0, 0);//getCenterVelocity (leftCell);
+			Vector2 d = new Vector2 (0, 0);
+			Vector2 b = new Vector2 (0, 0);
+			Vector2 a = new Vector2 (0, 0);
+
+			if (leftCell != null) {
+				c = getCenterVelocity (leftCell);
+				d = getCenterVelocity ((GroupCell)grid2 [(int)leftCell.index.x + 1, (int)leftCell.index.y]);
+				b = getCenterVelocity ((GroupCell)grid2 [(int)leftCell.index.x + 1, (int)leftCell.index.y + 1]);
+				a = getCenterVelocity((GroupCell)grid2[(int)leftCell.index.x, (int)leftCell.index.y + 1]);
+			}
+
 			// A -- B
 			// |    |
 			// C -- D
 			
-			// float t = (pos.x - cell.x) / cell_width
-			// cdX = (1f - t) * c.x + d.x * t;
-			// abX = (1f - t) * a.x + b.x * t;
-			// cdZ = (1f - t) * c.z + d.z * t;
-			// abZ = (1f - t) * a.z + b.z * t;
+			float t = (pos.x - leftCell.position.x) / cell_width;
+			float cdX = (1f - t) * c.x + d.x * t;
+			float abX = (1f - t) * a.x + b.x * t;
+			float cdZ = (1f - t) * c.y + d.y * t;
+			float abZ = (1f - t) * a.y + b.y * t;
 			
-			// t = (pos.z - cell.z) / cell_width
-			// terpX = (1 - t) * cdX + t * abX;
-			// terpZ = (1 - t) * cdZ + t * abZ;
-			// return vector(terpX, terpZ);
+			t = (pos.y - leftCell.position.y) / cell_width;
+			float terpX = (1 - t) * cdX + t * abX;
+			float terpY = (1 - t) * cdZ + t * abZ;
+			return new Vector2(terpX, terpY);
 		}
 
 		void computeVelocity ()
@@ -337,11 +300,43 @@ namespace CrowdSim
 				SharedCell sharedCell = (SharedCell)shared_grid.grid2[(int)cell.index.x, (int)cell.index.y];
 				for (int i = 0; i < cell.faces.Length; i++) {
 					Face sharedFace = sharedCell.faces [i];
-					float sharedVelocity = sharedFace.velocity;
-					GroupFace groupFace = (GroupFace)cell.faces [i];
-					groupFace.velocity = - sharedVelocity * groupFace.grad_Potential;
+					if (sharedFace != null) {
+						float sharedVelocity = sharedFace.velocity;
+						GroupFace groupFace = (GroupFace)cell.faces [i];
+						groupFace.velocity = -sharedVelocity * groupFace.grad_Potential;
+					} 
 				}
+				float[] dirVels = getDirVels (sharedCell);
+				sharedCell.avg_Velocity = new Vector2 (dirVels [1] - dirVels [3], dirVels [0] - dirVels [2]);
 			}
+		}
+
+		float[] getDirVels(Cell cell){
+			float northVel = 0;
+
+			if (cell.faces [(int)GroupCell.Dir.north] != null) {
+				northVel = cell.faces [(int)GroupCell.Dir.north].velocity;
+			}
+
+			float southVel = 0;
+
+			if (cell.faces [(int)GroupCell.Dir.south] != null) {
+				southVel = cell.faces [(int)GroupCell.Dir.south].velocity;
+			}
+
+			float eastVel = 0;
+
+			if (cell.faces [(int)GroupCell.Dir.east] != null) {
+				eastVel = cell.faces [(int)GroupCell.Dir.east].velocity;
+			}
+
+			float westVel = 0;
+
+			if (cell.faces [(int)GroupCell.Dir.west] != null) {
+				westVel = cell.faces [(int)GroupCell.Dir.west].velocity;
+			}
+
+			return new float[]{ northVel, eastVel, southVel, westVel };
 		}
 
 		// Returns the upwind directions from this cell

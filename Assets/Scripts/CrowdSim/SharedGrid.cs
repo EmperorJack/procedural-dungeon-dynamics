@@ -79,20 +79,26 @@ namespace CrowdSim
 				cell.density += densityA;
 				//cell.avg_Velocity += densityA * agentVelocity;
 
-				SharedCell cellB = grid [x + 1, y] as SharedCell;
-				float densityB = Mathf.Pow (Mathf.Min (deltaX, dif - deltaY), densityExponent);
-				float cellB_og = cell.density;
-				cellB.density += densityB;
+				if (x + 1 < grid2.Length) {
+					SharedCell cellB = grid [x + 1, y] as SharedCell;
+					float densityB = Mathf.Pow (Mathf.Min (deltaX, dif - deltaY), densityExponent);
+					float cellB_og = cell.density;
+					cellB.density += densityB;
+				}
 
-				SharedCell cellC = grid [x + 1, y + 1] as SharedCell;
-				float densityC = Mathf.Pow (Mathf.Min (deltaX, deltaY), densityExponent);
-				float cellC_og = cell.density;
-				cellC.density += densityC;
+				if (x + 1 < grid.Length && x + 1 < grid.Length) {
+					SharedCell cellC = grid [x + 1, y + 1] as SharedCell;
+					float densityC = Mathf.Pow (Mathf.Min (deltaX, deltaY), densityExponent);
+					float cellC_og = cell.density;
+					cellC.density += densityC;
+				}
 
-				SharedCell cellD = grid [x, y + 1] as SharedCell;
-				float densityD = Mathf.Pow (Mathf.Min (dif - deltaX, deltaY), densityExponent);
-				float cellD_og = cellD.density;
-				cellD.density += densityD;
+				if (y + 1 < grid.Length) {
+					SharedCell cellD = grid [x, y + 1] as SharedCell;
+					float densityD = Mathf.Pow (Mathf.Min (dif - deltaX, deltaY), densityExponent);
+					float cellD_og = cellD.density;
+					cellD.density += densityD;
+				}
 			}
 		}
 
@@ -119,35 +125,6 @@ namespace CrowdSim
 						shared_face.cost = (alpha * f + beta + gamma * g) / f;
 					}
 				}
-			}
-		}
-
-		// Get the grid coordinate with it's center with
-		// x and y coordinates less than the given x/y
-
-		public Vector2 getLeft (float x, float y)
-		{
-//		Vector2 cellPos = new Vector2 (Mathf.Floor (x / cell_width - cell_width / 2), Mathf.Floor (y / cell_width - cell_width / 2));
-//		cellPos = new Vector2 (cellPos.x * cell_width + cell_width / 2, cellPos.y * cell_width + cell_width / 2);
-//
-//		if (cellDic.ContainsKey (cellPos)) {
-//			return cellDic [cellPos];
-//		} else {
-//			return new Vector2 (0, 0);
-//		}
-
-			x = x / cell_width;
-			y = y / cell_width;
-
-			float t_cell_width = 1.0f;
-
-			Vector2 cellPos = new Vector2 (Mathf.Floor (x - t_cell_width / 2), Mathf.Floor (y - t_cell_width / 2));
-			cellPos = new Vector2 (cellPos.x * cell_width + cell_width / 2, cellPos.y * cell_width + cell_width / 2);
-
-			if (cellDic.ContainsKey (cellPos)) {
-				return cellDic [cellPos];
-			} else {
-				return new Vector2 (0, 0);
 			}
 		}
 
