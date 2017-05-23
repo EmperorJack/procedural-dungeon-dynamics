@@ -20,7 +20,7 @@ namespace DungeonGeneration
             connectedCorridors.Add(corridor);
         }
 
-        public void Populate(DungeonAssetPopulator dungeonAssetPopulator, GameObject parent)
+        public virtual void Populate(DungeonAssetPopulator dungeonAssetPopulator, GameObject parent)
         {
             GameObject roomParent = new GameObject();
             roomParent.name = this.GetType().Name + id;

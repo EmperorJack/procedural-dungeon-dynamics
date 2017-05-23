@@ -25,6 +25,13 @@ namespace DungeonGeneration {
             return 0;
         }
 
+        public override void Populate(DungeonAssetPopulator dungeonAssetPopulator, GameObject parent)
+        {
+            base.Populate(dungeonAssetPopulator, parent);
+
+            PopulateDoors(parent, dungeonAssetPopulator.doorPrefab);
+        }
+
         protected override void PopulateWalls(GameObject parent, GameObject wallPrefab)
         {
             if (horiztonal)
@@ -42,7 +49,7 @@ namespace DungeonGeneration {
                     {
                         GameObject instance = MonoBehaviour.Instantiate(wallPrefab);
                         instance.transform.SetParent(parent.transform);
-                        instance.transform.Translate((x + i - 1) * generator.GetGridSpacing(), DisplayHeight(), (y + height) * generator.GetGridSpacing());
+                        instance.transform.Translate((x + i) * generator.GetGridSpacing(), DisplayHeight(), (y + height - 1) * generator.GetGridSpacing());
                         instance.transform.Rotate(0, 180, 0);
                     }
                 }
@@ -55,7 +62,7 @@ namespace DungeonGeneration {
                     {
                         GameObject instance = MonoBehaviour.Instantiate(wallPrefab);
                         instance.transform.SetParent(parent.transform);
-                        instance.transform.Translate((x - 1) * generator.GetGridSpacing(), DisplayHeight(), (y + j) * generator.GetGridSpacing());
+                        instance.transform.Translate((x) * generator.GetGridSpacing(), DisplayHeight(), (y + j) * generator.GetGridSpacing());
                         instance.transform.Rotate(0, 90, 0);
                     }
 
@@ -63,10 +70,38 @@ namespace DungeonGeneration {
                     {
                         GameObject instance = MonoBehaviour.Instantiate(wallPrefab);
                         instance.transform.SetParent(parent.transform);
-                        instance.transform.Translate((x + width - 1) * generator.GetGridSpacing(), DisplayHeight(), (y + j + 1) * generator.GetGridSpacing());
+                        instance.transform.Translate((x + width - 1) * generator.GetGridSpacing(), DisplayHeight(), (y + j) * generator.GetGridSpacing());
                         instance.transform.Rotate(0, 270, 0);
                     }
                 }
+            }
+        }
+
+        private void PopulateDoors(GameObject parent, GameObject doorPref)
+        {
+            if (horiztonal)
+            {
+                GameObject instance = MonoBehaviour.Instantiate(doorPref);
+                instance.transform.SetParent(parent.transform);
+                instance.transform.Translate((x) * generator.GetGridSpacing(), DisplayHeight(), (y) * generator.GetGridSpacing());
+                instance.transform.Rotate(0, 90, 0);
+
+                instance = MonoBehaviour.Instantiate(doorPref);
+                instance.transform.SetParent(parent.transform);
+                instance.transform.Translate((x + width - 1) * generator.GetGridSpacing(), DisplayHeight(), (y) * generator.GetGridSpacing());
+                instance.transform.Rotate(0, 270, 0);
+            }
+            else // Vertical
+            {
+                GameObject instance = MonoBehaviour.Instantiate(doorPref);
+                instance.transform.SetParent(parent.transform);
+                instance.transform.Translate((x) * generator.GetGridSpacing(), DisplayHeight(), (y) * generator.GetGridSpacing());
+                instance.transform.Rotate(0, 0, 0);
+
+                instance = MonoBehaviour.Instantiate(doorPref);
+                instance.transform.SetParent(parent.transform);
+                instance.transform.Translate((x) * generator.GetGridSpacing(), DisplayHeight(), (y + height - 1) * generator.GetGridSpacing());
+                instance.transform.Rotate(0, 180, 0);
             }
         }
     }
