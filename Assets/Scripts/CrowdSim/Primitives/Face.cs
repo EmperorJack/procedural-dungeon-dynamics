@@ -16,6 +16,8 @@ namespace Primitives
 		public Cell neighbour;
 		public Vector2 neighbourIndex;
 
+		public bool obstruction = false;
+
 		public int index;
 
 		public Face (Cell cell, Vector2 neighbourIndex, int index)

@@ -25,7 +25,7 @@ namespace CrowdSim
 				for (int j = 0; j < dim; j++) {
 					SharedCell cell = (SharedCell)grid [i, j];
 					foreach (Face face in cell.faces) {
-						if (face != null) {
+						if (face != null && face.obstruction == false) {
 							face.neighbour = grid [(int)face.neighbourIndex.x, (int)face.neighbourIndex.y];
 						}
 					}
@@ -41,20 +41,24 @@ namespace CrowdSim
 			grid [i, j] = cell;
 			cellDic [new Vector2 ((pos.x), (pos.y))] = new Vector2 (i, j);
 
-			if (i < dim - 1) {
-				cell.setFace (SharedCell.Dir.east, new Face (cell, new Vector2 (i + 1, j), (int)SharedCell.Dir.east));
+			cell.setFace (SharedCell.Dir.east, new Face (cell, new Vector2 (i + 1, j), (int)SharedCell.Dir.east));
+			if (i >= dim - 1) {
+				cell.getFace (SharedCell.Dir.east).obstruction = true;
 			} 
 			//add bottom face
-			if (j < dim - 1) {
-				cell.setFace (SharedCell.Dir.south, new Face (cell, new Vector2 (i, j + 1), (int)SharedCell.Dir.south));
+			cell.setFace (SharedCell.Dir.south, new Face (cell, new Vector2 (i, j + 1), (int)SharedCell.Dir.south));
+			if (j >= dim - 1) {
+				cell.getFace (SharedCell.Dir.south).obstruction = true;
 			} 
 			//add left face
-			if (i > 0) {
-				cell.setFace (SharedCell.Dir.west, new Face (cell, new Vector2 (i - 1, j), (int)SharedCell.Dir.west));
+			cell.setFace (SharedCell.Dir.west, new Face (cell, new Vector2 (i - 1, j), (int)SharedCell.Dir.west));
+			if (i <= 0) {
+				cell.getFace (SharedCell.Dir.west).obstruction = true;
 			} 
 			//add top face
-			if (j > 0) {
-				cell.setFace (SharedCell.Dir.north, new Face (cell, new Vector2 (i, j - 1), (int)SharedCell.Dir.north));
+			cell.setFace (SharedCell.Dir.north, new Face (cell, new Vector2 (i, j - 1), (int)SharedCell.Dir.north));
+			if (j <= 0) {
+				cell.getFace (SharedCell.Dir.north).obstruction = true;
 			}
 		}
 
@@ -111,18 +115,21 @@ namespace CrowdSim
 			foreach (SharedCell cell in grid) {
 				Vector2 cell_index = cell.index;
 				for (int i = 0; i < cell.faces.Length; i++) {
-					if (cell.faces [i] != null) {
+					if (cell.faces [i] != null ) {
 						SharedCell shared_cell = (SharedCell)grid [(int)cell_index.x, (int)cell_index.y];
 						Face shared_face = shared_cell.faces [i];
+						if (cell.faces [i].obstruction == false) {
+							float f = shared_face.velocity;
 
-						float f = shared_face.velocity;
+							Vector2 neighbour_index = shared_face.neighbourIndex;
+							SharedCell neighbour = (SharedCell)grid [(int)neighbour_index.x, (int)neighbour_index.y];
 
-						Vector2 neighbour_index = shared_face.neighbourIndex;
-						SharedCell neighbour = (SharedCell)grid [(int)neighbour_index.x, (int)neighbour_index.y];
+							float g = neighbour.discomfort;
 
-						float g = neighbour.discomfort;
-
-						shared_face.cost = (alpha * f + beta + gamma * g) / f;
+							shared_face.cost = (alpha * f + beta + gamma * g) / f;
+						} else {
+							shared_face.cost = float.MaxValue;
+						}
 					}
 				}
 			}

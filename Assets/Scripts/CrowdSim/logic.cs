@@ -132,7 +132,6 @@ namespace CrowdSim
 			for (int i = 0; i < dim; i++) {
 				for (int j = 0; j < dim; j++) {
 
-
 					GroupCell groupCell = (GroupCell)grid.grid2 [i, j];
 					SharedCell sharedCell = (SharedCell)shared_grid.grid2 [i, j];
 
@@ -192,6 +191,18 @@ namespace CrowdSim
 						}
 					}
 
+					// draw flow velocity
+					//Vector2 vec = sharedCell.avg_Velocity;
+					// draw group velocity
+					//Vector2 vec = new Vector2(groupCell.avgVelocity.x , groupCell.avgVelocity.y);
+					// draw potential grad
+					Vector2 vec = groupCell.gradPotential;
+					vec.Normalize ();
+					vec.Scale (new Vector2 (0.2f, 0.2f));
+					if (vec != null) {
+						drawDirLine (position, vec);
+					}
+
 				}
 			}
 
@@ -245,6 +256,16 @@ namespace CrowdSim
 			Gizmos.DrawLine (top_r, bot_r);
 			Gizmos.DrawLine (bot_r, bot_l);
 			Gizmos.DrawLine (bot_l, top_l);
+		}
+
+		void drawDirLine(Vector2 pos, Vector2 dir){
+			setColor (Color.red);
+			Vector3 from = new Vector3 (pos.x - dir.x, 0, pos.y - dir.y);
+			Vector3 to = new Vector3 (pos.x + dir.x, 0, pos.y + dir.y);
+			Gizmos.DrawLine (from, to);
+			setColor (Color.blue);
+
+			fillRect (to.x, to.z, 0.1f, 0.1f);
 		}
 
 		void fillRect (Vector2 pos, float width, float height)

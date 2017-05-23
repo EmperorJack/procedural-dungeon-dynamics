@@ -22,7 +22,7 @@ namespace CrowdSim
 				for (int j = 0; j < dim; j++) {
 					GroupCell cell = (GroupCell)grid [i, j];
 					foreach (Face face in cell.faces) {
-						if (face != null) {
+						if (face != null && face.obstruction == false) {
 							face.neighbour = grid [(int)face.neighbourIndex.x, (int)face.neighbourIndex.y];
 						}
 					}
@@ -65,20 +65,24 @@ namespace CrowdSim
 			grid [i, j] = cell;
 			cellDic [new Vector2 ((pos.x), (pos.y))] = new Vector2 (i, j);
 
-			if (i < dim - 1) {
-				cell.setFace (GroupCell.Dir.east, new GroupFace (cell, new Vector2 (i + 1, j), (int)GroupCell.Dir.east));
+			cell.setFace (GroupCell.Dir.east, new GroupFace (cell, new Vector2 (i + 1, j), (int)GroupCell.Dir.east));
+			if (i >= dim - 1) {
+				cell.getFace (GroupCell.Dir.east).obstruction = true;
 			} 
 			//add bottom face
-			if (j < dim - 1) {
-				cell.setFace (GroupCell.Dir.south, new GroupFace (cell, new Vector2 (i, j + 1), (int)GroupCell.Dir.south));
+			cell.setFace (GroupCell.Dir.south, new GroupFace (cell, new Vector2 (i, j + 1), (int)GroupCell.Dir.south));
+			if (j >= dim - 1) {
+				cell.getFace (GroupCell.Dir.south).obstruction = true;
 			} 
 			//add left face
-			if (i > 0) {
-				cell.setFace (GroupCell.Dir.west, new GroupFace (cell, new Vector2 (i - 1, j), (int)GroupCell.Dir.west));
+			cell.setFace (GroupCell.Dir.west, new GroupFace (cell, new Vector2 (i - 1, j), (int)GroupCell.Dir.west));
+			if (i <= 0) {
+				cell.getFace (GroupCell.Dir.west).obstruction = true;
 			} 
 			//add top face
-			if (j > 0) {
-				cell.setFace (GroupCell.Dir.north, new GroupFace (cell, new Vector2 (i, j - 1), (int)GroupCell.Dir.north));
+			cell.setFace (GroupCell.Dir.north, new GroupFace (cell, new Vector2 (i, j - 1), (int)GroupCell.Dir.north));
+			if (j <= 0) {
+				cell.getFace (GroupCell.Dir.north).obstruction = true;
 			}
 		}
 
@@ -140,7 +144,7 @@ namespace CrowdSim
 		
 					// add candidates neighbours
 					foreach (GroupFace face in min_candidate.faces) {
-						if (face != null && face.neighbour != null) {
+						if (face != null && face.neighbour != null && face.obstruction == false) {
 							GroupCell candidate = (GroupCell)face.neighbour;
 							if (known_cells.Contains (candidate) == false) {
 								//Printer.message ("ATTEMPTING: " + candidate.index.x + ", " + candidate.index.y);
@@ -171,11 +175,39 @@ namespace CrowdSim
 							}
 
 						}
+						setGradPotVec(cell);
 						normaliseGrads (cell);
 					}
 				}
 
 			}
+		}
+
+		void setGradPotVec(GroupCell cell){
+			GroupFace eastFace = (GroupFace)cell.faces [(int)GroupCell.Dir.east];
+			GroupFace westFace = (GroupFace)cell.faces [(int)GroupCell.Dir.west];
+			GroupFace northFace = (GroupFace)cell.faces [(int)GroupCell.Dir.north];
+			GroupFace southFace = (GroupFace)cell.faces [(int)GroupCell.Dir.south];
+
+			Vector2 grads = new Vector2 (0, 0);
+			if (eastFace.obstruction == false) {
+				grads.x = eastFace.grad_Potential;
+			}
+
+			if (westFace.obstruction == false) {
+				grads.x = grads.x - westFace.grad_Potential;
+			}
+
+			if (northFace.obstruction == false) {
+				grads.y = northFace.grad_Potential;
+			}
+
+			if (southFace.obstruction == false) {
+				grads.y = grads.y - southFace.grad_Potential;
+			}
+
+			grads.Normalize ();
+			cell.gradPotential = grads;
 		}
 
 		void normaliseGrads(GroupCell cell){
@@ -296,7 +328,6 @@ namespace CrowdSim
 		void computeVelocity ()
 		{
 			foreach (GroupCell cell in grid) {
-				normaliseGrads (cell);
 				SharedCell sharedCell = (SharedCell)shared_grid.grid2[(int)cell.index.x, (int)cell.index.y];
 				for (int i = 0; i < cell.faces.Length; i++) {
 					Face sharedFace = sharedCell.faces [i];
@@ -308,6 +339,9 @@ namespace CrowdSim
 				}
 				float[] dirVels = getDirVels (sharedCell);
 				sharedCell.avg_Velocity = new Vector2 (dirVels [1] - dirVels [3], dirVels [0] - dirVels [2]);
+
+				float[] groupDirVels = getDirVels (cell);
+				cell.avgVelocity = new Vector2 (groupDirVels [1] - groupDirVels [3], groupDirVels [0] - groupDirVels [2]);
 			}
 		}
 
