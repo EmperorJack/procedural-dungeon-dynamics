@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Primitives;
@@ -33,7 +32,7 @@ namespace CrowdSim
 		public override void update ()
 		{
 			max_potential = float.MinValue;
-			fastMarch2 ();
+			fastMarch ();
 			//testMach();
 			computeVelocity();
 			foreach (GameObject agent in agents) {
@@ -86,7 +85,7 @@ namespace CrowdSim
 			}
 		}
 
-		private void fastMarch2 ()
+		private void fastMarch ()
 		{
 			//1
 			// for each node
@@ -114,16 +113,14 @@ namespace CrowdSim
 			for (int i = 0; i < dim; i++) {
 				for (int j = 0; j < dim; j++) {
 					GroupCell cell = (GroupCell)grid [i, j];
+					cell.accepted = false;
+
 					if (cell.isGoal) {
 						cell.potential = 0f;
-						cell.temporary_potential = 0f;
-						cell.accepted = true;
 						addCell (candidates, cell);
 					} else {
 						cell.temporary_potential = float.MaxValue;
 						cell.potential = float.MaxValue;
-						cell.far = true;
-						cell.accepted = false;
 					}
 				}
 			}
@@ -131,29 +128,48 @@ namespace CrowdSim
 			while (accepted < dim * dim) {
 				// remove from candidates
 				List<GroupCell> candidateList = null;
+
 				foreach (KeyValuePair<float, List<GroupCell>> key in candidates) {
 					candidateList = key.Value;
+					//Printer.message ("KEY: " + key.Key);
+					break;
 				}
 				GroupCell minCandidate = candidateList[0];
 				max_potential = Mathf.Max (minCandidate.potential, max_potential);
 					
-				candidateList.RemoveAt (0);
 				minCandidate.accepted = true;
 				accepted++;
-				if (candidateList.Count <= 0) {
-					candidates.Remove (minCandidate.potential);
-				}
+				removeCell (candidates, minCandidate, minCandidate.potential);
 
 				addNeighbours (candidates, minCandidate);
+			}
+
+			// iterate through all to compute gradient 
+			for (int i = 0; i < dim; i++) {
+				for (int j = 0; j < dim; j++) {
+					GroupCell cell = (GroupCell)grid [i, j];
+
+					foreach (GroupFace face in cell.faces)
+					{
+						float grad = 0f;
+						if (face != null && face.neighbour != null) {
+							GroupCell neighbour = (GroupCell)face.neighbour;
+							grad = neighbour.potential - cell.potential;
+							face.grad_Potential = grad;
+						}
+
+					}
+					setGradPotVec(cell);
+					normaliseGrads (cell);
+				}
 			}
 		}
 
 		public void addCell(SortedDictionary<float, List<GroupCell>> candidates, GroupCell cell){
 			float potential = cell.potential;
 			// add to candidates
-
 			if (candidates.ContainsKey(cell.potential)) {
-				candidates[cell.potential].Add (cell);
+				candidates[potential].Add (cell);
 			} else {
 				List<GroupCell> newCandidateList = new List<GroupCell> ();
 				newCandidateList.Add (cell);
@@ -161,115 +177,33 @@ namespace CrowdSim
 			}
 		}
 
-		public void addNeighbours(SortedDictionary<float, List<GroupCell>> candidates, GroupCell cell){
-			foreach (Face face in cell.faces) {
-				if (face != null && face.obstruction == false) {
-					GroupCell neighbour = (GroupCell)face.neighbour;
-					if (neighbour.accepted == false) {
-						float tempPotential = getCellPotential (neighbour);
-						if (tempPotential < neighbour.potential) {
-							neighbour.potential = tempPotential;
-							addCell (candidates, neighbour);
-						}
-					}
+		public void removeCell(SortedDictionary<float, List<GroupCell>> candidates, GroupCell toRemove, float oldPotential){
+			if (candidates.ContainsKey (oldPotential)) {
+				List<GroupCell> candidateList = candidates [oldPotential];
+				candidateList.Remove(toRemove);
+				if (candidateList.Count <= 0) {
+					candidates.Remove (oldPotential);
+
 				}
 			}
 		}
 
-		private void fastMarch ()
-		{
-			List<GroupCell> known_cells = new List<GroupCell> ();
-			List<GroupCell> candidates = new List<GroupCell> ();
-		
-			for (int i = 0; i < dim; i++) {
-				for (int j = 0; j < dim; j++) {
-					GroupCell cell = (GroupCell)grid [i, j];
-					if (cell.isGoal) {
-						cell.potential = 0f;
-						cell.temporary_potential = 0f;
-						known_cells.Add (cell);
-					} else {
-						cell.temporary_potential = float.MaxValue;
-						cell.potential = float.MaxValue;
-					}
-				}
-			}
-		
-			if (known_cells.Count > 0) {
-		
-				foreach (GroupCell knownCell in known_cells) {
-					// add neighbours to candidates
-					for (int f_index = 0; f_index < knownCell.faces.Length; f_index++) {
-						GroupFace face = (GroupFace)knownCell.faces [f_index];
-						if (face != null && face.neighbour != null) {
-							GroupCell candidate = (GroupCell)face.neighbour;
-							float aprox_potential = getCellPotential (candidate);
-							candidate.temporary_potential = aprox_potential;
-							candidates.Add (candidate);
+		public void addNeighbours(SortedDictionary<float, List<GroupCell>> candidates, GroupCell cell){
+			foreach (Face face in cell.faces) {
+				if (face != null && face.obstruction == false) {
+					GroupCell neighbour = (GroupCell)face.neighbour;
+
+					if (neighbour.accepted == false) {
+						float tempPotential = getCellPotential (neighbour);
+						if (tempPotential < neighbour.potential) {
+							float oldPotential = neighbour.potential;
+							removeCell (candidates, neighbour, oldPotential);
+							neighbour.potential = tempPotential;
+
+							addCell (candidates, neighbour);
 						}
 					}
 				}
-		
-				while (known_cells.Count < dim * dim) {
-		
-					float min_potential = float.MaxValue;
-					GroupCell min_candidate = null;
-		
-					foreach (GroupCell candidate in candidates) {
-						if (candidate.temporary_potential <= min_potential) {
-							//Printer.message ("TEMPPOT(" + candidate.index.x + ", " + candidate.index.y + ") = " + candidate.temporary_potential);
-							min_potential = candidate.temporary_potential;
-							min_candidate = candidate;
-						}
-					}
-		
-					// add candidate with min potential
-					min_candidate.potential = min_candidate.temporary_potential;
-					candidates.Remove (min_candidate);
-
-					//Printer.message ("POT("+min_candidate.index.x+", "+min_candidate.index.y+") = "+min_candidate.potential);
-					max_potential = Mathf.Max (max_potential, min_candidate.potential);
-					known_cells.Add (min_candidate);
-		
-		
-					// add candidates neighbours
-					foreach (GroupFace face in min_candidate.faces) {
-						if (face != null && face.neighbour != null && face.obstruction == false) {
-							GroupCell candidate = (GroupCell)face.neighbour;
-							if (known_cells.Contains (candidate) == false) {
-								//Printer.message ("ATTEMPTING: " + candidate.index.x + ", " + candidate.index.y);
-								float aprox_potential = getCellPotential (candidate);
-								// TODO: THIS IS ALWAYS FLOAT.MAX
-								//Printer.message ("APROX("+candidate.index.x+", "+candidate.index.y+") = "+aprox_potential);
-								candidate.temporary_potential = aprox_potential;
-								if (candidates.Contains (candidate) == false) {
-									candidates.Add (candidate);
-								}
-							}
-						}
-					}
-				}
-
-				// iterate through all to compute gradient 
-				for (int i = 0; i < dim; i++) {
-					for (int j = 0; j < dim; j++) {
-						GroupCell cell = (GroupCell)grid [i, j];
-
-						foreach (GroupFace face in cell.faces)
-						{
-							float grad = 0f;
-							if (face != null && face.neighbour != null) {
-								GroupCell neighbour = (GroupCell)face.neighbour;
-								grad = neighbour.potential - cell.potential;
-								face.grad_Potential = grad;
-							}
-
-						}
-						setGradPotVec(cell);
-						normaliseGrads (cell);
-					}
-				}
-
 			}
 		}
 
