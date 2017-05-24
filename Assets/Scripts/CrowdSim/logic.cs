@@ -194,13 +194,13 @@ namespace CrowdSim
 					// draw flow velocity
 					//Vector2 vec = sharedCell.avg_Velocity;
 					// draw group velocity
-					//Vector2 vec = new Vector2(groupCell.avgVelocity.x , groupCell.avgVelocity.y);
+					Vector2 vec = new Vector2(groupCell.avgVelocity.x , groupCell.avgVelocity.y);
 					// draw potential grad
-					Vector2 vec = groupCell.gradPotential;
+					//Vector2 vec = groupCell.gradPotential;
 					vec.Normalize ();
 					vec.Scale (new Vector2 (0.2f, 0.2f));
 					if (vec != null) {
-						//drawDirLine (position, vec);
+						drawDirLine (position, vec);
 					}
 
 				}

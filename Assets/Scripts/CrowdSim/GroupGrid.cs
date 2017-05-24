@@ -87,26 +87,6 @@ namespace CrowdSim
 
 		private void fastMarch ()
 		{
-			//1
-			// for each node
-			    // if goal, set potential 0, set accepted
-			    // else, set potential max, set far
-
-			//2
-			// for every far node
-			    // calculate temp potential
-			    // if temp potential less than current
-			         // set current potential to temp
-			         // set far to considered
-
-			//3
-			// set smallest potential to accepted
-		    // for every neighbour of accepted
-			    // if neighbour not accepted
-			        // calculate temp potential
-			        // if temp pot < neighbour potential
-			        // set neighbour to considered
-
 			SortedDictionary<float, List<GroupCell>> candidates = new SortedDictionary<float, List<GroupCell>> ();
 			int accepted = 0;
 
@@ -229,7 +209,7 @@ namespace CrowdSim
 			if (southFace.obstruction == false) {
 				grads.y = grads.y - southFace.grad_Potential;
 			}
-
+			grads.y = -grads.y;
 			grads.Normalize ();
 			cell.gradPotential = grads;
 		}
@@ -313,10 +293,40 @@ namespace CrowdSim
 			return new Vector2 (lerp (0.5f, southVel, northVel), lerp (0.5f, eastVel, westVel));
 			
 		}
-		 
+
+//		Vector2 interpolateVelocity2(Vector2 pos){
+//			// get cell left and down of pos
+//
+//			// Velocity a,b,c,d = getCenterVelocity(a,b,c,d)
+//			Vector2 leftPos = getLeft(pos.x, pos.y);
+//			GroupCell leftCell = (GroupCell)grid2 [(int)leftPos.x, (int)leftPos.y];
+//
+//			Vector2 c = new Vector2 (0, 0);//getCenterVelocity (leftCell);
+//			Vector2 d = new Vector2 (0, 0);
+//			Vector2 b = new Vector2 (0, 0);
+//			Vector2 a = new Vector2 (0, 0);
+//
+//			if (leftCell != null) {
+//				a = getCenterVelocity (leftCell);
+//				b = getCenterVelocity ((GroupCell)grid2 [(int)leftCell.index.x + 1, (int)leftCell.index.y]);
+//				c = getCenterVelocity ((GroupCell)grid2 [(int)leftCell.index.x + 1, (int)leftCell.index.y + 1]);
+//				d = getCenterVelocity((GroupCell)grid2[(int)leftCell.index.x, (int)leftCell.index.y + 1]);
+//			}
+//
+//			float xT = (leftPos.x+cell_width/2 - pos.x) / cell_width;
+//			float cornerA = xT * a;
+//			float cornerD = xT * d;
+//
+//			float yT = (leftPos.y + cell_width / 2 - pos.y) / cell_width;
+//			float cornerB = yT * b;
+//			float cornerC = yT * b;
+//
+//
+//		}
+
 		Vector2 interpolateVelocity(Vector2 pos){
 			// get cell left and down of pos
-			
+
 			// Velocity a,b,c,d = getCenterVelocity(a,b,c,d)
 			Vector2 leftPos = getLeft(pos.x, pos.y);
 			GroupCell leftCell = (GroupCell)grid2 [(int)leftPos.x, (int)leftPos.y];
@@ -336,13 +346,13 @@ namespace CrowdSim
 			// A -- B
 			// |    |
 			// C -- D
-			
+
 			float t = (pos.x - leftCell.position.x) / cell_width;
 			float cdX = (1f - t) * c.x + d.x * t;
 			float abX = (1f - t) * a.x + b.x * t;
 			float cdZ = (1f - t) * c.y + d.y * t;
 			float abZ = (1f - t) * a.y + b.y * t;
-			
+
 			t = (pos.y - leftCell.position.y) / cell_width;
 			float terpX = (1 - t) * cdX + t * abX;
 			float terpY = (1 - t) * cdZ + t * abZ;
@@ -362,10 +372,10 @@ namespace CrowdSim
 					} 
 				}
 				float[] dirVels = getDirVels (sharedCell);
-				sharedCell.avg_Velocity = new Vector2 (dirVels [1] - dirVels [3], dirVels [0] - dirVels [2]);
+				sharedCell.avg_Velocity = new Vector2 (dirVels [1] - dirVels [3], -(dirVels [0] - dirVels [2]));
 
 				float[] groupDirVels = getDirVels (cell);
-				cell.avgVelocity = new Vector2 (groupDirVels [1] - groupDirVels [3], groupDirVels [0] - groupDirVels [2]);
+				cell.avgVelocity = new Vector2 (groupDirVels [1] - groupDirVels [3], -(groupDirVels [0] - groupDirVels [2]));
 			}
 		}
 
@@ -543,8 +553,8 @@ namespace CrowdSim
 			float under_root = (b * b) - (4 * a * c);
 
 			if (under_root < 0) {
-				Printer.message ("(" + b + " * " + b + ") - ( 4" + " * " + a + " * " + c + " ) = " + under_root);
-				Printer.message (b * b + " - " + 4 * a * c);
+				//Printer.message ("(" + b + " * " + b + ") - ( 4" + " * " + a + " * " + c + " ) = " + under_root);
+				//Printer.message (b * b + " - " + 4 * a * c);
 				if (potential_one > potential_two) {
 					return singleFiniteDif (cell, orignalFace_one);
 				} else {
