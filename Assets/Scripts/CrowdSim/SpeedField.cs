@@ -47,10 +47,10 @@ namespace CrowdSim
 							shared_face.velocity = 0.0f;
 							continue;
 						}
-						float max_density = 5.0f;
+						float max_density = 1.0f;
 						float min_density = 0.1f;
 
-						float terr_speed = getTerrSpeed (0.5f, 0.0f, 0f, 0f, 0f);
+						float terr_speed = getTerrSpeed (0.02f, 0.0f, 0f, 0f, 0f);
 						float flow_speed = getFlowSpeed (face);
 
 						SharedCell neighbour = (SharedCell)face.neighbour;

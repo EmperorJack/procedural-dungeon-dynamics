@@ -9,8 +9,8 @@ namespace CrowdSim
 {
 	public class SharedGrid : Grid
 	{
-		float distance_weight = 1.0f;
-		float time_weight = 1.0f;
+		float distance_weight = 100.0f;
+		float time_weight = 100.0f;
 		float discomfort_weight = 1.0f;
 
 		List<GameObject> agents;

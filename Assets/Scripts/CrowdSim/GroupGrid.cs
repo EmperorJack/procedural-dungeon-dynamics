@@ -524,10 +524,7 @@ namespace CrowdSim
 				//Printer.message ("F!: not null");
 				cost_one = face_one.cost;
 				potential_one = adj_one.potential;
-			} else {
-				//Printer.message ("F1: null");
-			}
-
+			} 
 
 			float cost_two = 0;
 			float potential_two = 0;
@@ -535,21 +532,20 @@ namespace CrowdSim
 				//Printer.message ("F2: not null");
 				cost_two = face_two.cost;
 				potential_two = adj_two.potential;
-			} else {
-				//Printer.message ("F2: null");
-			}
+			} 
 
 			// TODO: Sometimes a is 0	
 			float a = (cost_one * cost_one) + (cost_two * cost_two);
 			float b = -2 * ((cost_one * cost_one * potential_two) + (cost_two * cost_two * potential_one));
-			float c = (cost_one * cost_one * potential_two * potential_two) + (cost_two * cost_two * potential_one * potential_one) - 1;
+			float c = (cost_one * cost_one * potential_two * potential_two) + (cost_two * cost_two * potential_one * potential_one) - cost_one*cost_one*cost_two*cost_two;
 
 			// TODO: potential_one and Potential_two seem to be zero
 			float under_root = (b * b) - (4 * a * c);
-			//Printer.message ("(" + b + " * " + b + ") - ( 4" + " * " + a + " * " + c + " ) = " + under_root);
 
 			if (under_root < 0) {
-				if (potential_one < potential_two) {
+				Printer.message ("(" + b + " * " + b + ") - ( 4" + " * " + a + " * " + c + " ) = " + under_root);
+				Printer.message (b * b + " - " + 4 * a * c);
+				if (potential_one > potential_two) {
 					return singleFiniteDif (cell, orignalFace_one);
 				} else {
 					return singleFiniteDif (cell, orignalFace_two);

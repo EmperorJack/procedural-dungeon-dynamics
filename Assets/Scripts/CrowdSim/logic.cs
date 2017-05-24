@@ -200,7 +200,7 @@ namespace CrowdSim
 					vec.Normalize ();
 					vec.Scale (new Vector2 (0.2f, 0.2f));
 					if (vec != null) {
-						drawDirLine (position, vec);
+						//drawDirLine (position, vec);
 					}
 
 				}
