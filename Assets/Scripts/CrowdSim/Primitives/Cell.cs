@@ -10,6 +10,9 @@ namespace Primitives
 
 		public bool obstruction;
 
+		public bool far = false;
+		public bool accepted = false;
+
 		public enum Dir : int
 		{
 			east,

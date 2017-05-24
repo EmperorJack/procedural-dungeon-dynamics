@@ -33,7 +33,7 @@ namespace CrowdSim
 		public override void update ()
 		{
 			max_potential = float.MinValue;
-			fastMarch ();
+			fastMarch2 ();
 			//testMach();
 			computeVelocity();
 			foreach (GameObject agent in agents) {
@@ -83,6 +83,96 @@ namespace CrowdSim
 			cell.setFace (GroupCell.Dir.north, new GroupFace (cell, new Vector2 (i, j - 1), (int)GroupCell.Dir.north));
 			if (j <= 0) {
 				cell.getFace (GroupCell.Dir.north).obstruction = true;
+			}
+		}
+
+		private void fastMarch2 ()
+		{
+			//1
+			// for each node
+			    // if goal, set potential 0, set accepted
+			    // else, set potential max, set far
+
+			//2
+			// for every far node
+			    // calculate temp potential
+			    // if temp potential less than current
+			         // set current potential to temp
+			         // set far to considered
+
+			//3
+			// set smallest potential to accepted
+		    // for every neighbour of accepted
+			    // if neighbour not accepted
+			        // calculate temp potential
+			        // if temp pot < neighbour potential
+			        // set neighbour to considered
+
+			SortedDictionary<float, List<GroupCell>> candidates = new SortedDictionary<float, List<GroupCell>> ();
+			int accepted = 0;
+
+			for (int i = 0; i < dim; i++) {
+				for (int j = 0; j < dim; j++) {
+					GroupCell cell = (GroupCell)grid [i, j];
+					if (cell.isGoal) {
+						cell.potential = 0f;
+						cell.temporary_potential = 0f;
+						cell.accepted = true;
+						addCell (candidates, cell);
+					} else {
+						cell.temporary_potential = float.MaxValue;
+						cell.potential = float.MaxValue;
+						cell.far = true;
+						cell.accepted = false;
+					}
+				}
+			}
+
+			while (accepted < dim * dim) {
+				// remove from candidates
+				List<GroupCell> candidateList = null;
+				foreach (KeyValuePair<float, List<GroupCell>> key in candidates) {
+					candidateList = key.Value;
+				}
+				GroupCell minCandidate = candidateList[0];
+				max_potential = Mathf.Max (minCandidate.potential, max_potential);
+					
+				candidateList.RemoveAt (0);
+				minCandidate.accepted = true;
+				accepted++;
+				if (candidateList.Count <= 0) {
+					candidates.Remove (minCandidate.potential);
+				}
+
+				addNeighbours (candidates, minCandidate);
+			}
+		}
+
+		public void addCell(SortedDictionary<float, List<GroupCell>> candidates, GroupCell cell){
+			float potential = cell.potential;
+			// add to candidates
+
+			if (candidates.ContainsKey(cell.potential)) {
+				candidates[cell.potential].Add (cell);
+			} else {
+				List<GroupCell> newCandidateList = new List<GroupCell> ();
+				newCandidateList.Add (cell);
+				candidates.Add (potential, newCandidateList);
+			}
+		}
+
+		public void addNeighbours(SortedDictionary<float, List<GroupCell>> candidates, GroupCell cell){
+			foreach (Face face in cell.faces) {
+				if (face != null && face.obstruction == false) {
+					GroupCell neighbour = (GroupCell)face.neighbour;
+					if (neighbour.accepted == false) {
+						float tempPotential = getCellPotential (neighbour);
+						if (tempPotential < neighbour.potential) {
+							neighbour.potential = tempPotential;
+							addCell (candidates, neighbour);
+						}
+					}
+				}
 			}
 		}
 
