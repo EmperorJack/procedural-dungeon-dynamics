@@ -32,6 +32,9 @@ namespace CrowdSim
 		private SharedGrid shared_grid;
 		private SpeedField speed_field;
 
+		private GroupCell selectedGroupCell;
+		private SharedCell selectedSharedCell;
+
 		public bool show_Potential = false;
 		public bool show_Speed = false;
 
@@ -61,30 +64,39 @@ namespace CrowdSim
 						agent.transform.localScale = new Vector3 (0, 0, 0);
 						agentBody.position = new Vector3 (pos.x, agent.transform.localScale.y / 2, pos.z);
 
-
 						float x = agentBody.position.x;
 						float y = agentBody.position.y;
 										
 						agents.Add (agent);
+						isClicked = true;
+					}
+				} else if (Input.GetMouseButton (2)) {
+					print ("Setting selected cells");
+					selectedGroupCell = (GroupCell)grid.getCell (new Vector2 (pos.x, pos.z));
+					selectedSharedCell = (SharedCell)shared_grid.getCell (new Vector2 (pos.x, pos.z));
+					isClicked = true;
+				} else if(Input.GetMouseButton (1)) {
+					GroupCell cell = (GroupCell)grid.getCell (new Vector2 (pos.x, pos.z));
+					if (cell.isGoal) {
+						cell.isGoal = false;
+					} else {
+						cell.isGoal = true;
 					}
 					isClicked = true;
-
 				}
 			}
 
-			if (Input.GetMouseButtonUp (0)) {
+			if (Input.GetMouseButtonUp (0) || Input.GetMouseButtonUp(2) || Input.GetMouseButtonUp(1)) {
 				isClicked = false;
 			}
-
-			if (Input.GetMouseButton (1)) {
-				GroupCell cell = (GroupCell)grid.getCell (new Vector2 (pos.x, pos.z));
-				cell.isGoal = true;
-			}
-
+				
 			if (agents.Count > 0) {
 				speed_field.assignSpeeds ();
 				shared_grid.update ();
 				grid.update ();
+				//print (selectedSharedCell.print ());
+				//print (selectedGroupCell.print ());
+				//print ("--------------------------");
 			}
 
 		}
@@ -119,7 +131,6 @@ namespace CrowdSim
 
 			for (int i = 0; i < dim; i++) {
 				for (int j = 0; j < dim; j++) {
-
 
 					GroupCell groupCell = (GroupCell)grid.grid2 [i, j];
 					SharedCell sharedCell = (SharedCell)shared_grid.grid2 [i, j];
@@ -180,6 +191,18 @@ namespace CrowdSim
 						}
 					}
 
+					// draw flow velocity
+					//Vector2 vec = sharedCell.avg_Velocity;
+					// draw group velocity
+					Vector2 vec = new Vector2(groupCell.avgVelocity.x , groupCell.avgVelocity.y);
+					// draw potential grad
+					//Vector2 vec = groupCell.gradPotential;
+					vec.Normalize ();
+					vec.Scale (new Vector2 (0.2f, 0.2f));
+					if (vec != null) {
+						drawDirLine (position, vec);
+					}
+
 				}
 			}
 
@@ -233,6 +256,16 @@ namespace CrowdSim
 			Gizmos.DrawLine (top_r, bot_r);
 			Gizmos.DrawLine (bot_r, bot_l);
 			Gizmos.DrawLine (bot_l, top_l);
+		}
+
+		void drawDirLine(Vector2 pos, Vector2 dir){
+			setColor (Color.red);
+			Vector3 from = new Vector3 (pos.x - dir.x, 0, pos.y - dir.y);
+			Vector3 to = new Vector3 (pos.x + dir.x, 0, pos.y + dir.y);
+			Gizmos.DrawLine (from, to);
+			setColor (Color.blue);
+
+			fillRect (to.x, to.z, 0.1f, 0.1f);
 		}
 
 		void fillRect (Vector2 pos, float width, float height)

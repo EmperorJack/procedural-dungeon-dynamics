@@ -18,9 +18,19 @@ namespace Primitives
 		public Boolean isKnown = false;
 		public Boolean isUnknown = false;
 
+		public Vector2 avgVelocity;
+
+		public Vector2 gradPotential;
+
 		public GroupCell (Vector2 pos, Vector2 index) : base (pos, index)
 		{
 
+		}
+
+		public String print(){
+			String text = "GroupCell: " + index.x + " " + index.y;
+			text = text + "\nPot: " + potential + " TempPot: " + temporary_potential;
+			return text;
 		}
 
 	}

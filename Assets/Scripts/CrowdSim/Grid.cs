@@ -33,7 +33,6 @@ namespace CrowdSim
 		{
 			grid = new Cell[dim, dim];
 			cellDic = new Dictionary<Vector2, Vector2> ();
-
 			for (int i = 0; i < dim; i++) {
 				for (int j = 0; j < dim; j++) {
 
@@ -42,6 +41,35 @@ namespace CrowdSim
 				}
 			}
 			
+		}
+
+		// Get the grid coordinate with it's center with
+		// x and y coordinates less than the given x/y
+
+		public Vector2 getLeft (float x, float y)
+		{
+			//		Vector2 cellPos = new Vector2 (Mathf.Floor (x / cell_width - cell_width / 2), Mathf.Floor (y / cell_width - cell_width / 2));
+			//		cellPos = new Vector2 (cellPos.x * cell_width + cell_width / 2, cellPos.y * cell_width + cell_width / 2);
+			//
+			//		if (cellDic.ContainsKey (cellPos)) {
+			//			return cellDic [cellPos];
+			//		} else {
+			//			return new Vector2 (0, 0);
+			//		}
+
+			x = x / cell_width;
+			y = y / cell_width;
+
+			float t_cell_width = 1.0f;
+
+			Vector2 cellPos = new Vector2 (Mathf.Floor (x - t_cell_width / 2), Mathf.Floor (y - t_cell_width / 2));
+			cellPos = new Vector2 (cellPos.x * cell_width + cell_width / 2, cellPos.y * cell_width + cell_width / 2);
+
+			if (cellDic.ContainsKey (cellPos)) {
+				return cellDic [cellPos];
+			} else {
+				return new Vector2 (0, 0);
+			}
 		}
 
 		protected  abstract void instantiateCell (int i, int j, Vector2 pos);

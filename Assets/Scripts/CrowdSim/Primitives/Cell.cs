@@ -8,6 +8,11 @@ namespace Primitives
 		public Vector2 position;
 		public Vector2 index;
 
+		public bool obstruction;
+
+		public bool far = false;
+		public bool accepted = false;
+
 		public enum Dir : int
 		{
 			east,
