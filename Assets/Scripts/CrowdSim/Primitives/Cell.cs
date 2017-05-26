@@ -1,39 +1,19 @@
-﻿using System;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Primitives
 {
-	public class Cell
+	public class Cell 
 	{
-		public Vector2 position;
-		public Vector2 index;
+		public bool exists;
 
-		public enum Dir : int
-		{
-			east,
-			south,
-			west,
-			north}
+		public Vector2 position, avgVelocity;
+		public float density;
+		public Face[] faces;
 
-		;
-
-		public Face[] faces = new Face[4];
-
-		public void setFace (Dir dir, Face face)
-		{
-			faces [(int)dir] = face;
-		}
-
-		public Face getFace (Dir dir)
-		{
-			return faces [(int)dir];
-		}
-
-		public Cell (Vector2 pos, Vector2 index)
-		{
-			this.position = pos;
-			this.index = index;
-		}
+		//Used only for group cells
+		public float potential;
 
 	}
 }
