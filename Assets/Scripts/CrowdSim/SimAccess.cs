@@ -16,19 +16,26 @@ namespace CrowdSim
 
 		public SimAccess ()
 		{
-			this.simManager = new SimManager(1,10);
+			init ();
+		}
+
+		public void init(){
+			this.simManager = new SimManager(1,3);
 			this.cellWidth = simManager.cellWidth;
 			this.dim = simManager.dim;
 
-			displayGrid (sharedGraphics);
+			GameObject sharedGrid = new GameObject ();
+			sharedGrid.name = "SharedGrid";
+			sharedGrid.transform.position = new Vector3 (0, 0, 0);
 
+			sharedGraphics = new GridGraphics (cellWidth, dim, simManager.getGrid(), sharedGrid);
+			displayGrid (sharedGraphics);
 		}
 			
 		private void displayGrid(GridGraphics graphics){
-			if (graphics == null) {
-				graphics = new GridGraphics (cellWidth, dim);
-			} 
-			graphics.display ();
+			if (graphics != null) {
+				graphics.display ();
+			}
 		}
 
 		private void hideGrid(GridGraphics graphics){

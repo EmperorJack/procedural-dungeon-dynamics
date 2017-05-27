@@ -23,9 +23,13 @@ namespace CrowdSim
 			grid = new Cell[dim, dim];
 			helper = new Helper<Cell> (grid, cellWidth);
 
+			this.cellWidth = cellWidth;
+			this.dim = dim;
+
 			for (int i = 0; i < dim; i++) {
 				for (int j = 0; j < dim; j++) {
 					grid [i, j] = new Cell ();
+					grid [i, j].position = new Vector2 (i * cellWidth, j * cellWidth);
 				}
 			}
 		}

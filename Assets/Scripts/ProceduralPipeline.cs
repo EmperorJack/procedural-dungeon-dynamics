@@ -12,15 +12,22 @@ public class ProceduralPipeline : MonoBehaviour {
 
 	private SimAccess simAccess;
 
+	public void createSim()
+	{
+		if (simAccess == null) {
+			simAccess = new SimAccess ();
+		}
+
+		simAccess.init ();
+		simAccess.displaySharedGrid ();
+	}
+
     public void Perform()
     {
         Reset();
 
         dungeonGenerator.Generate();
         simpleLayout = dungeonGenerator.GetSimpleLayout();
-
-		//simAccess = new SimAccess ();
-		//simAccess.displaySharedGrid ();
     }
 
     public void Reset()

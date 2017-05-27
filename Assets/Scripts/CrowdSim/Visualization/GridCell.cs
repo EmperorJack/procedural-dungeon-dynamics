@@ -11,31 +11,39 @@ namespace Visualization
 		private Vector2 position;
 
 		GameObject quad;
+		GameObject parent;
 
-		public GridCell (float size, Color color, Vector2 position)
+		public GridCell (float size, Color color, Vector2 position, GameObject parent)
 		{
 			this.size = size;
 			this.color = color;
 			this.position = position;
+			this.parent = parent;
+			initQuad ();
 		}
 
-		public GridCell(float size){
+		public GridCell(float size, GameObject parent){
 			this.size = size;
 			this.color = Color.black;
-			this.position = new Vector2 (0, 0);
+			this.position = new Vector2 (position.x, position.y);
+			this.parent = parent;
+			initQuad ();
 		}
 
 		private void initQuad(){
 			quad = GameObject.CreatePrimitive(PrimitiveType.Plane);
-			Rigidbody rb = quad.GetComponent<Rigidbody>();
-			rb.position = new Vector3(position.x, 0, position.y);
+			Transform t = quad.GetComponent<Transform>();
+			t.parent = parent.transform;
+			t.position = new Vector3(position.x,0,position.y);
+			t.localScale = new Vector3 (size/2, 0, size/2);
 
 			setColor (color);
 		}
 
 		public void setColor(Color color){
-			Material mat = quad.GetComponent<Material> ();
-			mat.color = color;
+			Material mat = new Material (Shader.Find ("Specular"));
+			Renderer rend = quad.GetComponent<Renderer> ();
+			rend.material = mat;
 		}
 
 		public void display(){

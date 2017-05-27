@@ -10,30 +10,36 @@ namespace Visualization
 	public class GridGraphics
 	{
 		GridCell[,] cells;
+		Cell[,] dataGrid;
 		private float cellSize;
 		private int dim;
-		private float width;
+		//private float width;
 
 		Helper<GridCell> helper;
 
 		private bool active = false;
 
-		public GridGraphics (float cellSize, int dim)
+		GameObject objectParent;
+
+		public GridGraphics (float cellSize, int dim, Cell[,] dataGrid, GameObject objectParent)
 		{
-			this.width = dim * cellSize;
+			//this.width = dim * cellSize;
 			this.cellSize = cellSize;
 			this.dim = dim;
+			this.dataGrid = dataGrid;
+			this.objectParent = objectParent;
+			init ();
 		}
 
 
-		private void intCells(Cell[,] dataGrid){
-			cells = new GridCell[dim, dim];
-
+		private void init ()
+		{
 			helper = new Helper<GridCell> (cells, cellSize);
+			cells = new GridCell[dim, dim];
 			for (int i = 0; i < dim; i++) {
 				for (int j = 0; j < dim; j++) {
 					Vector2 cellPos = dataGrid [i, j].position;
-					cells [i, j] = new GridCell (cellSize, Color.blue, cellPos);
+					cells [i, j] = new GridCell (cellSize, Color.blue, cellPos, objectParent);
 					cells [i, j].display ();
 				}
 			}
@@ -41,34 +47,42 @@ namespace Visualization
 			active = true;
 		}
 
-		public GridCell getDispCell(Vector3 pos){
+		public GridCell getDispCell (Vector3 pos)
+		{
 			int[] index = helper.getCellIndex (new Vector2 (pos.x, pos.z));
 			return helper.accessGridCell (index);
 		}
 
-		public void display(){
+		public void display ()
+		{
 			if (active == false) {
 				for (int i = 0; i < dim; i++) {
 					for (int j = 0; j < dim; j++) {
-						cells [i, j].display ();
+						if (cells [i, j] != null) {
+							cells [i, j].display ();
+						}
 					}
 				}
 			}
 			active = true;
 		}
 
-		public void hide(){
-			if (active = true) {
+		public void hide ()
+		{
+			if (active == true) {
 				for (int i = 0; i < dim; i++) {
 					for (int j = 0; j < dim; j++) {
-						cells [i, j].hide ();
+						if (cells [i, j] != null) {
+							cells [i, j].hide ();
+						} 
 					}
 				}
 			}
 			active = false;
 		}
 
-		public bool isActive(){
+		public bool isActive ()
+		{
 			return active;
 		}
 	}

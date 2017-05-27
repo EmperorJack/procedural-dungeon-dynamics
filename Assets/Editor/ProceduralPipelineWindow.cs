@@ -9,6 +9,7 @@ public class ProceduralPipelineWindow : EditorWindow {
     private string performButton = "Perform";
     private string resetButton = "Reset";
     private string displaySimpleLayoutButton = "Display Simple Layout";
+	private string createSim = "Initialize Crowd Simulator";
 
     private GameObject pipelineObject = null;
 
@@ -29,6 +30,9 @@ public class ProceduralPipelineWindow : EditorWindow {
         if (GUILayout.Button(resetButton)) GetPipeline().Reset();
 
         if (GUILayout.Button(displaySimpleLayoutButton)) GetPipeline().DisplaySimpleLayout();
+
+		if (GUILayout.Button (createSim))
+			GetPipeline ().createSim ();
     }
 
     private ProceduralPipeline GetPipeline()

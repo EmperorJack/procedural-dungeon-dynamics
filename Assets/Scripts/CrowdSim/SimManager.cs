@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Visualization;
+using Primitives;
 
 namespace CrowdSim
 {
@@ -16,9 +17,12 @@ namespace CrowdSim
 		{
 			this.cellWidth = cellWidth;
 			this.dim = dim;
-			sharedGrid = new SharedGrid(1,10);	
+			sharedGrid = new SharedGrid(cellWidth,dim);	
 		}
 
+		public Cell[,] getGrid(){
+			return sharedGrid.grid;
+		}
 
 	}
 }
