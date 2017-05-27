@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using CrowdSim;
 
 public class ProceduralPipeline : MonoBehaviour {
 
@@ -9,13 +10,17 @@ public class ProceduralPipeline : MonoBehaviour {
     private GameObject layoutParent;
     private DungeonGeneration.Cell[,] simpleLayout;
 
+	private SimAccess simAccess;
+
     public void Perform()
     {
         Reset();
 
         dungeonGenerator.Generate();
-
         simpleLayout = dungeonGenerator.GetSimpleLayout();
+
+		//simAccess = new SimAccess ();
+		//simAccess.displaySharedGrid ();
     }
 
     public void Reset()
