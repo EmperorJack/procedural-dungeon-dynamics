@@ -12,6 +12,13 @@ namespace Primitives
 
 		//used only for Group faces
 		public float groupVelocity, potentialGrad;
+
+		public void reset(){
+			cost = float.MaxValue;
+			velocity = 0;
+			groupVelocity = 0;
+			potentialGrad = 0;
+		}
 	}
 }
 

@@ -16,6 +16,21 @@ namespace Primitives
 		public float potential;
 		public bool isGoal;
 
+		public int[] index;
+
+		public Cell(int[] index){
+			this.index = index;
+		}
+
+		public void reset(){
+			foreach (Face face in faces) {
+				face.reset ();
+			}
+			avgVelocity = new Vector2 (0, 0);
+			density = 0;
+			potential = float.MaxValue;
+		}
+
 	}
 }
 

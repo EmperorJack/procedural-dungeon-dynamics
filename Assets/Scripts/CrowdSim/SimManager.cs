@@ -11,6 +11,8 @@ namespace CrowdSim
 	public class SimManager
 	{
 		SharedGrid sharedGrid;
+		GroupGrid groupGrid;
+
 		public float cellWidth;
 		public int dim;
 		Helper<Cell> helper;
@@ -23,9 +25,16 @@ namespace CrowdSim
 			this.cellWidth = cellWidth;
 			this.dim = dim;
 			sharedGrid = new SharedGrid(cellWidth,dim);	
-			helper = new Helper<Cell>(sharedGrid.grid, cellWidth);
 			this.simObjectsParent = simObjectsParent;
 			simObjects = new List<SimObject> ();
+
+			groupGrid = new GroupGrid (cellWidth, dim, sharedGrid);
+			helper = new Helper<Cell>(groupGrid.grid, cellWidth);
+		}
+
+		public void update(){
+			sharedGrid.update ();
+			groupGrid.update ();
 		}
 
 		public int[] selectCell(Vector2 pos){
@@ -43,7 +52,7 @@ namespace CrowdSim
 		}
 
 		public Cell[,] getGrid(){
-			return sharedGrid.grid;
+			return groupGrid.grid;
 		}
 
 		public void addAgent(Vector2 pos){
@@ -69,6 +78,10 @@ namespace CrowdSim
 			rend.material = mat;
 
 			return dummy;
+		}
+
+		public float getMax(){
+			return groupGrid.getMax();
 		}
 
 	}

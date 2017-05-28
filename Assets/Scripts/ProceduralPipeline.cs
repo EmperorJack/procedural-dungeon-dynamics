@@ -89,7 +89,10 @@ public class ProceduralPipeline : MonoBehaviour {
     }
 
 	void Update(){
+
 		if (simAccess != null) {
+			simAccess.update ();
+
 			Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
 			RaycastHit hit;
 

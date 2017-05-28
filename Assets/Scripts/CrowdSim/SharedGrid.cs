@@ -11,12 +11,20 @@ namespace CrowdSim
 	{
 		public Cell[,] grid;
 		float cellWidth;
-		int dim;
+		public int dim;
 
 		private Helper<Cell> helper;
 
 		// 'constant' values
 		float densityExp = 0.1f;
+
+		public float minDensity = 1;
+		public float maxDensity = 5;
+		public float minVelocity = 0.1f;
+		public float maxVelocity = 0.5f;
+		public float distanceWeight = 1;
+		public float timeWeight = 1;
+		public float discomfortWeight = 1;
 
 		public SharedGrid (float cellWidth, int dim)
 		{
@@ -26,10 +34,51 @@ namespace CrowdSim
 			this.cellWidth = cellWidth;
 			this.dim = dim;
 
+			initGrid ();
+		}
+
+		private void initGrid(){
 			for (int i = 0; i < dim; i++) {
 				for (int j = 0; j < dim; j++) {
-					grid [i, j] = new Cell ();
+					grid [i, j] = new Cell (new int[]{i,j});
 					grid [i, j].position = new Vector2 (i * cellWidth, j * cellWidth);
+				}
+			}
+
+			for (int i = 0; i < dim; i++) {
+				for (int j = 0; j < dim; j++) {
+					Face[] faces = new Face[4];
+
+					faces [1] = new Face ();
+					if (i + 1 < dim) {
+						faces [1].cell = grid [i + 1, j];
+					}
+
+					faces [3] = new Face ();
+					if (i > 0) {
+						faces [3].cell = grid [i - 1, j];
+					}
+
+					faces [0] = new Face ();
+					if (j + 1 < dim) {
+						faces [0].cell = grid [i, j + 1];
+					}
+
+					faces [2] = new Face ();
+					if (j > 0) {
+						faces [2].cell = grid [i, j - 1];
+					}
+
+					grid [i, j].faces = faces;
+					grid [i, j].reset ();
+				}
+			}
+		}
+
+		private void resetGrid(){
+			for (int i = 0; i < dim; i++) {
+				for (int j = 0; j < dim; j++) {
+					grid [i, j].reset ();
 				}
 			}
 		}
@@ -88,8 +137,66 @@ namespace CrowdSim
 			}
 		}
 
-		public void update(){
+		private void assignCosts(){
+			for (int i = 0; i < dim; i++) {
+				for (int j = 0; j < dim; j++) {
+					for (int f = 0; f < grid [i, j].faces.Length; f++) {
+						Cell cell = grid [i, j];
+						Face face = cell.faces [f];
 
+						if (face.cell == null) {
+							face.cost = float.MaxValue;
+						} else {
+							if (face.velocity == 0) {
+								face.cost = float.MaxValue;
+							} else {
+								face.cost = (distanceWeight * face.velocity + timeWeight + discomfortWeight) / face.velocity;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		private void assignSpeedField(){
+			for (int i = 0; i < dim; i++) {
+				for (int j = 0; j < dim; j++) {
+					for (int f = 0; f < grid[i,j].faces.Length; f++) {
+						Face face = grid [i, j].faces [f];
+						if (face.cell == null) {
+							face.velocity = 0;
+						} else {
+							if (grid [i, j].density < minDensity) {
+								face.velocity = topoSpeed (face);
+							} else if (grid [i, j].density > maxDensity) {
+								face.velocity = flowSpeed (face, f);
+							} else {
+								face.velocity = topoSpeed (face) + ((face.cell.density - minDensity) / (maxDensity - minDensity)) * 
+									(flowSpeed (face, f) - topoSpeed (face));
+							}
+						}
+					}
+				}
+			}
+		}
+
+		private float topoSpeed(Face face){
+			return maxVelocity; // is more complicated when considering height variations
+		}
+
+		private float flowSpeed(Face face, int dir){
+			Cell neighbour = face.cell;
+			if (dir ==0 || dir == 2) {
+				return neighbour.avgVelocity.y;
+			} else {
+				return neighbour.avgVelocity.x;
+			}
+		}
+
+		public virtual void update(){
+			resetGrid ();
+			assignSpeedField ();
+			assignCosts ();
 		}
 	}
 }

@@ -35,6 +35,14 @@ namespace CrowdSim
 			displayGrid (sharedGraphics);
 		}
 
+		public void update(){
+			if (simManager != null) {
+				simManager.update ();
+				float max = simManager.getMax ();
+				sharedGraphics.updatePotentialColors (max);
+			}
+		}
+
 		public int[] selectCell(Vector2 pos){
 			int[] index = simManager.selectCell (pos);
 			GridCell graphicCell = sharedGraphics.getDispCell (index);

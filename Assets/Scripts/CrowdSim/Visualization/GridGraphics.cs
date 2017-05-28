@@ -31,6 +31,18 @@ namespace Visualization
 			init ();
 		}
 
+		public void updatePotentialColors(float max){
+			for (int i = 0; i < dim; i++) {
+				for (int j = 0; j < dim; j++) {
+					if (dataGrid [i, j].isGoal == false) {
+						float ratio = dataGrid [i, j].potential / max;
+						Color col = new Color (ratio, ratio, ratio);
+						cells [i, j].setColor (col);
+					}
+				}
+			}
+		}
+
 
 		private void init ()
 		{
