@@ -14,6 +14,7 @@ namespace Primitives
 
 		//Used only for group cells
 		public float potential;
+		public bool isGoal;
 
 	}
 }

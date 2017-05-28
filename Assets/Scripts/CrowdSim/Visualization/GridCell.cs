@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Visualization
 {
-	public class GridCell
+	public class GridCell 
 	{
 		private float size;
 		private Color color;
@@ -31,19 +31,29 @@ namespace Visualization
 		}
 
 		private void initQuad(){
-			quad = GameObject.CreatePrimitive(PrimitiveType.Plane);
-			Transform t = quad.GetComponent<Transform>();
+			quad = GameObject.CreatePrimitive(PrimitiveType.Cube);
+			Collider c = quad.GetComponent<Collider> ();
+			c.enabled = false;
+
+			Transform t = quad.transform;
 			t.parent = parent.transform;
 			t.position = new Vector3(position.x,0,position.y);
-			t.localScale = new Vector3 (size/2, 0, size/2);
+			t.localScale = new Vector3 (size, 0.01f, size);
+				setColor (color);
 
-			setColor (color);
+
 		}
 
 		public void setColor(Color color){
-			Material mat = new Material (Shader.Find ("Specular"));
+			this.color = color;
+			Material mat = new Material (Shader.Find ("Diffuse"));
 			Renderer rend = quad.GetComponent<Renderer> ();
+			mat.color = color;
 			rend.material = mat;
+		}
+
+		public Color getColor(){
+			return color;
 		}
 
 		public void display(){

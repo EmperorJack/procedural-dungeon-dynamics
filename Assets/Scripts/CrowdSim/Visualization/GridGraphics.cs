@@ -34,12 +34,13 @@ namespace Visualization
 
 		private void init ()
 		{
-			helper = new Helper<GridCell> (cells, cellSize);
 			cells = new GridCell[dim, dim];
+
+			helper = new Helper<GridCell> (cells, cellSize);
 			for (int i = 0; i < dim; i++) {
 				for (int j = 0; j < dim; j++) {
 					Vector2 cellPos = dataGrid [i, j].position;
-					cells [i, j] = new GridCell (cellSize, Color.blue, cellPos, objectParent);
+					cells [i, j] = new GridCell (cellSize, Color.black, cellPos, objectParent);
 					cells [i, j].display ();
 				}
 			}
@@ -47,9 +48,13 @@ namespace Visualization
 			active = true;
 		}
 
-		public GridCell getDispCell (Vector3 pos)
+		public GridCell getDispCell (Vector2 pos)
 		{
-			int[] index = helper.getCellIndex (new Vector2 (pos.x, pos.z));
+			int[] index = helper.getCellIndex (pos);
+			return helper.accessGridCell (index);
+		}
+
+		public GridCell getDispCell(int[] index){
 			return helper.accessGridCell (index);
 		}
 

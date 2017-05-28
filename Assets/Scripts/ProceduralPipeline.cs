@@ -12,14 +12,25 @@ public class ProceduralPipeline : MonoBehaviour {
 
 	private SimAccess simAccess;
 
+	public GameObject colliderQuad;
+
+	public Vector2 pos;
+	public float cellWidth;
+	public int dim;
+
 	public void createSim()
 	{
 		if (simAccess == null) {
 			simAccess = new SimAccess ();
 		}
 
-		simAccess.init ();
+		simAccess.init (cellWidth, dim);
 		simAccess.displaySharedGrid ();
+
+		Collider c = GetComponent<Collider> ();
+		c.transform.position = pos;
+		c.transform.localScale = new Vector3(cellWidth * dim, 0, cellWidth * dim);
+		c.transform.position = c.transform.position + new Vector3 ((cellWidth * (dim-1)) / 2, 0, (cellWidth * (dim-1)) / 2);
 	}
 
     public void Perform()
@@ -63,4 +74,26 @@ public class ProceduralPipeline : MonoBehaviour {
             }
         }
     }
+
+	public void OnMouseDown(){
+		if (Input.GetMouseButtonDown (0)) {
+			if (simAccess != null) {
+				Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+				RaycastHit hit;
+
+				if (Physics.Raycast (ray, out hit)) {
+					Vector3 hitPosition = hit.point;
+					print (hitPosition.x + " " + hitPosition.y + " " + hitPosition.z);
+					int[] selectedIndex = simAccess.selectCell (new Vector2 (hitPosition.x, hitPosition.z));
+					if (selectedIndex != null) {
+						print ("Selected cell: " + selectedIndex [0] + " " + selectedIndex [1]);
+					} else {
+						print ("Failed to select cell at: " + hitPosition.x + " " + hitPosition.z);
+					}
+				} else {
+					print ("NOTHING");
+				}
+			}
+		}
+	}
 }

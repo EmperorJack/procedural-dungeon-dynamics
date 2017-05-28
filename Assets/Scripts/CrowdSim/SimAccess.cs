@@ -13,14 +13,9 @@ namespace CrowdSim
 
 		float cellWidth;
 		int dim;
-
-		public SimAccess ()
-		{
-			init ();
-		}
-
-		public void init(){
-			this.simManager = new SimManager(1,3);
+			
+		public void init(float cellWidth, int dim){
+			this.simManager = new SimManager(cellWidth,dim);
 			this.cellWidth = simManager.cellWidth;
 			this.dim = simManager.dim;
 
@@ -30,6 +25,25 @@ namespace CrowdSim
 
 			sharedGraphics = new GridGraphics (cellWidth, dim, simManager.getGrid(), sharedGrid);
 			displayGrid (sharedGraphics);
+		}
+
+		public int[] selectCell(Vector2 pos){
+			int[] index = simManager.selectCell (pos);
+			GridCell graphicCell = sharedGraphics.getDispCell (index);
+
+			if (graphicCell != null) {
+				if (graphicCell.getColor().Equals(Color.green)) {
+					graphicCell.setColor (Color.black);
+				} else {
+					graphicCell.setColor (Color.green);
+				}
+				return index;
+			} 
+			return null;
+		}
+
+		public void addAgent(Vector2 pos){
+
 		}
 			
 		private void displayGrid(GridGraphics graphics){

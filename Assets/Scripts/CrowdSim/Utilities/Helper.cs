@@ -43,10 +43,11 @@ namespace Utilities
 		}
 
 		public  int[] getCellIndex(Vector2 position){
-			return new int[]{ (int)(position.x / cellWidth), (int)(position.y / cellWidth) };
+			return new int[]{ (int)((position.x + cellWidth/2) / cellWidth), (int)((position.y + cellWidth/2) / cellWidth) };
 		}
 
 		public  T accessGridCell(int[] index){
+
 			if (index [0] < 0 || index [1] < 0 || index [0] >= grid.Length || index [1] >= grid.Length) {
 				return default(T);
 			}
