@@ -15,13 +15,21 @@ namespace CrowdSim
 		int dim;
 			
 		public void init(float cellWidth, int dim){
-			this.simManager = new SimManager(cellWidth,dim);
-			this.cellWidth = simManager.cellWidth;
-			this.dim = simManager.dim;
+			GameObject crowdSim = new GameObject ();
+			crowdSim.name = "CrowdSim";
+			crowdSim.transform.position = new Vector3 (0, 0, 0);
 
 			GameObject sharedGrid = new GameObject ();
 			sharedGrid.name = "SharedGrid";
-			sharedGrid.transform.position = new Vector3 (0, 0, 0);
+			sharedGrid.transform.parent = crowdSim.transform;
+
+			GameObject simObjects = new GameObject ();
+			simObjects.name = "SimObjects";
+			simObjects.transform.parent = crowdSim.transform;
+
+			this.simManager = new SimManager(cellWidth,dim, simObjects);
+			this.cellWidth = simManager.cellWidth;
+			this.dim = simManager.dim;
 
 			sharedGraphics = new GridGraphics (cellWidth, dim, simManager.getGrid(), sharedGrid);
 			displayGrid (sharedGraphics);
@@ -43,7 +51,7 @@ namespace CrowdSim
 		}
 
 		public void addAgent(Vector2 pos){
-
+			simManager.addAgent (pos);
 		}
 			
 		private void displayGrid(GridGraphics graphics){

@@ -18,6 +18,19 @@ public class ProceduralPipeline : MonoBehaviour {
 	public float cellWidth;
 	public int dim;
 
+	 bool addAgent = true;
+	 bool addGoal = false;
+
+	public void setAddAgent(){
+		addGoal = false;
+		addAgent = true;
+	}
+
+	public void setAddGoal(){
+		addGoal = true;
+		addAgent = false;
+	}
+
 	public void createSim()
 	{
 		if (simAccess == null) {
@@ -75,23 +88,30 @@ public class ProceduralPipeline : MonoBehaviour {
         }
     }
 
-	public void OnMouseDown(){
-		if (Input.GetMouseButtonDown (0)) {
-			if (simAccess != null) {
-				Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
-				RaycastHit hit;
+	void Update(){
+		if (simAccess != null) {
+			Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+			RaycastHit hit;
 
-				if (Physics.Raycast (ray, out hit)) {
-					Vector3 hitPosition = hit.point;
-					print (hitPosition.x + " " + hitPosition.y + " " + hitPosition.z);
-					int[] selectedIndex = simAccess.selectCell (new Vector2 (hitPosition.x, hitPosition.z));
-					if (selectedIndex != null) {
-						print ("Selected cell: " + selectedIndex [0] + " " + selectedIndex [1]);
-					} else {
-						print ("Failed to select cell at: " + hitPosition.x + " " + hitPosition.z);
+			if (Physics.Raycast (ray, out hit)) {
+				Vector3 hitPosition = hit.point;
+
+				if (Input.GetMouseButtonDown (0)) {
+
+					// set grid cell to a goal
+					if (addGoal) {
+						int[] selectedIndex = simAccess.selectCell (new Vector2 (hitPosition.x, hitPosition.z));
+						if (selectedIndex != null) {
+							print ("Selected cell: " + selectedIndex [0] + " " + selectedIndex [1]);
+						} else {
+							print ("Failed to select cell at: " + hitPosition.x + " " + hitPosition.z);
+						}
 					}
-				} else {
-					print ("NOTHING");
+
+					// add an agent
+					if (addAgent) {
+						simAccess.addAgent (new Vector2 (hitPosition.x, hitPosition.z));
+					}
 				}
 			}
 		}

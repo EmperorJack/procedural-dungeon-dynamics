@@ -34,16 +34,16 @@ namespace CrowdSim
 			}
 		}
 
-		List<Cell> affectedCells = new List<Cell>(); // all cells who have an agent denstiy contribution
+		public void assignAgents(List<SimObject> simObjects){
+			List<Cell> affectedCells = new List<Cell>(); // all cells who have an agent denstiy contribution
 
-		public void assignAgents(List<Agent> agents){
-			foreach(Agent agent in agents){
-				int[] index = helper.getCellIndex (agent.position);
+			foreach(SimObject simObject in simObjects){
+				int[] index = helper.getCellIndex (simObject.position);
 				Cell leftCell = helper.accessGridCell(index);
 
 				if (leftCell != null && leftCell.exists) {
-					float deltaX = agent.position.x - leftCell.position.x;
-					float deltaY = agent.position.y - leftCell.position.y;
+					float deltaX = simObject.position.x - leftCell.position.x;
+					float deltaY = simObject.position.y - leftCell.position.y;
 
 					// D --- C
 					// |     |
@@ -53,14 +53,14 @@ namespace CrowdSim
 					float leftDensity = Mathf.Pow (Mathf.Min (1 - deltaX, 1 - deltaY), densityExp);
 					// add average velocity contribution
 					leftCell.density += leftDensity;
-					leftCell.avgVelocity += leftDensity * agent.velocity; // cell A
+					leftCell.avgVelocity += leftDensity * simObject.velocity; // cell A
 					affectedCells.Add(leftCell);
 
 					Cell bCell = helper.accessGridCell (new int[]{ index [0] + 1, index [1] });
 					if (bCell != null) {
 						float bDensity = Mathf.Pow (Mathf.Min (deltaX, 1 - deltaY), densityExp);
 						bCell.density += bDensity;
-						bCell.avgVelocity += bDensity * agent.velocity;
+						bCell.avgVelocity += bDensity * simObject.velocity;
 						affectedCells.Add (bCell);
 					}
 
@@ -68,7 +68,7 @@ namespace CrowdSim
 					if (cCell != null) {
 						float cDensity = Mathf.Pow (Mathf.Min (deltaX,deltaY), densityExp);
 						cCell.density += cDensity;
-						cCell.avgVelocity += cDensity * agent.velocity;
+						cCell.avgVelocity += cDensity * simObject.velocity;
 						affectedCells.Add (cCell);
 					}
 
@@ -76,7 +76,7 @@ namespace CrowdSim
 					if (dCell != null) {
 						float dDensity = Mathf.Pow (Mathf.Min (1 - deltaX, deltaY), densityExp);
 						dCell.density += dDensity;
-						dCell.avgVelocity += dDensity * agent.velocity;
+						dCell.avgVelocity += dDensity * simObject.velocity;
 						affectedCells.Add (dCell);
 					}
 				}
