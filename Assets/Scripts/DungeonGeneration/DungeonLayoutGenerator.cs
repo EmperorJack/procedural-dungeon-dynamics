@@ -29,14 +29,6 @@ namespace DungeonGeneration {
 	    private List<Room> rooms;
 		private List<Corridor> corridors;
 
-	    public void FixedUpdate()
-	    {
-	        if (Time.frameCount % 60 == 0)
-	        {
-	            Generate();
-	        }
-	    }
-
 	    public void Generate()
 	    {
 	        Clear();
