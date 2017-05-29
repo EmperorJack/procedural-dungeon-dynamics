@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ProceduralPipeline : MonoBehaviour {
 
-    public DungeonGeneration.DungeonGenerator dungeonGenerator;
+    public DungeonGeneration.DungeonLayoutGenerator dungeonLayoutGenerator;
     public DungeonGeneration.DungeonAssetPopulator dungeonAssetPopulator;
 
     private GameObject simpleLayoutParent;
@@ -16,18 +16,18 @@ public class ProceduralPipeline : MonoBehaviour {
     {
         Reset();
 
-        dungeonGenerator.Generate();
+        dungeonLayoutGenerator.Generate();
 
-        simpleLayout = dungeonGenerator.GetSimpleLayout();
+        simpleLayout = dungeonLayoutGenerator.GetSimpleLayout();
 
-        dungeonAssetPopulator.Setup(dungeonGenerator.GetRooms(), dungeonGenerator.GetCorridors(), dungeonGenerator.GetGridSpacing());
+        dungeonAssetPopulator.Setup(dungeonLayoutGenerator.GetRooms(), dungeonLayoutGenerator.GetCorridors(), dungeonLayoutGenerator.GetGridSpacing());
 
         DisplayComplexLayout();
     }
 
     public void Reset()
     {
-        dungeonGenerator.Clear();
+        dungeonLayoutGenerator.Clear();
         DestroyImmediate(simpleLayoutParent);
         DestroyImmediate(complexLayoutParent);
         simpleLayout = null;
@@ -45,15 +45,15 @@ public class ProceduralPipeline : MonoBehaviour {
         Material material = new Material(Shader.Find("Diffuse"));
         material.color = new Color(200 / 255.0f, 125 / 255.0f, 30 / 255.0f);
 
-        for (int i = 0; i < dungeonGenerator.gridSize; i++)
+        for (int i = 0; i < dungeonLayoutGenerator.gridSize; i++)
         {
-            for (int j = 0; j < dungeonGenerator.gridSize; j++)
+            for (int j = 0; j < dungeonLayoutGenerator.gridSize; j++)
             {
                 if (simpleLayout[i, j].GetType() == typeof(DungeonGeneration.FloorCell))
                 {
                     GameObject instance = simpleLayout[i, j].Display();
                     instance.transform.SetParent(simpleLayoutParent.transform);
-                    instance.transform.Translate((i) * dungeonGenerator.GetGridSpacing(), 0.0f, (j) * dungeonGenerator.GetGridSpacing());
+                    instance.transform.Translate((i) * dungeonLayoutGenerator.GetGridSpacing(), 0.0f, (j) * dungeonLayoutGenerator.GetGridSpacing());
                     instance.transform.Rotate(90, 0, 0);
                     instance.GetComponent<Renderer>().material = material;
                 }

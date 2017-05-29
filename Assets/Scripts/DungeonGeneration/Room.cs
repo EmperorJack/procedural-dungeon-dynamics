@@ -9,7 +9,7 @@ namespace DungeonGeneration {
 	public class Room : ConnectableGridArea
     {
 
-	    public Room(int id, DungeonGenerator generator, int x, int y, int width, int height) : base(id, generator, x, y, width, height)
+	    public Room(int id, DungeonLayoutGenerator generator, int x, int y, int width, int height) : base(id, generator, x, y, width, height)
 	    { }
 
         public override Color DisplayColor()

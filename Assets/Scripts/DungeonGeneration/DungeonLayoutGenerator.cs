@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace DungeonGeneration {
 
-	public class DungeonGenerator : MonoBehaviour {
+	public class DungeonLayoutGenerator : MonoBehaviour {
 
 	    // User set fields
 	    public int gridSize = 10;

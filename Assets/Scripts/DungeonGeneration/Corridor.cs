@@ -10,7 +10,7 @@ namespace DungeonGeneration {
 
         public bool horiztonal;
 
-        public Corridor(int id, DungeonGenerator generator, int x, int y, int width, int height, bool horiztonal) : base(id, generator, x, y, width, height)
+        public Corridor(int id, DungeonLayoutGenerator generator, int x, int y, int width, int height, bool horiztonal) : base(id, generator, x, y, width, height)
 	    {
             this.horiztonal = horiztonal;
         }
