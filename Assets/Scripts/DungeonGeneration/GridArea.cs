@@ -39,7 +39,7 @@ namespace DungeonGeneration {
 	        {
 	            for (int j = 0; j < height; j++)
 	            {
-	                grid[i, j] = new FloorCell(generator.cellPrefab);
+	                grid[i, j] = new FloorCell(generator.simpleLayoutPrefab);
 	            }
 	        }
 	    }
@@ -61,8 +61,9 @@ namespace DungeonGeneration {
 	            {
 	                GameObject instance = grid[i, j].Display();
 	                instance.transform.SetParent(gridParent.transform);
-	                instance.transform.Translate((x + i) * generator.GetGridSpacing(), (y + j) * generator.GetGridSpacing(), DisplayHeight());
-	                instance.GetComponent<Renderer>().material = material;
+	                instance.transform.Translate((x + i) * generator.GetGridSpacing(), DisplayHeight(), (y + j) * generator.GetGridSpacing());
+                    instance.transform.Rotate(90, 0, 0);
+                    instance.GetComponent<Renderer>().material = material;
 	            }
 	        }
 	    }

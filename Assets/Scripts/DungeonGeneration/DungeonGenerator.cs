@@ -12,7 +12,7 @@ namespace DungeonGeneration {
 	    public int roomBuffer = 1;
         public float minRoomWidthHeightRatio = 1.0f;
         public float maxRoomWidthHeightRatio = 1.0f;
-        public GameObject cellPrefab;
+        public GameObject simpleLayoutPrefab;
 
 	    // Internal fields
 	    private float gridSpacing;
@@ -95,7 +95,7 @@ namespace DungeonGeneration {
             {
                 for (int j = area.y; j < area.y + area.height; j++)
                 {
-                    layout[i, j] = new FloorCell(cellPrefab);
+                    layout[i, j] = new FloorCell(simpleLayoutPrefab);
                 }
             }
         }
@@ -126,7 +126,6 @@ namespace DungeonGeneration {
 
             DisplayRooms();
             DisplayCorridors();
-            //DisplayPartitions();
         }
 
         public void DisplayRooms()
@@ -164,6 +163,16 @@ namespace DungeonGeneration {
             DestroyImmediate(dungeonParent);
             root = null;
             rooms = null;
+        }
+
+        public List<Room> GetRooms()
+        {
+            return rooms;
+        }
+
+        public List<Corridor> GetCorridors()
+        {
+            return corridors;
         }
     }
 }

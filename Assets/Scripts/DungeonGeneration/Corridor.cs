@@ -1,14 +1,19 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace DungeonGeneration {
 
-	public class Corridor : GridArea
-	{
+	public class Corridor : ConnectableGridArea
+    {
 
-	    public Corridor(int id, DungeonGenerator generator, int x, int y, int width, int height) : base(id, generator, x, y, width, height)
-	    { }
+        public bool horiztonal;
+
+        public Corridor(int id, DungeonGenerator generator, int x, int y, int width, int height, bool horiztonal) : base(id, generator, x, y, width, height)
+	    {
+            this.horiztonal = horiztonal;
+        }
 
         public override Color DisplayColor()
         {

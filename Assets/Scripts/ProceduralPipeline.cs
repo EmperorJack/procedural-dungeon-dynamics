@@ -5,9 +5,12 @@ using UnityEngine;
 public class ProceduralPipeline : MonoBehaviour {
 
     public DungeonGeneration.DungeonGenerator dungeonGenerator;
+    public DungeonGeneration.DungeonAssetPopulator dungeonAssetPopulator;
 
-    private GameObject layoutParent;
+    private GameObject simpleLayoutParent;
     private DungeonGeneration.Cell[,] simpleLayout;
+
+    private GameObject complexLayoutParent;
 
     public void Perform()
     {
@@ -16,12 +19,17 @@ public class ProceduralPipeline : MonoBehaviour {
         dungeonGenerator.Generate();
 
         simpleLayout = dungeonGenerator.GetSimpleLayout();
+
+        dungeonAssetPopulator.Setup(dungeonGenerator.GetRooms(), dungeonGenerator.GetCorridors(), dungeonGenerator.GetGridSpacing());
+
+        DisplayComplexLayout();
     }
 
     public void Reset()
     {
         dungeonGenerator.Clear();
-        DestroyImmediate(layoutParent);
+        DestroyImmediate(simpleLayoutParent);
+        DestroyImmediate(complexLayoutParent);
         simpleLayout = null;
     }
 
@@ -29,10 +37,10 @@ public class ProceduralPipeline : MonoBehaviour {
     {
         if (simpleLayout == null) return;
 
-        DestroyImmediate(layoutParent);
+        DestroyImmediate(simpleLayoutParent);
 
-        layoutParent = new GameObject();
-        layoutParent.name = "SimpleLayout";
+        simpleLayoutParent = new GameObject();
+        simpleLayoutParent.name = "SimpleLayout";
 
         Material material = new Material(Shader.Find("Diffuse"));
         material.color = new Color(200 / 255.0f, 125 / 255.0f, 30 / 255.0f);
@@ -44,11 +52,24 @@ public class ProceduralPipeline : MonoBehaviour {
                 if (simpleLayout[i, j].GetType() == typeof(DungeonGeneration.FloorCell))
                 {
                     GameObject instance = simpleLayout[i, j].Display();
-                    instance.transform.SetParent(layoutParent.transform);
-                    instance.transform.Translate((i) * dungeonGenerator.GetGridSpacing(), (j) * dungeonGenerator.GetGridSpacing(), 0.0f);
+                    instance.transform.SetParent(simpleLayoutParent.transform);
+                    instance.transform.Translate((i) * dungeonGenerator.GetGridSpacing(), 0.0f, (j) * dungeonGenerator.GetGridSpacing());
+                    instance.transform.Rotate(90, 0, 0);
                     instance.GetComponent<Renderer>().material = material;
                 }
             }
         }
+    }
+
+    public void DisplayComplexLayout()
+    {
+        if (simpleLayout == null) return;
+
+        DestroyImmediate(complexLayoutParent);
+
+        complexLayoutParent = new GameObject();
+        complexLayoutParent.name = "ComplexLayout";
+
+        dungeonAssetPopulator.Populate(complexLayoutParent);
     }
 }
