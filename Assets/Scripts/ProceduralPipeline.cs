@@ -20,7 +20,7 @@ public class ProceduralPipeline : MonoBehaviour {
 
         simpleLayout = dungeonGenerator.GetSimpleLayout();
 
-        dungeonAssetPopulator.Setup(dungeonGenerator.GetRooms(), dungeonGenerator.GetCorridors());
+        dungeonAssetPopulator.Setup(dungeonGenerator.GetRooms(), dungeonGenerator.GetCorridors(), dungeonGenerator.GetGridSpacing());
 
         DisplayComplexLayout();
     }
