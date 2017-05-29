@@ -41,6 +41,7 @@ namespace CrowdSim
 
 			Cell cell = helper.getCell (pos);
 			int[] index = helper.getCellIndex(pos);
+
 			if (cell != null) {
 				if (cell.isGoal) {
 					cell.isGoal = false;

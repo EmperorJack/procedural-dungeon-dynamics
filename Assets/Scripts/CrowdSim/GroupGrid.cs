@@ -26,10 +26,15 @@ namespace CrowdSim
 				for (int j = 0; j < dim; j++) {
 					if (grid [i, j].isGoal) {
 						grid [i, j].potential = 0;
+						grid [i, j].isAccepted = true;
+
+						//Face upwindVert = upwindFace (grid [i, j+1].faces [0], grid [i, j+1].faces [2], grid [i, j+1].faces [0].cell, grid [i, j+1].faces [2].cell);
+						//Debug.Log (upwindVert.cell.isGoal +" "+ upwindVert.cell.potential);
 						addNeighbours (candidates, grid [i, j]);
 						accepted++;
 					} else {
 						grid [i, j].potential = float.MaxValue;
+						grid [i, j].isAccepted = false;
 					}
 				}
 			}
@@ -38,17 +43,17 @@ namespace CrowdSim
 				return; // no goals
 			}
 
+
+
+
 			while (accepted < dim * dim) { // total number of cells that are connected
 				Cell minCandidate = null;
 			
-				foreach (float key in candidates.Keys) {
-					minCandidate = candidates [key][0];
-					break;
-				}
+				minCandidate = candidates [candidates.Keys [0]] [0];
 
 				removeCell (candidates, minCandidate, minCandidate.potential);
-
-				//Debug.Log (minCandidate.index [0] + " " + minCandidate.index [1] + " " + minCandidate.potential);
+				minCandidate.isAccepted = true;
+				Debug.Log (minCandidate.index [0] + " " + minCandidate.index [1] + " " + minCandidate.potential);
 
 				max = Mathf.Max (max, minCandidate.potential);
 
@@ -70,10 +75,14 @@ namespace CrowdSim
 		private void addNeighbours(SortedList<float, List<Cell>> candidates, Cell cell){
 			foreach (Face face in cell.faces) {
 				Cell neighbour = face.cell;
-				if (neighbour != null && neighbour.isGoal == false) {
+				if (neighbour != null && neighbour.isAccepted == false) {
 					float tempPotential = calculatePotential (neighbour);
+
+					//Debug.Log (tempPotential);
+
 					if (tempPotential <= neighbour.potential) {
-					
+						Debug.Log ("TEMP: "+neighbour.index[0]+" "+neighbour.index[1]+" "+tempPotential);
+
 						removeCell (candidates, neighbour, neighbour.potential);
 
 						if (candidates.ContainsKey (tempPotential)) {
@@ -83,7 +92,7 @@ namespace CrowdSim
 							bucket.Add (neighbour);
 							candidates.Add (tempPotential, bucket);
 						}
-						cell.potential = tempPotential;
+						neighbour.potential = tempPotential;
 					}
 				}
 			}
@@ -92,8 +101,9 @@ namespace CrowdSim
 		private float calculatePotential (Cell cell)
 		{
 			Cell sharedCell = sharedGrid.grid [cell.index [0], cell.index [1]];
+
 			Face horUp = upwindFace (sharedCell.faces [1], sharedCell.faces [3], cell.faces[1].cell, cell.faces[3].cell);
-			Face vertUp = upwindFace (sharedCell.faces [0], sharedCell.faces [3], cell.faces[0].cell, cell.faces[3].cell);
+			Face vertUp = upwindFace (sharedCell.faces [0], sharedCell.faces [2], cell.faces[0].cell, cell.faces[2].cell);
 
 			if (horUp == null && vertUp == null) {
 				return float.MaxValue; 
@@ -106,22 +116,18 @@ namespace CrowdSim
 			}
 		}
 
-		private Face upwindFace (Face face1, Face face2, Cell cell1, Cell cell2)
+		private Face upwindFace (Face face1, Face face2, Cell neighbour1, Cell neighbour2)
 		{
-			Cell neighbour1 = cell1;
-			Cell neighbour2 = cell2;
-
-			if (neighbour1 == null && neighbour2 == null) {
+			
+			if ((neighbour1 == null && neighbour2 == null) || (neighbour1.potential == float.MaxValue && neighbour2.potential == float.MaxValue)) {
 				return null;
-			} else if (neighbour1 == null) {
+			} else if (neighbour1 == null || neighbour1.potential == float.MaxValue) {
 				return face2;
-			} else if (neighbour2 == null) {
+			} else if (neighbour2 == null || neighbour2.potential == float.MaxValue) {
 				return face1;
 			} else {
 
-				//TODO: THE POTENTIALS ARE ALWAYS NULL
-				Debug.Log (neighbour1.potential + " + " + face1.cost);
-				Debug.Log (neighbour2.potential + " + " + face2.cost);
+				//TODO: THE POTENTIALS ARE ALWAYS Max
 
 				float totalCost1 = neighbour1.potential + face1.cost;
 				float totalCost2 = neighbour2.potential + face2.cost;
@@ -137,7 +143,7 @@ namespace CrowdSim
 		public float singleDif (Face face)
 		{
 			float potential = grid [face.cell.index [0], face.cell.index [1]].potential;
-			Debug.Log (potential + " " + face.cost);
+			//Debug.Log (potential + " " + face.cost);
 			return Mathf.Max (face.cost + potential, face.cost - potential);
 		}
 
@@ -151,7 +157,7 @@ namespace CrowdSim
 			float c = face1.cost * face1.cost * pot2 * pot2 + face2.cost * face2.cost * pot1 * pot1 -
 			          face1.cost * face1.cost * face2.cost * face2.cost;
 
-			Debug.Log (a + " " + b + " " + c);
+			//Debug.Log (a + " " + b + " " + c);
 			Debug.Log (face1.cost + " " + face2.cost + " " + pot1 + " " + pot2);
 
 

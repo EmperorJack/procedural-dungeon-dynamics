@@ -15,6 +15,7 @@ namespace Primitives
 		//Used only for group cells
 		public float potential;
 		public bool isGoal;
+		public bool isAccepted;
 
 		public int[] index;
 
@@ -29,6 +30,7 @@ namespace Primitives
 			avgVelocity = new Vector2 (0, 0);
 			density = 0;
 			potential = float.MaxValue;
+			isAccepted = false;
 		}
 
 	}
