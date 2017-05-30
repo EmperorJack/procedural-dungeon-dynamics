@@ -13,6 +13,7 @@ namespace DungeonGeneration
         public GameObject floorPrefab;
         public GameObject wallPrefab;
         public GameObject doorPrefab;
+		public GameObject torchPrefab;
 
         // Dungeon fields
         private List<Room> rooms;
@@ -44,6 +45,7 @@ namespace DungeonGeneration
 
                 PopulateFloor(room, roomParent);
                 PopulateWalls(room, roomParent);
+				PopulateTorches(room, roomParent);
             }
         }
 
@@ -58,6 +60,7 @@ namespace DungeonGeneration
                 PopulateFloor(corridor, corridorParent);
                 PopulateWalls(corridor, corridorParent);
                 PopulateDoors(corridor, corridorParent);
+				PopulateTorches(corridor, corridorParent);
             }
         }
 
@@ -67,9 +70,7 @@ namespace DungeonGeneration
             {
                 for (int j = 0; j < area.height; j++)
                 {
-                    GameObject instance = MonoBehaviour.Instantiate(floorPrefab);
-                    instance.transform.SetParent(parent.transform);
-                    instance.transform.Translate((area.x + i) * gridSpacing, 0, (area.y + j) * gridSpacing);
+					SpawnFloor(parent, new Vector3((area.x + i) * gridSpacing, 0, (area.y + j) * gridSpacing), 0);
                 }
             }
         }
@@ -82,17 +83,12 @@ namespace DungeonGeneration
                 {
                     if (area.GetConnectedCorridors().Find(c => c.x == area.x + i && c.y + c.height == area.y) == null)
                     {
-                        GameObject instance = MonoBehaviour.Instantiate(wallPrefab);
-                        instance.transform.SetParent(parent.transform);
-                        instance.transform.Translate((area.x + i) * gridSpacing, 0, (area.y) * gridSpacing);
+						SpawnWall(parent, new Vector3((area.x + i) * gridSpacing, 0, (area.y) * gridSpacing), 0);
                     }
-
+						
                     if (area.GetConnectedCorridors().Find(c => c.x == area.x + i && c.y == area.y + area.height) == null)
                     {
-                        GameObject instance = MonoBehaviour.Instantiate(wallPrefab);
-                        instance.transform.SetParent(parent.transform);
-                        instance.transform.Translate((area.x + i) * gridSpacing, 0, (area.y + area.height - 1) * gridSpacing);
-                        instance.transform.Rotate(0, 180, 0);
+						SpawnWall(parent, new Vector3((area.x + i) * gridSpacing, 0, (area.y + area.height - 1) * gridSpacing), 180);
                     }
                 }
             }
@@ -103,18 +99,12 @@ namespace DungeonGeneration
                 {
                     if (area.GetConnectedCorridors().Find(c => c.y == area.y + j && c.x + c.width == area.x) == null)
                     {
-                        GameObject instance = MonoBehaviour.Instantiate(wallPrefab);
-                        instance.transform.SetParent(parent.transform);
-                        instance.transform.Translate((area.x) * gridSpacing, 0, (area.y + j) * gridSpacing);
-                        instance.transform.Rotate(0, 90, 0);
+						SpawnWall(parent, new Vector3((area.x) * gridSpacing, 0, (area.y + j) * gridSpacing), 90);
                     }
 
                     if (area.GetConnectedCorridors().Find(c => c.y == area.y + j && c.x == area.x + area.width) == null)
                     {
-                        GameObject instance = MonoBehaviour.Instantiate(wallPrefab);
-                        instance.transform.SetParent(parent.transform);
-                        instance.transform.Translate((area.x + area.width - 1) * gridSpacing, 0, (area.y + j) * gridSpacing);
-                        instance.transform.Rotate(0, 270, 0);
+						SpawnWall(parent, new Vector3((area.x + area.width - 1) * gridSpacing, 0, (area.y + j) * gridSpacing), 270);
                     }
                 }
             }
@@ -124,28 +114,57 @@ namespace DungeonGeneration
         {
             if (corridor.horiztonal)
             {
-                GameObject instance = MonoBehaviour.Instantiate(doorPrefab);
-                instance.transform.SetParent(parent.transform);
-                instance.transform.Translate((corridor.x) * gridSpacing, 0, (corridor.y) * gridSpacing);
-                instance.transform.Rotate(0, 90, 0);
-
-                instance = MonoBehaviour.Instantiate(doorPrefab);
-                instance.transform.SetParent(parent.transform);
-                instance.transform.Translate((corridor.x + corridor.width - 1) * gridSpacing, 0, (corridor.y) * gridSpacing);
-                instance.transform.Rotate(0, 270, 0);
+				SpawnDoor(parent, new Vector3((corridor.x) * gridSpacing, 0, (corridor.y) * gridSpacing), 90);
+				SpawnDoor(parent, new Vector3((corridor.x + corridor.width - 1) * gridSpacing, 0, (corridor.y) * gridSpacing), 270);
             }
             else // Vertical
             {
-                GameObject instance = MonoBehaviour.Instantiate(doorPrefab);
-                instance.transform.SetParent(parent.transform);
-                instance.transform.Translate((corridor.x) * gridSpacing, 0, (corridor.y) * gridSpacing);
-                instance.transform.Rotate(0, 0, 0);
-
-                instance = MonoBehaviour.Instantiate(doorPrefab);
-                instance.transform.SetParent(parent.transform);
-                instance.transform.Translate((corridor.x) * gridSpacing, 0, (corridor.y + corridor.height - 1) * gridSpacing);
-                instance.transform.Rotate(0, 180, 0);
+				SpawnDoor(parent, new Vector3((corridor.x) * gridSpacing, 0, (corridor.y) * gridSpacing), 0);
+				SpawnDoor(parent, new Vector3((corridor.x) * gridSpacing, 0, (corridor.y + corridor.height - 1) * gridSpacing), 180);
             }
         }
+
+		private void PopulateTorches(ConnectableGridArea area, GameObject parent)
+		{
+			for (int i = 0; i < area.width - 1; i++)
+			{
+				SpawnTorch(parent, new Vector3((area.x + i) * gridSpacing, 0, (area.y) * gridSpacing), 0);
+				SpawnTorch(parent, new Vector3((area.x + i) * gridSpacing, 0, (area.y + area.height) * gridSpacing), 180);
+			}
+
+			for (int j = 1; j < area.height; j++)
+			{
+				SpawnTorch(parent, new Vector3((area.x - 1) * gridSpacing, 0, (area.y + j) * gridSpacing), 90);
+				SpawnTorch(parent, new Vector3((area.x + area.width - 1) * gridSpacing, 0, (area.y + j) * gridSpacing), 270);
+			}
+		}
+
+		private void SpawnFloor(GameObject parent, Vector3 position, int rotation)
+		{
+			SpawnAsset(parent, position, rotation, floorPrefab);
+		}
+
+		private void SpawnWall(GameObject parent, Vector3 position, int rotation)
+		{
+			SpawnAsset(parent, position, rotation, wallPrefab);
+		}
+
+		private void SpawnDoor(GameObject parent, Vector3 position, int rotation)
+		{
+			SpawnAsset(parent, position, rotation, doorPrefab);
+		}
+
+		private void SpawnTorch(GameObject parent, Vector3 position, int rotation)
+		{
+			SpawnAsset(parent, position, rotation, torchPrefab);
+		}
+
+		private void SpawnAsset(GameObject parent, Vector3 position, int rotation, GameObject asset)
+		{
+			GameObject instance = MonoBehaviour.Instantiate (asset);
+			instance.transform.SetParent(parent.transform);
+			instance.transform.Translate(position);
+			instance.transform.Rotate (0, rotation, 0);
+		}
     }
 }
