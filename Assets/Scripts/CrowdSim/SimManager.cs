@@ -20,15 +20,17 @@ namespace CrowdSim
 		List<SimObject> simObjects;
 		GameObject simObjectsParent;
 
-		public SimManager (float cellWidth, int dim, GameObject simObjectsParent)
+		public SimManager (float cellWidth, int dim, GameObject simObjectsParent, DungeonGeneration.Cell[,] dungeon)
 		{
 			this.cellWidth = cellWidth;
 			this.dim = dim;
-			sharedGrid = new SharedGrid(cellWidth,dim);	
+
+			sharedGrid = new SharedGrid (cellWidth, dim, dungeon);	
+			
 			this.simObjectsParent = simObjectsParent;
 			simObjects = new List<SimObject> ();
 
-			groupGrid = new GroupGrid (cellWidth, dim, sharedGrid);
+			groupGrid = new GroupGrid (cellWidth, dim, sharedGrid, dungeon);
 			helper = new Helper<Cell>(groupGrid.grid, cellWidth);
 		}
 

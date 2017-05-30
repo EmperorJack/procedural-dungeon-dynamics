@@ -12,7 +12,7 @@ namespace CrowdSim
 		private SharedGrid sharedGrid;
 		private float max = float.MinValue;
 
-		public GroupGrid (float cellWidth, int dim, SharedGrid sharedGrid) : base (cellWidth, dim)
+		public GroupGrid (float cellWidth, int dim, SharedGrid sharedGrid, DungeonGeneration.Cell[,] dungeon) : base (cellWidth, dim,dungeon)
 		{
 			this.sharedGrid = sharedGrid;
 		}
@@ -24,17 +24,19 @@ namespace CrowdSim
 			int accepted = 0;
 			for (int i = 0; i < dim; i++) {
 				for (int j = 0; j < dim; j++) {
-					if (grid [i, j].isGoal) {
-						grid [i, j].potential = 0;
-						grid [i, j].isAccepted = true;
+					if (grid [i, j] != null) {
+						if (grid [i, j].isGoal) {
+							grid [i, j].potential = 0;
+							grid [i, j].isAccepted = true;
 
-						//Face upwindVert = upwindFace (grid [i, j+1].faces [0], grid [i, j+1].faces [2], grid [i, j+1].faces [0].cell, grid [i, j+1].faces [2].cell);
-						//Debug.Log (upwindVert.cell.isGoal +" "+ upwindVert.cell.potential);
-						addNeighbours (candidates, grid [i, j]);
-						accepted++;
-					} else {
-						grid [i, j].potential = float.MaxValue;
-						grid [i, j].isAccepted = false;
+							//Face upwindVert = upwindFace (grid [i, j+1].faces [0], grid [i, j+1].faces [2], grid [i, j+1].faces [0].cell, grid [i, j+1].faces [2].cell);
+							//Debug.Log (upwindVert.cell.isGoal +" "+ upwindVert.cell.potential);
+							addNeighbours (candidates, grid [i, j]);
+							accepted++;
+						} else {
+							grid [i, j].potential = float.MaxValue;
+							grid [i, j].isAccepted = false;
+						}
 					}
 				}
 			}
@@ -43,7 +45,7 @@ namespace CrowdSim
 				return; // no goals
 			}
 
-			while (accepted < dim * dim) { // total number of cells that are connected
+			while (accepted < realCells) { // total number of cells that are connected
 				Cell minCandidate = null;
 			
 				//minCandidate = candidates [candidates.Keys [0]] [0];

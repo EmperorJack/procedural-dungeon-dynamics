@@ -26,59 +26,89 @@ namespace CrowdSim
 		public float timeWeight = 1;
 		public float discomfortWeight = 1;
 
-		public SharedGrid (float cellWidth, int dim)
-		{
-			grid = new Cell[dim, dim];
-			helper = new Helper<Cell> (grid, cellWidth);
+		private bool customDungeon = false;
 
+		private DungeonGeneration.Cell[,] dungeon;
+
+		public int realCells;
+
+		public SharedGrid (float cellWidth, int dim, DungeonGeneration.Cell[,] dungeon)
+		{
 			this.cellWidth = cellWidth;
 			this.dim = dim;
+
+			if (dungeon == null) {
+				customDungeon = false;
+			} else {
+				customDungeon = true;
+				this.dim = dungeon.GetLength(0);
+			}
+
+			Debug.Log ("DIM: " + this.dim);
+
+			grid = new Cell[this.dim,this.dim];
+			helper = new Helper<Cell> (grid, cellWidth);
+			this.dungeon = dungeon;
 
 			initGrid ();
 		}
 
 		private void initGrid(){
+
 			for (int i = 0; i < dim; i++) {
 				for (int j = 0; j < dim; j++) {
-					grid [i, j] = new Cell (new int[]{i,j});
-					grid [i, j].position = new Vector2 (i * cellWidth, j * cellWidth);
+					if (isFloor (dungeon [i, j]) || customDungeon == false) {
+						grid [i, j] = new Cell (new int[]{ i, j });
+						grid [i, j].position = new Vector2 (i * cellWidth, j * cellWidth);
+						realCells++;
+					}
 				}
 			}
+
+			Debug.Log ("REAL CELLS: " + realCells);
 
 			for (int i = 0; i < dim; i++) {
 				for (int j = 0; j < dim; j++) {
 					Face[] faces = new Face[4];
 
 					faces [1] = new Face ();
-					if (i + 1 < dim) {
+					if (i + 1 < dim && grid[i+1, j] != null) {
 						faces [1].cell = grid [i + 1, j];
 					}
 
 					faces [3] = new Face ();
-					if (i > 0) {
+					if (i > 0 && grid[i-1, j] != null) {
 						faces [3].cell = grid [i - 1, j];
 					}
 
 					faces [0] = new Face ();
-					if (j + 1 < dim) {
+					if (j + 1 < dim && grid[i, j+1] != null) {
 						faces [0].cell = grid [i, j + 1];
 					}
 
 					faces [2] = new Face ();
-					if (j > 0) {
+					if (j > 0 && grid[i, j-1] != null) {
 						faces [2].cell = grid [i, j - 1];
 					}
 
-					grid [i, j].faces = faces;
-					grid [i, j].reset ();
+					if (grid [i, j] != null) {
+						grid [i, j].faces = faces;
+						grid [i, j].reset ();
+					}
 				}
 			}
+		}
+
+		public bool isFloor(DungeonGeneration.Cell cell){
+			return cell is DungeonGeneration.FloorCell;
 		}
 
 		private void resetGrid(){
 			for (int i = 0; i < dim; i++) {
 				for (int j = 0; j < dim; j++) {
-					grid [i, j].reset ();
+					if (grid [i, j] != null) {
+						grid [i, j].reset ();
+					}
 				}
 			}
 		}
@@ -140,17 +170,19 @@ namespace CrowdSim
 		private void assignCosts(){
 			for (int i = 0; i < dim; i++) {
 				for (int j = 0; j < dim; j++) {
-					for (int f = 0; f < grid [i, j].faces.Length; f++) {
-						Cell cell = grid [i, j];
-						Face face = cell.faces [f];
+					if (grid [i, j] != null) {
+						for (int f = 0; f < grid [i, j].faces.Length; f++) {
+							Cell cell = grid [i, j];
+							Face face = cell.faces [f];
 
-						if (face.cell == null) {
-							face.cost = float.MaxValue;
-						} else {
-							if (face.velocity == 0) {
+							if (face.cell == null) {
 								face.cost = float.MaxValue;
 							} else {
-								face.cost = (distanceWeight * face.velocity + timeWeight + discomfortWeight) / face.velocity;
+								if (face.velocity == 0) {
+									face.cost = float.MaxValue;
+								} else {
+									face.cost = (distanceWeight * face.velocity + timeWeight + discomfortWeight) / face.velocity;
+								}
 							}
 						}
 					}
@@ -161,18 +193,21 @@ namespace CrowdSim
 		private void assignSpeedField(){
 			for (int i = 0; i < dim; i++) {
 				for (int j = 0; j < dim; j++) {
-					for (int f = 0; f < grid[i,j].faces.Length; f++) {
-						Face face = grid [i, j].faces [f];
-						if (face.cell == null) {
-							face.velocity = 0;
-						} else {
-							if (grid [i, j].density < minDensity) {
-								face.velocity = topoSpeed (face);
-							} else if (grid [i, j].density > maxDensity) {
-								face.velocity = flowSpeed (face, f);
+
+					if (grid [i, j] != null) {
+						for (int f = 0; f < grid [i, j].faces.Length; f++) {
+							Face face = grid [i, j].faces [f];
+							if (face.cell == null) {
+								face.velocity = 0;
 							} else {
-								face.velocity = topoSpeed (face) + ((face.cell.density - minDensity) / (maxDensity - minDensity)) * 
+								if (grid [i, j].density < minDensity) {
+									face.velocity = topoSpeed (face);
+								} else if (grid [i, j].density > maxDensity) {
+									face.velocity = flowSpeed (face, f);
+								} else {
+									face.velocity = topoSpeed (face) + ((face.cell.density - minDensity) / (maxDensity - minDensity)) *
 									(flowSpeed (face, f) - topoSpeed (face));
+								}
 							}
 						}
 					}

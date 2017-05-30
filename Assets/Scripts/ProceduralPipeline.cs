@@ -37,7 +37,12 @@ public class ProceduralPipeline : MonoBehaviour {
 			simAccess = new SimAccess ();
 		}
 
-		simAccess.init (cellWidth, dim);
+		if (simpleLayout != null) {
+			simAccess.init (cellWidth, dim, simpleLayout);
+		} else {
+			simAccess.init (cellWidth, dim, simpleLayout);
+
+		}
 		simAccess.displaySharedGrid ();
 
 		Collider c = GetComponent<Collider> ();

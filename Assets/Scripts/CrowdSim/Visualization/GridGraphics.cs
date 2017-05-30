@@ -21,11 +21,11 @@ namespace Visualization
 
 		GameObject objectParent;
 
-		public GridGraphics (float cellSize, int dim, Cell[,] dataGrid, GameObject objectParent)
+		public GridGraphics (float cellSize, Cell[,] dataGrid, GameObject objectParent)
 		{
 			//this.width = dim * cellSize;
 			this.cellSize = cellSize;
-			this.dim = dim;
+			this.dim = dataGrid.GetLength(0);
 			this.dataGrid = dataGrid;
 			this.objectParent = objectParent;
 			init ();
@@ -34,7 +34,7 @@ namespace Visualization
 		public void updatePotentialColors(float max){
 			for (int i = 0; i < dim; i++) {
 				for (int j = 0; j < dim; j++) {
-					if (dataGrid [i, j].isGoal == false) {
+					if (dataGrid[i,j] != null && dataGrid [i, j].isGoal == false) {
 						float ratio = dataGrid [i, j].potential / max;
 						Color col = new Color (ratio, ratio, ratio);
 						cells [i, j].setColor (col);
@@ -51,9 +51,11 @@ namespace Visualization
 			helper = new Helper<GridCell> (cells, cellSize);
 			for (int i = 0; i < dim; i++) {
 				for (int j = 0; j < dim; j++) {
-					Vector2 cellPos = dataGrid [i, j].position;
-					cells [i, j] = new GridCell (cellSize, Color.black, cellPos, objectParent);
-					cells [i, j].display ();
+					if (dataGrid [i, j] != null) {
+						Vector2 cellPos = dataGrid [i, j].position;
+						cells [i, j] = new GridCell (cellSize, Color.black, cellPos, objectParent);
+						cells [i, j].display ();
+					}
 				}
 			}
 

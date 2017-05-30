@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Visualization;
+using DungeonGeneration;
 
 namespace CrowdSim
 {
@@ -27,11 +28,32 @@ namespace CrowdSim
 			simObjects.name = "SimObjects";
 			simObjects.transform.parent = crowdSim.transform;
 
-			this.simManager = new SimManager(cellWidth,dim, simObjects);
+			this.simManager = new SimManager(cellWidth,dim, simObjects, null);
 			this.cellWidth = simManager.cellWidth;
 			this.dim = simManager.dim;
 
-			sharedGraphics = new GridGraphics (cellWidth, dim, simManager.getGrid(), sharedGrid);
+			sharedGraphics = new GridGraphics (cellWidth, simManager.getGrid(), sharedGrid);
+			displayGrid (sharedGraphics);
+		}
+
+		public void init(float cellWidth, int dim,DungeonGeneration.Cell[,] dungeon){
+			GameObject crowdSim = new GameObject ();
+			crowdSim.name = "CrowdSim";
+			crowdSim.transform.position = new Vector3 (0, 0, 0);
+
+			GameObject sharedGrid = new GameObject ();
+			sharedGrid.name = "SharedGrid";
+			sharedGrid.transform.parent = crowdSim.transform;
+
+			GameObject simObjects = new GameObject ();
+			simObjects.name = "SimObjects";
+			simObjects.transform.parent = crowdSim.transform;
+
+			this.simManager = new SimManager(cellWidth,dim, simObjects, dungeon);
+			this.cellWidth = simManager.cellWidth;
+			this.dim = simManager.dim;
+
+			sharedGraphics = new GridGraphics (cellWidth, simManager.getGrid(), sharedGrid);
 			displayGrid (sharedGraphics);
 		}
 
