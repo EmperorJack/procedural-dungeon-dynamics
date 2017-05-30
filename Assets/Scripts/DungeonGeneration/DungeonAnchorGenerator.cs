@@ -17,6 +17,7 @@ namespace DungeonGeneration
 
         public void Generate(List<Room> rooms, float gridSpacing)
         {
+            nextAnchorId = 0;
             anchors = new List<Anchor>();
 
             foreach (Room room in rooms)
@@ -25,8 +26,18 @@ namespace DungeonGeneration
                 {
                     float x = (room.x + (room.width / 2.0f) - 0.5f) * gridSpacing;
                     float y = (room.y + (room.height / 2.0f) - 0.5f) * gridSpacing;
-                    anchors.Add(new Anchor(nextAnchorId++, x, y));
+                    anchors.Add(new Anchor(nextAnchorId++, x, y, "Center"));
                 }
+
+                if (room.GetConnectedCorridors().Find(c => (c.x == room.x && c.y + c.height == room.y) ||
+                                                           (c.y == room.y && c.x + c.width == room.x)) == null)
+                    anchors.Add(new Anchor(nextAnchorId++, room.x, room.y, "Corner"));
+
+                if (room.GetConnectedCorridors().Find(c => (c.x == room.x && c.y == room.y + room.height) ||
+                                                           (c.y == room.y && c.x + c.width == room.x)) == null)
+                    anchors.Add(new Anchor(nextAnchorId++, room.x + room.width - 1.0f, room.y, "Corner"));
+                //anchors.Add(new Anchor(nextAnchorId++, room.x, room.y + room.height - 1.0f, "Corner"));
+                //anchors.Add(new Anchor(nextAnchorId++, room.x + room.width - 1.0f, room.y + room.height - 1.0f, "Corner"));
             }
         }
 
@@ -47,16 +58,20 @@ namespace DungeonGeneration
         public float x;
         public float y;
 
-        public Anchor(int id, float x, float y)
+        public string type;
+
+        public Anchor(int id, float x, float y, string type)
         {
             this.id = id;
             this.x = x;
             this.y = y;
+            this.type = type;
         }
 
         public void Display(GameObject parent, GameObject anchorPrefab)
         {
             GameObject instance = MonoBehaviour.Instantiate(anchorPrefab);
+            instance.name = type + this.GetType().Name + id;
             instance.transform.SetParent(parent.transform);
             instance.transform.Translate(x, 0.5f, y);
         }
