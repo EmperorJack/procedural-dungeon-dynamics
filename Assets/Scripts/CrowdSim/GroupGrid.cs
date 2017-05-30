@@ -28,9 +28,6 @@ namespace CrowdSim
 						if (grid [i, j].isGoal) {
 							grid [i, j].potential = 0;
 							grid [i, j].isAccepted = true;
-
-							//Face upwindVert = upwindFace (grid [i, j+1].faces [0], grid [i, j+1].faces [2], grid [i, j+1].faces [0].cell, grid [i, j+1].faces [2].cell);
-							//Debug.Log (upwindVert.cell.isGoal +" "+ upwindVert.cell.potential);
 							addNeighbours (candidates, grid [i, j]);
 							accepted++;
 						} else {
@@ -54,23 +51,23 @@ namespace CrowdSim
 				// THE ELEMENTS ARENT ITERATED IN ORDER IN THE 
 				// BELOW LOOP
 
-				float minKey = float.MaxValue;
+				//TODO: It appears that elements in a list have a potential
+				// different to that of the key of the list, which shouldn't
+				// be possible.
 
-				foreach (float key in candidates.Keys) {
-					foreach(Cell cell in candidates[key]){
-						//TODO: SOME POTENTIALS ARE STILL FLOAT.MAXVALUE
-						cell.potential = key;
-
-						//Debug.Log ("LOOP: " + cell.index [0] + " " + cell.index [1] + " : " + cell.potential +" : "+key);
+				foreach (KeyValuePair<float, List<Cell>> pair in candidates) {
+					string message = "Key: "+pair.Key.ToString()+" VALS: ";
+					foreach (Cell cell in pair.Value) {
+						message = message + " :"+ cell.potential+"["+cell.index[0]+","+cell.index[1]+"] : ";
 					}
-						
-					if (key < minKey) {
-						minCandidate = candidates [key] [0];
-						minKey = key;
-					}
+					Debug.Log (message);
 				}
 
-				//Debug.Log ("-----------------------");
+				if (minCandidate == null) {
+					return;
+				}
+
+				Debug.Log ("-----------------------");
 
 				removeCell (candidates, minCandidate, minCandidate.potential);
 				minCandidate.isAccepted = true;
@@ -98,8 +95,10 @@ namespace CrowdSim
 				Cell neighbour = face.cell;
 				if (neighbour != null && neighbour.isAccepted == false) {
 					float tempPotential = calculatePotential (neighbour);
+					if(neighbour.index[0] == 5 && neighbour.index[1] == 6){
 
-					//Debug.Log ("TEMP: " + tempPotential +" "+neighbour.index[0]+" "+neighbour.index[1]);
+					Debug.Log ("TEMP: " + tempPotential +" "+neighbour.index[0]+" "+neighbour.index[1]);
+					}
 
 					if (tempPotential < neighbour.potential) {
 						//Debug.Log ("TEMP: "+neighbour.index[0]+" "+neighbour.index[1]+" "+tempPotential);
@@ -128,9 +127,26 @@ namespace CrowdSim
 			Face horUp = upwindFace (sharedCell.faces [1], sharedCell.faces [3], cell.faces[1].cell, cell.faces[3].cell);
 			Face vertUp = upwindFace (sharedCell.faces [0], sharedCell.faces [2], cell.faces[0].cell, cell.faces[2].cell);
 
+			if (cell.index [0] == 5 && cell.index [1] == 6) {
+				if (horUp == null) {
+					Debug.Log ("HOR: NULL");
+				} else {
+					Debug.Log ("HOR: NOTNULL");
+				}
+
+				if (vertUp == null) {
+					Debug.Log ("VERT: NULL");
+				} else {
+					Debug.Log ("VERT: NOTNULL");
+				}
+			}
+
 			if (horUp == null && vertUp == null) {
 				return float.MaxValue; 
 			} else if (horUp == null) {
+				if (cell.index [0] == 5 && cell.index [1] == 6) {
+					Debug.Log ("SINGLE DIF: "+singleDif (vertUp));
+				}
 				return singleDif (vertUp);
 			} else if (vertUp == null) {
 				return singleDif (horUp);
@@ -180,7 +196,7 @@ namespace CrowdSim
 
 
 			float a = face1.cost * face1.cost + face2.cost * face2.cost;
-			float b = -2 * (pot1 * face2.cost * face2.cost - pot2 * face1.cost * face1.cost);
+			float b = -2 * (pot1 * face2.cost * face2.cost + pot2 * face1.cost * face1.cost);
 			float c = face1.cost * face1.cost * pot2 * pot2 + face2.cost * face2.cost * pot1 * pot1 -
 			          face1.cost * face1.cost * face2.cost * face2.cost;
 
@@ -197,7 +213,7 @@ namespace CrowdSim
 				return float.MaxValue;
 			}
 				
-			return Mathf.Max ((-b + 2 * Mathf.Sqrt (underRoot)) / 2 * a, (-b - 2 * Mathf.Sqrt (underRoot)) / 2 * a); 
+			return Mathf.Max ((-b + Mathf.Sqrt (underRoot)) / (2 * a), (-b - Mathf.Sqrt (underRoot)) / (2 * a)); 
 		}
 
 		public float getMax(){

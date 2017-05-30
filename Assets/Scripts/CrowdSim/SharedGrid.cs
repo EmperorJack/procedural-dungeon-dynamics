@@ -57,7 +57,7 @@ namespace CrowdSim
 
 			for (int i = 0; i < dim; i++) {
 				for (int j = 0; j < dim; j++) {
-					if (isFloor (dungeon [i, j]) || customDungeon == false) {
+					if (customDungeon == false || isFloor (dungeon [i, j])) {
 						grid [i, j] = new Cell (new int[]{ i, j });
 						grid [i, j].position = new Vector2 (i * cellWidth, j * cellWidth);
 						realCells++;
