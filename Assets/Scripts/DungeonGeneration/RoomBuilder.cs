@@ -7,7 +7,7 @@ namespace DungeonGeneration {
 	public static class RoomBuilder
 	{
 
-	    public static Room CreateRoom(DungeonGenerator generator, Partition partition)
+	    public static Room CreateRoom(DungeonLayoutGenerator generator, Partition partition)
 	    {
 	        int xArea = (partition.width - generator.minimumRoomSize) / 2;
 	        int yArea = (partition.height - generator.minimumRoomSize) / 2;

@@ -40,7 +40,7 @@ namespace DungeonGeneration
             foreach (Room room in rooms)
             {
                 GameObject roomParent = new GameObject();
-                roomParent.name = this.GetType().Name + room.id;
+                roomParent.name = room.GetType().Name + room.id;
                 roomParent.transform.SetParent(parent.transform);
 
                 PopulateFloor(room, roomParent);
@@ -54,7 +54,7 @@ namespace DungeonGeneration
             foreach (Corridor corridor in corridors)
             {
                 GameObject corridorParent = new GameObject();
-                corridorParent.name = this.GetType().Name + corridor.id;
+                corridorParent.name = corridor.GetType().Name + corridor.id;
                 corridorParent.transform.SetParent(parent.transform);
 
                 PopulateFloor(corridor, corridorParent);

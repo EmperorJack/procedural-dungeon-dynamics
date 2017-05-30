@@ -10,7 +10,7 @@ namespace DungeonGeneration
 
         protected List<Corridor> connectedCorridors;
 
-        public ConnectableGridArea(int id, DungeonGenerator generator, int x, int y, int width, int height) : base(id, generator, x, y, width, height)
+        public ConnectableGridArea(int id, DungeonLayoutGenerator generator, int x, int y, int width, int height) : base(id, generator, x, y, width, height)
         {
             connectedCorridors = new List<Corridor>();
         }

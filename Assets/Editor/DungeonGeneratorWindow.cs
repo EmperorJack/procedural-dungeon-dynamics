@@ -50,14 +50,14 @@ public class DungeonGeneratorWindow : EditorWindow {
         if (GUILayout.Button(clearButton)) GetGenerator().Clear();
     }
 
-    private DungeonGenerator GetGenerator()
+    private DungeonLayoutGenerator GetGenerator()
     {
         if (generatorObject != null)
         {
-            DungeonGenerator generator = generatorObject.GetComponent<DungeonGenerator>();
+            DungeonLayoutGenerator generator = generatorObject.GetComponent<DungeonLayoutGenerator>();
             if (generator != null) return generator;
         }
 
-        throw new Exception("Dungeon generator not found!");
+        throw new Exception("Dungeon layout generator not found!");
     }
 }

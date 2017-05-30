@@ -39,7 +39,7 @@ namespace DungeonGeneration {
 	        }
 	    }
 
-	    public static Corridor CreateCorridor(DungeonGenerator generator, Partition partitionA, Partition partitionB, bool horizontalCut)
+	    public static Corridor CreateCorridor(DungeonLayoutGenerator generator, Partition partitionA, Partition partitionB, bool horizontalCut)
 	    {
 	        List<ConnectableGridArea> areasA = new List<ConnectableGridArea>();
 	        partitionA.GetRooms(areasA);
