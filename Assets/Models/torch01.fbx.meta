@@ -1,24 +1,22 @@
 fileFormatVersion: 2
-guid: 91703d420584b6a42af604b94cb769c5
-timeCreated: 1495512704
+guid: 100f41fd56c3a4c75a61ed09d687401b
+timeCreated: 1496114645
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
-    100000: door
-    100002: //RootNode
-    100004: doorway 1
-    400000: door
-    400002: //RootNode
-    400004: doorway 1
-    2300000: door
-    2300002: //RootNode
-    2300004: doorway 1
-    3300000: door
-    3300002: //RootNode
-    3300004: doorway 1
-    4300000: doorway
-    4300002: door
+    100000: pCube1
+    100002: pPyramid1
+    100004: //RootNode
+    400000: pCube1
+    400002: pPyramid1
+    400004: //RootNode
+    2300000: pCube1
+    2300002: pPyramid1
+    3300000: pCube1
+    3300002: pPyramid1
+    4300000: pPyramid1
+    4300002: pCube1
     9500000: //RootNode
   materials:
     importMaterials: 1

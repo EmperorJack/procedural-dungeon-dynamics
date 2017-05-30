@@ -16,7 +16,7 @@ namespace DungeonGeneration {
 	    private Room room;
         private Corridor corridor;
 
-        public Partition(DungeonGenerator generator, int x, int y, int width, int height, int depth) : base(generator.NextPartitionId(), generator, x, y, width, height)
+        public Partition(DungeonLayoutGenerator generator, int x, int y, int width, int height, int depth) : base(generator.NextPartitionId(), generator, x, y, width, height)
 	    {
             this.depth = depth;
         }
