@@ -29,15 +29,21 @@ namespace DungeonGeneration
                     anchors.Add(new Anchor(nextAnchorId++, x, y, "Center"));
                 }
 
-                if (room.GetConnectedCorridors().Find(c => (c.x == room.x && c.y + c.height == room.y) ||
-                                                           (c.y == room.y && c.x + c.width == room.x)) == null)
+                // Bottom left corner
+                if (!room.GetDoorPositions().Exists(v => v.x == room.x && v.y == room.y))
                     anchors.Add(new Anchor(nextAnchorId++, room.x, room.y, "Corner"));
 
-                if (room.GetConnectedCorridors().Find(c => (c.x == room.x && c.y == room.y + room.height) ||
-                                                           (c.y == room.y && c.x + c.width == room.x)) == null)
+                // Bottom right corner
+                if (!room.GetDoorPositions().Exists(v => v.x == room.x + room.width - 1 && v.y == room.y))
                     anchors.Add(new Anchor(nextAnchorId++, room.x + room.width - 1.0f, room.y, "Corner"));
-                //anchors.Add(new Anchor(nextAnchorId++, room.x, room.y + room.height - 1.0f, "Corner"));
-                //anchors.Add(new Anchor(nextAnchorId++, room.x + room.width - 1.0f, room.y + room.height - 1.0f, "Corner"));
+
+                // Top left corner
+                if (!room.GetDoorPositions().Exists(v => v.x == room.x && v.y == room.y + room.height - 1))
+                    anchors.Add(new Anchor(nextAnchorId++, room.x, room.y + room.height - 1.0f, "Corner"));
+
+                // Top right corner
+                if (!room.GetDoorPositions().Exists(v => v.x == room.x + room.width - 1 && v.y == room.y + room.height - 1))
+                    anchors.Add(new Anchor(nextAnchorId++, room.x + room.width - 1.0f, room.y + room.height - 1.0f, "Corner"));
             }
         }
 
