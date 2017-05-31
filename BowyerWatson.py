@@ -13,12 +13,22 @@ class Face:
     def __init__(self, vertices, tessellation):
         self.center = findCenter(vertices)
         self.vertices = vertices
+        tessellation.addFaceEdges(self)
         for v in self.vertices:
             tessellation.addFaceToVertex(v,self)
+            if tessellation.boundingTetra:
+                if v in tessellation.boundingTetra.vertices and self not in tessellation.outerFaces:
+                    tessellation.outerFaces.append(self)
+            else:
+                if self not in tessellation.outerFaces:
+                    tessellation.outerFaces.append(self)
+
 
     def printCoords(self):
         for v in self.vertices:
             print v
+
+
 
 
 
@@ -44,6 +54,8 @@ def makeFace(vertices, tessellation):
         return Face([vertices[0], vertices[1], vertices[2]],tessellation)
 
 
+
+
 # ------ TETRA -----------------------------------------
 class Tetra:
     def __init__(self, vertices, tessellation):
@@ -57,6 +69,8 @@ class Tetra:
             newFace = makeFace([f[0], f[1], f[2]], tessellation)
             self.faces.append(newFace)
             tessellation.addTetraToFace(newFace,self)
+            if newFace in tessellation.outerFaces and self not in tessellation.outerTets:
+                tessellation.outerTets.append(self)
 
     def printCoords(self):
         for v in self.vertices:
@@ -89,10 +103,13 @@ class Tessellation:
         self.faceToTets = {}
         self.vertexToFaces = {}
         self.vertices = []
+        self.edges = {}
         self.tetras = []
         self.object = object
 
-        #self.boundingTetra = None
+        self.boundingTetra = None
+        self.outerFaces = []
+        self.outerTets = []
 
     def makeGeo(self):
         for t in self.tetras:
@@ -107,6 +124,40 @@ class Tessellation:
             self.vertexToFaces[v] = []
         else:
             print "ERROR WHILE ADDING: Vertex already in tessellation"
+
+    def addEdge(self, v1, v2):
+        if v1 in self.edges:
+            if v2 not in self.edges[v1]:
+                self.edges[v1].append(v2)
+        else:
+            self.edges[v1] = [v2]
+        if v2 in self.edges:
+            if v1 not in self.edges[v2]:
+                self.edges[v2].append(v1)
+        else:
+            self.edges[v2] = [v1]
+
+    def addFaceEdges(self,f):
+        self.addEdge(f.vertices[0],f.vertices[1])
+        self.addEdge(f.vertices[1],f.vertices[2])
+        self.addEdge(f.vertices[2],f.vertices[0])
+
+    def removeEdge(self,v1,v2):
+        if v1 in self.edges:
+            if v2 in self.edges[v1]:
+                self.edges[v1].remove(v2)
+        if v2 in self.edges:
+            if v1 in self.edges[v2]:
+                self.edges[v2].remove(v1)
+
+    def removeEdgesByVertex(self,v):
+        if v in self.edges:
+            for n in self.edges[v]:
+                if n in self.edges and v in self.edges[n]:
+                    self.edges[n].remove(v)
+            del self.edges[v]
+
+
 
     def addFaceToVertex(self,v,f):
         if v in self.vertexToFaces:
@@ -392,6 +443,8 @@ class Tessellation:
                 if f in internalHoleFaces:
                     for v in f.vertices:
                         self.removeFaceFromVertex(v, f)
+                if f in self.outerFaces:
+                    self.outerFaces.remove(f)
             if t in self.tetras:
                 self.tetras.remove(t)
             else:
@@ -399,6 +452,8 @@ class Tessellation:
                 t.printCoords()
                 t.makeGeo()
                 quit()
+            if t in self.outerTets:
+                self.outerTets.remove(t)
 
         return borderFaces
 
@@ -422,6 +477,22 @@ class Tessellation:
             print " neighbours"
             #t.printFaces()
             self.tetras.append(t)
+
+    def finish(self):
+        for v in self.boundingTetra.vertices:
+            # remove edges from tessellation
+            self.removeEdgesByVertex(v)
+        for t  in self.outerTets:
+            for f in t.faces:
+                self.removeTetraFromFace(f,t)
+                if f in self.outerFaces:
+                    for v in f.vertices:
+                        self.removeFaceFromVertex(v, f)
+            # remove tet from tessellation
+            if t in self.tetras:
+                self.tetras.remove(t)
+        self.outerFaces = []
+        self.outerTets = []
 
     def shatter(self):
         if self.object:
@@ -553,9 +624,10 @@ for obj in object:
     s = Sampler.VertexSampler(obj)
     points = s.randomSamples(12)
     dt.tessellate(points)
-    #dt.makeGeo()
-    dt.shatter()
-    dt.printInfo()
+    dt.finish()
+    dt.makeGeo()
+    #dt.shatter()
+    #dt.printInfo()
 
 
 #points = [[0,0,0],[-1,0,-1]]
