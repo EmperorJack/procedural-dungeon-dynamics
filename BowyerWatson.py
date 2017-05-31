@@ -3,6 +3,8 @@ import itertools as itools
 import numpy as np
 import sys
 import maya.mel as mel
+import Sampler
+import vShatter
 
 
 
@@ -83,11 +85,12 @@ class Tetra:
 # ------ TESSELLATION ------------------------------------
 class Tessellation:
 
-    def __init__(self):
+    def __init__(self,object):
         self.faceToTets = {}
         self.vertexToFaces = {}
         self.vertices = []
         self.tetras = []
+        self.object = object
 
         #self.boundingTetra = None
 
@@ -95,6 +98,8 @@ class Tessellation:
         for t in self.tetras:
             t.makeGeo()
 
+    def getCenters(self):
+        return [t.center for t in self.tetras]
 
     def addVertex(self,v):
         self.vertices.append(v)
@@ -247,17 +252,20 @@ class Tessellation:
 
 
 
-    def tessellate(self,object,points):
-        for p in points:
-            v = (p[0], p[1], p[2])
-            self.addVertex(v)
-        bBox = cmds.exactWorldBoundingBox(object)
-        center = cmds.objectCenter(object)
-        self.boundingTetra = self.makeBigTriangle(center, bBox)
-        self.addTetra(self.boundingTetra)
+    def tessellate(self,points):
+        if self.object:
+            for p in points:
+                v = (p[0], p[1], p[2])
+                self.addVertex(v)
+            bBox = cmds.exactWorldBoundingBox(self.object)
+            center = cmds.objectCenter(self.object)
+            self.boundingTetra = self.makeBigTriangle(center, bBox)
+            self.addTetra(self.boundingTetra)
 
-        for v in self.vertices:
-            self.insertPoint(v)
+            for v in self.vertices:
+                self.insertPoint(v)
+        else:
+            print "Error: No object assigned to tessellation"
 
     def insertPoint(self,p):
         print "\nInserting point at ",
@@ -415,6 +423,36 @@ class Tessellation:
             #t.printFaces()
             self.tetras.append(t)
 
+    def shatter(self):
+        if self.object:
+            cmds.setAttr(object[0] + '.visibility', 0)
+            brokenGeoName = object[0] + "_broken"
+            brokenGroup = cmds.group(em=True, name=brokenGeoName)
+            for t in self.tetras:
+                objectCopy = cmds.duplicate(self.object)
+                for n in self.neighboursOfTet(t):
+                    aim = [(vec1 - vec2) for (vec1, vec2) in zip(t.center, n.center)]
+
+                    # Perpendicular bisector of both points
+                    centerPoint = [(vec1 + vec2) / 2 for (vec1, vec2) in zip(t.center, n.center)]
+
+                    # Angle of cutting plane
+                    planeAngle = cmds.angleBetween(euler=True, v1=[0, 0, 1], v2=aim)
+
+                    # Apply cutting plane and close hole made in geometry
+                    cmds.polyCut(objectCopy[0], df=True, cutPlaneCenter=centerPoint, cutPlaneRotate=planeAngle)
+                    cmds.polyCloseBorder(objectCopy[0])
+                    cmds.polyTriangulate(objectCopy[0])
+                    cmds.polyQuad(objectCopy[0])
+                cmds.xform(objectCopy, cp=True)
+                print str(objectCopy)
+            cmds.xform(brokenGroup, cp=True)
+        else:
+            print "Error: Tessellation has no object assigned"
+
+
+
+
 # Find the centroid point from a set of vertices
 def findCenter(vertices):
     vertCount = len(vertices)
@@ -507,6 +545,19 @@ def getVertices(object):
     vertList = cmds.ls(sl=1, fl=1)
     print vertList
 
+
+
+object = cmds.ls(sl=True)
+for obj in object:
+    dt = Tessellation(obj)
+    s = Sampler.VertexSampler(obj)
+    points = s.randomSamples(12)
+    dt.tessellate(points)
+    #dt.makeGeo()
+    dt.shatter()
+    dt.printInfo()
+
+
 #points = [[0,0,0],[-1,0,-1]]
 #points = [[0,0,0]]
 #points = [[0,0,0],[2,2,2]]
@@ -514,27 +565,44 @@ def getVertices(object):
 #points = []
 
 
-def vertexSampler(object):
+"""
+def vertexSampler(object, samplePercent):
     cmds.select(object + ".vtx[*]", r=True)
     vertPosTemp = cmds.xform(object + '.vtx[*]', q=True, ws=True, t=True)
     vertices = zip(*[iter(vertPosTemp)] * 3)
-    return vertices
+    print object,
+    print " has ",
+    print len(vertices),
+    print " vertices."
+    if samplePercent < 100 and samplePercent > 0:
+        print "Sampling ",
+        print samplePercent,
+        print " percent (",
+        h = len(vertices) * (samplePercent / 100.0)
+        print h,
+        print " rounded to",
+        numberOfSamples = (int)(round(h))
+        print numberOfSamples,
+        print " vertices)"
+        return random.sample(set(vertices),numberOfSamples)
+    else:
+        print "Sampling all vertices"
+        return vertices
 
 
 object = cmds.ls(sl=True)
 for obj in object:
     getVertices(obj)
     dt = Tessellation()
-    points = vertexSampler(obj)
+    points = vertexSampler(obj,50)
+    #print points
     #points = [[0,0,0]]
     #points = [[0, 0, 0],[-5.0,-5.0,-5.0]]
     #points = [[-5.0, -5.0, 5.0], [5.0, -5.0, 5.0]]
     #points = [[0,0,0],[1,0,0],[0,1,0],[0,0,1]]
-    dt.tessellate(obj,points)
 
-    #dt.tessellate(obj,[[0,0,0],[1,0,0],[0,1,0],[0,0,1]])
-    #dt.tessellate(obj,[[-1,0,-1]])
-    dt.makeGeo()
-    dt.printInfo()
-
+    #dt.tessellate(obj,points)
+    #dt.makeGeo()
+    #dt.printInfo()
+"""
 
