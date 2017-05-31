@@ -15,7 +15,7 @@ namespace DungeonGeneration {
         public GameObject simpleLayoutPrefab;
 
 	    // Internal fields
-	    private float gridSpacing;
+	    private float gridSpacing = 1;
 	    private int cellSize = 1;
 
 	    // Representation fields
@@ -31,16 +31,9 @@ namespace DungeonGeneration {
 
 	    public void Generate()
 	    {
-	        Clear();
+            Clear();
 
-	        gridSpacing = 1;
-
-	        PerformBSP();
-	    }
-
-	    private void PerformBSP()
-	    {
-	        nextPartitionId = 0;
+            nextPartitionId = 0;
 	        nextRoomId = 0;
 			nextCorridorId = 0;
 

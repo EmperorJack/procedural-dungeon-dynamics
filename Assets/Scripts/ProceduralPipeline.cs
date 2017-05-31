@@ -4,16 +4,21 @@ using UnityEngine;
 
 public class ProceduralPipeline : MonoBehaviour {
 
+    // Dungeon components
     public DungeonGeneration.DungeonLayoutGenerator dungeonLayoutGenerator;
     public DungeonGeneration.DungeonAssetPopulator dungeonAssetPopulator;
     public DungeonGeneration.DungeonAnchorGenerator dungeonAnchorGenerator;
+    public DungeonGeneration.DungeonObjectPlacer dungeonObjectPlacer;
 
-    private GameObject simpleLayoutParent;
+    // Component reuslts
     private DungeonGeneration.Cell[,] simpleLayout;
+    private List<DungeonGeneration.Anchor> anchors;
 
+    // Parent transform objects
+    private GameObject simpleLayoutParent;
     private GameObject complexLayoutParent;
-
     private GameObject anchorsParent;
+    private GameObject objectsParent;
 
     public void Perform()
     {
@@ -34,18 +39,24 @@ public class ProceduralPipeline : MonoBehaviour {
             dungeonLayoutGenerator.GetGridSpacing()
         );
 
+        anchors = dungeonAnchorGenerator.GetAnchors();
+
+        dungeonObjectPlacer.Setup(anchors);
+
         DisplayComplexLayout();
 
-        //DisplayAnchors();
+        DisplayObjects();
     }
 
     public void Reset()
     {
-        dungeonLayoutGenerator.Clear();
+        simpleLayout = null;
+        anchors = null;
+
         DestroyImmediate(simpleLayoutParent);
         DestroyImmediate(complexLayoutParent);
         DestroyImmediate(anchorsParent);
-        simpleLayout = null;
+        DestroyImmediate(objectsParent);
     }
 
     public void DisplaySimpleLayout()
@@ -98,5 +109,17 @@ public class ProceduralPipeline : MonoBehaviour {
         anchorsParent.name = "AnchorsDisplay";
 
         dungeonAnchorGenerator.Display(anchorsParent);
+    }
+
+    public void DisplayObjects()
+    {
+        if (anchors == null) return;
+
+        DestroyImmediate(objectsParent);
+
+        objectsParent = new GameObject();
+        objectsParent.name = "DungeonObjects";
+
+        dungeonObjectPlacer.Populate(objectsParent);
     }
 }

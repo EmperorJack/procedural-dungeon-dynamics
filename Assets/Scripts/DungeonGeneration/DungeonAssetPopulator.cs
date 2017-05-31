@@ -14,6 +14,7 @@ namespace DungeonGeneration
         public GameObject wallPrefab;
         public GameObject doorPrefab;
 		public GameObject torchPrefab;
+        [Range(1, 10)] public int torchSpacing;
 
         // Dungeon fields
         private List<Room> rooms;
@@ -29,7 +30,7 @@ namespace DungeonGeneration
 
         public void Populate(GameObject parent)
         {
-            if (rooms == null || corridors == null) throw new Exception("Dungeon populator not setup!");
+            if (rooms == null || corridors == null) throw new Exception("Dungeon asset populator not setup!");
 
             PopulateRooms(parent);
             PopulateCorridors(parent);
@@ -66,6 +67,8 @@ namespace DungeonGeneration
 
         private void PopulateFloor(ConnectableGridArea area, GameObject parent)
         {
+            if (floorPrefab == null) return;
+
             for (int i = 0; i < area.width; i++)
             {
                 for (int j = 0; j < area.height; j++)
@@ -77,15 +80,19 @@ namespace DungeonGeneration
 
         private void PopulateWalls(ConnectableGridArea area, GameObject parent)
         {
+            if (wallPrefab == null) return;
+
             if (area.GetType() != typeof(Corridor) || ((Corridor)area).horiztonal)
             {
                 for (int i = 0; i < area.width; i++)
                 {
+                    // Bottom
                     if (area.GetConnectedCorridors().Find(c => c.x == area.x + i && c.y + c.height == area.y) == null)
                     {
 						SpawnWall(parent, new Vector3((area.x + i) * gridSpacing, 0, (area.y) * gridSpacing), 0);
                     }
-						
+
+                    // Top
                     if (area.GetConnectedCorridors().Find(c => c.x == area.x + i && c.y == area.y + area.height) == null)
                     {
 						SpawnWall(parent, new Vector3((area.x + i) * gridSpacing, 0, (area.y + area.height - 1) * gridSpacing), 180);
@@ -97,11 +104,13 @@ namespace DungeonGeneration
             {
                 for (int j = 0; j < area.height; j++)
                 {
+                    // Left
                     if (area.GetConnectedCorridors().Find(c => c.y == area.y + j && c.x + c.width == area.x) == null)
                     {
 						SpawnWall(parent, new Vector3((area.x) * gridSpacing, 0, (area.y + j) * gridSpacing), 90);
                     }
 
+                    // Right
                     if (area.GetConnectedCorridors().Find(c => c.y == area.y + j && c.x == area.x + area.width) == null)
                     {
 						SpawnWall(parent, new Vector3((area.x + area.width - 1) * gridSpacing, 0, (area.y + j) * gridSpacing), 270);
@@ -112,6 +121,8 @@ namespace DungeonGeneration
 
         private void PopulateDoors(Corridor corridor, GameObject parent)
         {
+            if (doorPrefab == null) return;
+
             if (corridor.horiztonal)
             {
 				SpawnDoor(parent, new Vector3((corridor.x) * gridSpacing, 0, (corridor.y) * gridSpacing), 90);
@@ -126,18 +137,32 @@ namespace DungeonGeneration
 
 		private void PopulateTorches(ConnectableGridArea area, GameObject parent)
 		{
-			for (int i = 0; i < area.width - 1; i++)
-			{
-				SpawnTorch(parent, new Vector3((area.x + i) * gridSpacing, 0, (area.y) * gridSpacing), 0);
-				SpawnTorch(parent, new Vector3((area.x + i) * gridSpacing, 0, (area.y + area.height) * gridSpacing), 180);
-			}
+            if (torchPrefab == null) return;
 
-			for (int j = 1; j < area.height; j++)
+            // Bottom
+            for (int i = area.width - 2; i >= 0; i -= torchSpacing)
+            {
+                SpawnTorch(parent, new Vector3((area.x + i) * gridSpacing, 0, (area.y) * gridSpacing), 0);
+            }
+
+            // Top
+            for (int i = 0; i < area.width - 1; i += torchSpacing)
 			{
-				SpawnTorch(parent, new Vector3((area.x - 1) * gridSpacing, 0, (area.y + j) * gridSpacing), 90);
-				SpawnTorch(parent, new Vector3((area.x + area.width - 1) * gridSpacing, 0, (area.y + j) * gridSpacing), 270);
-			}
-		}
+                SpawnTorch(parent, new Vector3((area.x + i) * gridSpacing, 0, (area.y + area.height) * gridSpacing), 180);
+            }
+
+            // Left
+            for (int j = area.height - 1; j >= 1; j -= torchSpacing)
+            {
+                SpawnTorch(parent, new Vector3((area.x - 1) * gridSpacing, 0, (area.y + j) * gridSpacing), 90);
+            }
+
+            // Right
+            for (int j = 1; j < area.height; j += torchSpacing)
+            {
+                SpawnTorch(parent, new Vector3((area.x + area.width - 1) * gridSpacing, 0, (area.y + j) * gridSpacing), 270);
+            }
+        }
 
 		private void SpawnFloor(GameObject parent, Vector3 position, int rotation)
 		{

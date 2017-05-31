@@ -12,19 +12,38 @@ namespace DungeonGeneration {
 	        int xArea = (partition.width - generator.minimumRoomSize) / 2;
 	        int yArea = (partition.height - generator.minimumRoomSize) / 2;
 
-	        int x1 = partition.x + Random.Range(generator.roomBuffer, xArea);
-	        int x2 = partition.x + Random.Range(xArea + generator.minimumRoomSize, partition.width - generator.roomBuffer);
+            int x;
+            int y;
+            int width;
+            int height;
 
-	        int x = x1;
-	        int width = x2 - x1;
+            float widthHeightRatio;
+            int attemptsRemaining = 10;
 
-	        int y1 = partition.y + Random.Range(generator.roomBuffer, yArea);
-	        int y2 = partition.y + Random.Range(yArea + generator.minimumRoomSize, partition.height - generator.roomBuffer);
+            // Attempt to fit the room bounds within the width height ratio constraints
+            do
+            {
+                int x1 = partition.x + Random.Range(generator.roomBuffer, xArea);
+                int x2 = partition.x + Random.Range(xArea + generator.minimumRoomSize, partition.width - generator.roomBuffer);
 
-	        int y = y1;
-	        int height = y2 - y1;
+                x = x1;
+                width = x2 - x1;
 
-	        int id = generator.NextRoomId();
+                int y1 = partition.y + Random.Range(generator.roomBuffer, yArea);
+                int y2 = partition.y + Random.Range(yArea + generator.minimumRoomSize, partition.height - generator.roomBuffer);
+
+                y = y1;
+                height = y2 - y1;
+
+                widthHeightRatio = width / (float) height;
+
+                attemptsRemaining--;
+            }
+            while ((widthHeightRatio > generator.maxRoomWidthHeightRatio ||
+                   widthHeightRatio < generator.minRoomWidthHeightRatio) &&
+                   attemptsRemaining > 0);
+
+            int id = generator.NextRoomId();
 
 	        return new Room(id, generator, x, y, width, height);
 	    }
