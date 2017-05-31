@@ -33,22 +33,22 @@ class Face:
 
 
 def makeFace(vertices, tessellation):
-    print "Making face"
+    #print "Making face"
     a = tessellation.vertexToFaces.get(vertices[0], None)
     b = tessellation.vertexToFaces.get(vertices[1], None)
     c = tessellation.vertexToFaces.get(vertices[2], None)
     if a and b and c:
         faceList = [x for x in [a, b, c] if x]
         if len(faceList) < 3:
-            print "Making new face"
+            #print "Making new face"
             return Face([vertices[0], vertices[1], vertices[2]],tessellation)
         else:
             sharedList = list(set(faceList[0]) & set(faceList[1]) & set(faceList[2]))
             if len(sharedList) == 0:
-                print "Making new face"
+                #print "Making new face"
                 return Face([vertices[0], vertices[1], vertices[2]],tessellation)
             else:
-                print "Existing face found"
+                #print "Existing face found"
                 return sharedList[0]
     else:
         return Face([vertices[0], vertices[1], vertices[2]],tessellation)
@@ -156,8 +156,6 @@ class Tessellation:
                 if n in self.edges and v in self.edges[n]:
                     self.edges[n].remove(v)
             del self.edges[v]
-
-
 
     def addFaceToVertex(self,v,f):
         if v in self.vertexToFaces:
@@ -319,8 +317,8 @@ class Tessellation:
             print "Error: No object assigned to tessellation"
 
     def insertPoint(self,p):
-        print "\nInserting point at ",
-        print p
+        #print "\nInserting point at ",
+        #print p
 
         #print "Debugging: Not checking circumsphere"
         #holeTetras = []
@@ -329,42 +327,42 @@ class Tessellation:
         # find all tetras who's circumspheres contain s
         holeTetras = self.findConflicting(p)
 
-        print len(holeTetras),
-        print " conflicting tetras found."
-        print "--------------------------"
-        for c in holeTetras:
-            c.printCoords()
-        print "--------------------------"
+        #print len(holeTetras),
+        #print " conflicting tetras found."
+        #print "--------------------------"
+        #for c in holeTetras:
+        #    c.printCoords()
+        #print "--------------------------"
 
         # remove containing tetras from T
         holeFaces = self.makeHole(holeTetras)
 
-        print len(holeFaces),
-        print " border faces found."
-        print "Border face neighbours: ",
-        for hf in holeFaces:
-            print len(self.faceToTets[hf]),
-        print "\n"
+        #print len(holeFaces),
+        #print " border faces found."
+        #print "Border face neighbours: ",
+        #for hf in holeFaces:
+        #    print len(self.faceToTets[hf]),
+        #print "\n"
 
         # create new tetras by joining hole faces with s
         self.fillHole(p,holeFaces)
 
-        print "Tetras after point insertion: ",
-        print len(self.tetras)
-        "--------------------------"
-        for t in self.tetras:
-            t.printCoords()
-        "--------------------------"
+        #print "Tetras after point insertion: ",
+        #print len(self.tetras)
+        #"--------------------------"
+        #for t in self.tetras:
+        #    t.printCoords()
+        #"--------------------------"
 
     def findConflicting(self,p):
         containingTet = self.walk(p)
-        print "Containing tetra: "
-        print containingTet.printCoords()
-        print "Tetra has ",
-        print len(containingTet.vertices),
-        print " vertices"
-        for v in containingTet.vertices:
-            print v
+        #print "Containing tetra: "
+        #print containingTet.printCoords()
+        #print "Tetra has ",
+        #print len(containingTet.vertices),
+        #print " vertices"
+        #for v in containingTet.vertices:
+        #    print v
 
         conflictingTets = []
         visited = []
@@ -382,12 +380,12 @@ class Tessellation:
         verts = t.vertices
         if inSphere(verts[0],verts[1],verts[2],verts[3],p) >= 0:
             conflictingTets.append(t)
-            print "Conflicting tetra found:"
-            t.printCoords()
+            #print "Conflicting tetra found:"
+            #t.printCoords()
             neighbours = self.neighboursOfTet(t)
-            print "Tetra has ",
-            print len(neighbours),
-            print " neighbours"
+            #print "Tetra has ",
+            #print len(neighbours),
+            #print " neighbours"
             for n in neighbours:
                 if n not in visited:
                     conflictingTets = self.findCircumsphereTets(p, n, conflictingTets, visited)
@@ -458,23 +456,23 @@ class Tessellation:
         return borderFaces
 
     def fillHole(self,p,holeFaces):
-        "--------------------------"
-        print "Filling hole"
+        #"--------------------------"
+        #print "Filling hole"
 
         for f in holeFaces:
-            "--------------------------"
-            print "face: "
-            f.printCoords()
-            print "face has ",
-            print len(self.faceToTets[f]),
-            print "neighbours"
+            #"--------------------------"
+            #print "face: "
+            #f.printCoords()
+            #print "face has ",
+            #print len(self.faceToTets[f]),
+            #print "neighbours"
             t = Tetra([f.vertices[0],f.vertices[1],f.vertices[2],p], self)
-            print "Adding tetra "
-            t.printCoords()
+            #print "Adding tetra "
+            #t.printCoords()
             neighbours = self.neighboursOfTet(t)
-            print "Tetra has ",
-            print len(neighbours),
-            print " neighbours"
+            #print "Tetra has ",
+            #print len(neighbours),
+            #print " neighbours"
             #t.printFaces()
             self.tetras.append(t)
 
@@ -499,13 +497,13 @@ class Tessellation:
             cmds.setAttr(object[0] + '.visibility', 0)
             brokenGeoName = object[0] + "_broken"
             brokenGroup = cmds.group(em=True, name=brokenGeoName)
-            for t in self.tetras:
+            for v in self.vertices:
                 objectCopy = cmds.duplicate(self.object)
-                for n in self.neighboursOfTet(t):
-                    aim = [(vec1 - vec2) for (vec1, vec2) in zip(t.center, n.center)]
+                for n in self.edges[v]:
+                    aim = [(vec1 - vec2) for (vec1, vec2) in zip(v, n)]
 
                     # Perpendicular bisector of both points
-                    centerPoint = [(vec1 + vec2) / 2 for (vec1, vec2) in zip(t.center, n.center)]
+                    centerPoint = [(vec1 + vec2) / 2 for (vec1, vec2) in zip(v, n)]
 
                     # Angle of cutting plane
                     planeAngle = cmds.angleBetween(euler=True, v1=[0, 0, 1], v2=aim)
@@ -625,8 +623,8 @@ for obj in object:
     points = s.randomSamples(12)
     dt.tessellate(points)
     dt.finish()
-    dt.makeGeo()
-    #dt.shatter()
+    #dt.makeGeo()
+    dt.shatter()
     #dt.printInfo()
 
 
