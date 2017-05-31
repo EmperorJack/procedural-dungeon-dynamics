@@ -30,7 +30,7 @@ namespace DungeonGeneration
 
         public void Populate(GameObject parent)
         {
-            if (rooms == null || corridors == null) throw new Exception("Dungeon populator not setup!");
+            if (rooms == null || corridors == null) throw new Exception("Dungeon asset populator not setup!");
 
             PopulateRooms(parent);
             PopulateCorridors(parent);
