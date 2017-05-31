@@ -14,8 +14,10 @@ namespace Primitives
 
 		//Used only for group cells
 		public float potential;
+		public float tempPotential;
 		public bool isGoal;
 		public bool isAccepted;
+		public Cell sharedCell; // same sharedCell across all groups
 
 		public int[] index;
 
@@ -30,6 +32,7 @@ namespace Primitives
 			avgVelocity = new Vector2 (0, 0);
 			density = 0;
 			potential = float.MaxValue;
+			tempPotential = float.MaxValue;
 			isAccepted = false;
 		}
 

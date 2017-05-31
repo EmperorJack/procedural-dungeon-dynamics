@@ -11,7 +11,7 @@ namespace CrowdSim
 	public class SimManager
 	{
 		SharedGrid sharedGrid;
-		GroupGrid groupGrid;
+		public GroupGrid groupGrid;
 
 		public float cellWidth;
 		public int dim;
@@ -40,7 +40,6 @@ namespace CrowdSim
 		}
 
 		public int[] selectCell(Vector2 pos){
-
 			Cell cell = helper.getCell (pos);
 			int[] index = helper.getCellIndex(pos);
 
@@ -51,6 +50,13 @@ namespace CrowdSim
 					cell.isGoal = true;
 				}
 			} 
+			return index;
+		}
+
+		public int[] getCell(Vector2 pos){
+			Cell cell = helper.getCell (pos);
+			int[] index = helper.getCellIndex(pos);
+
 			return index;
 		}
 

@@ -20,6 +20,7 @@ namespace Visualization
 			this.position = position;
 			this.parent = parent;
 			initQuad ();
+			hide ();
 		}
 
 		public GridCell(float size, GameObject parent){
@@ -28,6 +29,7 @@ namespace Visualization
 			this.position = new Vector2 (position.x, position.y);
 			this.parent = parent;
 			initQuad ();
+			hide ();
 		}
 
 		private void initQuad(){
@@ -39,7 +41,7 @@ namespace Visualization
 			t.parent = parent.transform;
 			t.position = new Vector3(position.x,0,position.y);
 			t.localScale = new Vector3 (size, 0.01f, size);
-				setColor (color);
+			setColor (color);
 
 
 		}
@@ -62,6 +64,7 @@ namespace Visualization
 
 		public void hide(){
 			quad.SetActive (false);
+		
 		}
 
 	}

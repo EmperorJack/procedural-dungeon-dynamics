@@ -11,18 +11,21 @@ namespace CrowdSim
 	{
 		private SimManager simManager; // class which runs the simulation
 		GridGraphics sharedGraphics;
+		GameObject gridParent;
 
 		float cellWidth;
 		int dim;
+
+		private bool visilbe = false;
 			
 		public void init(float cellWidth, int dim){
 			GameObject crowdSim = new GameObject ();
 			crowdSim.name = "CrowdSim";
 			crowdSim.transform.position = new Vector3 (0, 0, 0);
 
-			GameObject sharedGrid = new GameObject ();
-			sharedGrid.name = "SharedGrid";
-			sharedGrid.transform.parent = crowdSim.transform;
+			gridParent = new GameObject ();
+			gridParent.name = "gridParent";
+			gridParent.transform.parent = crowdSim.transform;
 
 			GameObject simObjects = new GameObject ();
 			simObjects.name = "SimObjects";
@@ -32,8 +35,6 @@ namespace CrowdSim
 			this.cellWidth = simManager.cellWidth;
 			this.dim = simManager.dim;
 
-			sharedGraphics = new GridGraphics (cellWidth, simManager.getGrid(), sharedGrid);
-			displayGrid (sharedGraphics);
 		}
 
 		public void init(float cellWidth, int dim,DungeonGeneration.Cell[,] dungeon){
@@ -41,9 +42,9 @@ namespace CrowdSim
 			crowdSim.name = "CrowdSim";
 			crowdSim.transform.position = new Vector3 (0, 0, 0);
 
-			GameObject sharedGrid = new GameObject ();
-			sharedGrid.name = "SharedGrid";
-			sharedGrid.transform.parent = crowdSim.transform;
+			gridParent = new GameObject ();
+			gridParent.name = "gridParent";
+			gridParent.transform.parent = crowdSim.transform;
 
 			GameObject simObjects = new GameObject ();
 			simObjects.name = "SimObjects";
@@ -53,31 +54,48 @@ namespace CrowdSim
 			this.cellWidth = simManager.cellWidth;
 			this.dim = simManager.dim;
 
-			sharedGraphics = new GridGraphics (cellWidth, simManager.getGrid(), sharedGrid);
-			displayGrid (sharedGraphics);
 		}
 
 		public void update(){
 			if (simManager != null) {
 				simManager.update ();
 				float max = simManager.getMax ();
-				sharedGraphics.updatePotentialColors (max);
+				if (sharedGraphics != null) {
+					sharedGraphics.updatePotentialColors (max);
+				}
 			}
 		}
 
-		public int[] selectCell(Vector2 pos){
+		public int[] addGoal(Vector2 pos){
 			int[] index = simManager.selectCell (pos);
-			GridCell graphicCell = sharedGraphics.getDispCell (index);
+			if (sharedGraphics != null) {
+				GridCell graphicCell = sharedGraphics.getDispCell (index);
 
-			if (graphicCell != null) {
-				if (graphicCell.getColor().Equals(Color.green)) {
-					graphicCell.setColor (Color.black);
-				} else {
-					graphicCell.setColor (Color.green);
+				if (graphicCell != null) {
+					if (graphicCell.getColor ().Equals (Color.green)) {
+						graphicCell.setColor (Color.black);
+					} else {
+						graphicCell.setColor (Color.green);
+					}
+				} 
+			}
+			return index;
+		}
+
+		public void selectCell(Vector2 pos){
+			int[] index = simManager.getCell (pos);
+			Primitives.Cell selected = simManager.groupGrid.grid[index [0], index [1]];
+			if (selected != null) {
+				Debug.Log (selected.index [0] + ", " + selected.index [1] + ": Potential: " + selected.potential);
+				Debug.Log ("Faces: ");
+				for(int i = 0; i < 4; i++){
+					Primitives.Face face = selected.sharedCell.faces [i];
+					if (face != null) {
+						Debug.Log (i + " Cost: " + face.cost);
+					}
 				}
-				return index;
-			} 
-			return null;
+				Debug.Log ("-------------");
+			}
 		}
 
 		public void addAgent(Vector2 pos){
@@ -96,12 +114,18 @@ namespace CrowdSim
 			}
 		}
 
-		public void hideSharedGrid(){
-			hideGrid (sharedGraphics);
-		}
+		public void displaySim(){
+			if (visilbe) {
 
-		public void displaySharedGrid(){
-			displayGrid (sharedGraphics);
+				hideGrid (sharedGraphics);
+				visilbe = false;
+			} else {
+				if (sharedGraphics == null) {
+					sharedGraphics = new GridGraphics (cellWidth, simManager.getGrid(), gridParent);
+				}
+				displayGrid (sharedGraphics);
+				visilbe = true;
+			}
 		}
 			
 	}

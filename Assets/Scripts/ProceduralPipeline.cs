@@ -21,14 +21,18 @@ public class ProceduralPipeline : MonoBehaviour {
 	 bool addAgent = true;
 	 bool addGoal = false;
 
+	string action = "select";
+
 	public void setAddAgent(){
-		addGoal = false;
-		addAgent = true;
+		action = "agent";
 	}
 
 	public void setAddGoal(){
-		addGoal = true;
-		addAgent = false;
+		action = "goal";
+	}
+
+	public void setSelect(){
+		action = "select";
 	}
 
 	public void createSim()
@@ -41,9 +45,7 @@ public class ProceduralPipeline : MonoBehaviour {
 			simAccess.init (cellWidth, dim, simpleLayout);
 		} else {
 			simAccess.init (cellWidth, dim, simpleLayout);
-
 		}
-		simAccess.displaySharedGrid ();
 
 		Collider c = GetComponent<Collider> ();
 		c.transform.position = pos;
@@ -65,6 +67,12 @@ public class ProceduralPipeline : MonoBehaviour {
         DestroyImmediate(layoutParent);
         simpleLayout = null;
     }
+
+	public void displaySim(){
+		if (simAccess != null) {
+			simAccess.displaySim ();
+		}
+	}
 
     public void DisplaySimpleLayout()
     {
@@ -107,8 +115,8 @@ public class ProceduralPipeline : MonoBehaviour {
 				if (Input.GetMouseButtonDown (0)) {
 
 					// set grid cell to a goal
-					if (addGoal) {
-						int[] selectedIndex = simAccess.selectCell (new Vector2 (hitPosition.x, hitPosition.z));
+					if (action.Equals("goal")) {
+						int[] selectedIndex = simAccess.addGoal (new Vector2 (hitPosition.x, hitPosition.z));
 						if (selectedIndex != null) {
 							print ("Selected cell: " + selectedIndex [0] + " " + selectedIndex [1]);
 						} else {
@@ -117,8 +125,12 @@ public class ProceduralPipeline : MonoBehaviour {
 					}
 
 					// add an agent
-					if (addAgent) {
+						if (action.Equals("agent")) {
 						simAccess.addAgent (new Vector2 (hitPosition.x, hitPosition.z));
+					}
+
+					if (action.Equals ("select")) {
+						simAccess.selectCell (new Vector2 (hitPosition.x, hitPosition.z));
 					}
 				}
 			}

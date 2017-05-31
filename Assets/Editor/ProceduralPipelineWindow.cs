@@ -12,6 +12,8 @@ public class ProceduralPipelineWindow : EditorWindow {
 	private string createSim = "Initialize Crowd Simulator";
 	private string addAgent = "Add Agent";
 	private string addGoal = "Add Goal";
+	private string selectCell ="Select Cell";
+	private string displaySim = "Display Sim";
 
     private GameObject pipelineObject = null;
 
@@ -42,6 +44,12 @@ public class ProceduralPipelineWindow : EditorWindow {
 
 		if (GUILayout.Button (addGoal))
 			GetPipeline ().setAddGoal();
+
+		if (GUILayout.Button (selectCell))
+			GetPipeline ().setSelect ();
+
+		if (GUILayout.Button (displaySim))
+			GetPipeline ().displaySim ();
     }
 
     private ProceduralPipeline GetPipeline()

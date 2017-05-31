@@ -34,8 +34,8 @@ namespace Visualization
 		public void updatePotentialColors(float max){
 			for (int i = 0; i < dim; i++) {
 				for (int j = 0; j < dim; j++) {
-					if (dataGrid[i,j] != null && dataGrid [i, j].isGoal == false) {
-						float ratio = dataGrid [i, j].potential / max;
+					if (cells[i,j] != null && dataGrid[i,j] != null && dataGrid [i, j].isGoal == false) {
+						float ratio = 1-dataGrid [i, j].potential / max;
 						Color col = new Color (ratio, ratio, ratio);
 						cells [i, j].setColor (col);
 					}
@@ -54,12 +54,10 @@ namespace Visualization
 					if (dataGrid [i, j] != null) {
 						Vector2 cellPos = dataGrid [i, j].position;
 						cells [i, j] = new GridCell (cellSize, Color.black, cellPos, objectParent);
-						cells [i, j].display ();
+						//cells [i, j].display ();
 					}
 				}
 			}
-
-			active = true;
 		}
 
 		public GridCell getDispCell (Vector2 pos)

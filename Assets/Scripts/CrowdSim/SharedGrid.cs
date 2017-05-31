@@ -71,25 +71,28 @@ namespace CrowdSim
 				for (int j = 0; j < dim; j++) {
 					Face[] faces = new Face[4];
 
+					faces [0] = new Face ();
+					if (j + 1 < dim && grid[i, j+1] != null) {
+						faces [0].cell = grid [i, j + 1];
+					}
+
 					faces [1] = new Face ();
 					if (i + 1 < dim && grid[i+1, j] != null) {
 						faces [1].cell = grid [i + 1, j];
 					}
+						
+					faces [2] = new Face ();
+					if (j > 0 && grid[i, j-1] != null) {
+						faces [2].cell = grid [i, j - 1];
+					}
+				
 
 					faces [3] = new Face ();
 					if (i > 0 && grid[i-1, j] != null) {
 						faces [3].cell = grid [i - 1, j];
 					}
 
-					faces [0] = new Face ();
-					if (j + 1 < dim && grid[i, j+1] != null) {
-						faces [0].cell = grid [i, j + 1];
-					}
 
-					faces [2] = new Face ();
-					if (j > 0 && grid[i, j-1] != null) {
-						faces [2].cell = grid [i, j - 1];
-					}
 
 					if (grid [i, j] != null) {
 						grid [i, j].faces = faces;
