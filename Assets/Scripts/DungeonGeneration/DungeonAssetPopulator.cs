@@ -139,26 +139,29 @@ namespace DungeonGeneration
 		{
             if (torchPrefab == null) return;
 
+            // Ensure the torch spacing is not 0
+            int spacing = Mathf.Max(torchSpacing, 1);
+
             // Bottom
-            for (int i = area.width - 2; i >= 0; i -= torchSpacing)
+            for (int i = area.width - 2; i >= 0; i -= spacing)
             {
                 SpawnTorch(parent, new Vector3((area.x + i) * gridSpacing, 0, (area.y) * gridSpacing), 0);
             }
 
             // Top
-            for (int i = 0; i < area.width - 1; i += torchSpacing)
+            for (int i = 0; i < area.width - 1; i += spacing)
 			{
                 SpawnTorch(parent, new Vector3((area.x + i) * gridSpacing, 0, (area.y + area.height) * gridSpacing), 180);
             }
 
             // Left
-            for (int j = area.height - 1; j >= 1; j -= torchSpacing)
+            for (int j = area.height - 1; j >= 1; j -= spacing)
             {
                 SpawnTorch(parent, new Vector3((area.x - 1) * gridSpacing, 0, (area.y + j) * gridSpacing), 90);
             }
 
             // Right
-            for (int j = 1; j < area.height; j += torchSpacing)
+            for (int j = 1; j < area.height; j += spacing)
             {
                 SpawnTorch(parent, new Vector3((area.x + area.width - 1) * gridSpacing, 0, (area.y + j) * gridSpacing), 270);
             }
