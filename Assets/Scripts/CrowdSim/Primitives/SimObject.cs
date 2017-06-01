@@ -16,6 +16,11 @@ namespace Primitives
 			this.velocity = velocity;
 			this.sceneObject = sceneObject;
 		}
+
+		public void updatePosition(){
+			//Debug.Log (position.x + " " + position.y);
+			sceneObject.transform.position = new Vector3(position.x, sceneObject.transform.position.y, position.y);
+		}
 	}
 }
 

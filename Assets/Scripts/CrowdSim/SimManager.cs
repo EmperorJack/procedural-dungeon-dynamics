@@ -37,6 +37,7 @@ namespace CrowdSim
 		public void update(){
 			sharedGrid.update ();
 			groupGrid.update ();
+
 		}
 
 		public int[] selectCell(Vector2 pos){
@@ -68,6 +69,7 @@ namespace CrowdSim
 			GameObject dummyAgent = createDummyAgent (pos);
 			SimObject simObject = new SimObject (pos, new Vector2 (0, 0), dummyAgent);
 			simObjects.Add (simObject);
+			groupGrid.simObjects.Add (simObject);
 		}
 
 		private GameObject createDummyAgent(Vector2 pos){

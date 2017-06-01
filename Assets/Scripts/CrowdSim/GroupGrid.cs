@@ -14,6 +14,8 @@ namespace CrowdSim
 
 		private Helper<Cell> helper;
 
+		public List<SimObject> simObjects;
+
 
 		public GroupGrid (float cellWidth, int dim, SharedGrid sharedGrid, DungeonGeneration.Cell[,] dungeon) : base (cellWidth, dim, dungeon)
 		{
@@ -25,6 +27,7 @@ namespace CrowdSim
 					}
 				}
 			}
+			simObjects = new List<SimObject> ();
 
 			helper = new Helper<Cell> (grid, cellWidth);
 
@@ -92,17 +95,23 @@ namespace CrowdSim
 		
 				// normalize gradients and update velocties
 				Vector2 potGrad = new Vector2 (upwinds [0].potentialGrad, upwinds [1].potentialGrad);
+				potGrad.Normalize ();
 				upwinds [0].potentialGrad = potGrad.x;
 				upwinds [1].potentialGrad = potGrad.y;
 
+				//TODO: Grad is always max
+				Debug.Log ("GRAD: " + upwinds [0].potentialGrad + " " + upwinds [1].potentialGrad);
+
 				upwinds [0].groupVelocity = -upwinds [0].potentialGrad * minCandidate.sharedCell.faces [upwinds [0].index].velocity;
 				upwinds [1].groupVelocity = -upwinds [1].potentialGrad * minCandidate.sharedCell.faces [upwinds [1].index].velocity;
+
+				Debug.Log ("UW: " + upwinds [0].groupVelocity + " " + upwinds [1].groupVelocity);
 			}
 
 			//Debug.Log ("DONE");
 		}
 
-		private void interpolateVelocities (List<SimObject> simObjects)
+		private void interpolateVelocities ()
 		{
 			foreach (SimObject simObject in simObjects) {
 				int[] index = helper.getCellIndex (simObject.position);
@@ -110,15 +119,31 @@ namespace CrowdSim
 
 				// interpolate center of each surrounding cell
 
-				if (index [0] + 1 < dim && index [1] + 1 < dim && grid [index [0] + 1, index [1] + 1] != null) {
+				float deltaX = simObject.position.x - leftCell.position.x;
+				float deltaY = simObject.position.y - leftCell.position.y;
+
+				//if (index [0] + 1 < dim && index [1] + 1 < dim && grid [index [0] + 1, index [1] + 1] != null) {
 					// simple case for grid
 					// a ----- b
 					// |       |
-					// d ----- d
+					// d ----- c
 
 					Vector2 aVel = getCenterVelocity(grid[index[0], index[1] + 1]);
-						
-				}
+					Vector2 bVel = getCenterVelocity(grid[index[0] + 1, index[1] + 1]);
+					Vector2 cVel = getCenterVelocity (grid [index [0] + 1, index [1]]);
+					Vector2 dVel = getCenterVelocity (leftCell);
+
+					Vector2 abx = Vector2.Lerp (aVel, bVel, deltaX);
+					Vector2 dcx = Vector2.Lerp (dVel, cVel, deltaX);
+
+					Vector2 interp = Vector2.Lerp (abx, dcx, deltaY);
+
+				Debug.Log (interp.x + " " + interp.y);
+
+					simObject.velocity = interp;
+					simObject.position = simObject.position + simObject.velocity;
+					simObject.updatePosition();
+				//}
 
 				// interpolate from neighbouring centers
 			}
@@ -149,6 +174,8 @@ namespace CrowdSim
 			Vector2 velocity = new Vector2 ();
 			velocity.x = eastVel - westVel;
 			velocity.y = northVel - southVel;
+
+			Debug.Log ("CENTER: " + velocity);
 
 			return velocity;
 		}
@@ -283,6 +310,7 @@ namespace CrowdSim
 		public override void update ()
 		{
 			assignPotentials ();
+			interpolateVelocities ();
 		}
 	}
 }
