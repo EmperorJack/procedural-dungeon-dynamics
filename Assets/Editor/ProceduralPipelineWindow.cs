@@ -10,6 +10,7 @@ public class ProceduralPipelineWindow : EditorWindow {
     private string resetButton = "Reset";
     private string displaySimpleLayoutButton = "Display Simple Layout";
     private string displayComplexLayoutButton = "Display Complex Layout";
+    private string displayAnchorsButton = "Display Anchors";
 
     private GameObject pipelineObject = null;
 
@@ -32,6 +33,8 @@ public class ProceduralPipelineWindow : EditorWindow {
         if (GUILayout.Button(displaySimpleLayoutButton)) GetPipeline().DisplaySimpleLayout();
 
         if (GUILayout.Button(displayComplexLayoutButton)) GetPipeline().DisplayComplexLayout();
+
+        if (GUILayout.Button(displayAnchorsButton)) GetPipeline().DisplayAnchors();
     }
 
     private ProceduralPipeline GetPipeline()

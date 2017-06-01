@@ -4,33 +4,59 @@ using UnityEngine;
 
 public class ProceduralPipeline : MonoBehaviour {
 
-    public DungeonGeneration.DungeonGenerator dungeonGenerator;
+    // Dungeon components
+    public DungeonGeneration.DungeonLayoutGenerator dungeonLayoutGenerator;
     public DungeonGeneration.DungeonAssetPopulator dungeonAssetPopulator;
+    public DungeonGeneration.DungeonAnchorGenerator dungeonAnchorGenerator;
+    public DungeonGeneration.DungeonObjectPlacer dungeonObjectPlacer;
 
-    private GameObject simpleLayoutParent;
+    // Component reuslts
     private DungeonGeneration.Cell[,] simpleLayout;
+    private List<DungeonGeneration.Anchor> anchors;
 
+    // Parent transform objects
+    private GameObject simpleLayoutParent;
     private GameObject complexLayoutParent;
+    private GameObject anchorsParent;
+    private GameObject objectsParent;
 
     public void Perform()
     {
         Reset();
 
-        dungeonGenerator.Generate();
+        dungeonLayoutGenerator.Generate();
 
-        simpleLayout = dungeonGenerator.GetSimpleLayout();
+        simpleLayout = dungeonLayoutGenerator.GetSimpleLayout();
 
-        dungeonAssetPopulator.Setup(dungeonGenerator.GetRooms(), dungeonGenerator.GetCorridors(), dungeonGenerator.GetGridSpacing());
+        dungeonAssetPopulator.Setup(
+            dungeonLayoutGenerator.GetRooms(),
+            dungeonLayoutGenerator.GetCorridors(),
+            dungeonLayoutGenerator.GetGridSpacing()
+        );
+
+        dungeonAnchorGenerator.Generate(
+            dungeonLayoutGenerator.GetRooms(),
+            dungeonLayoutGenerator.GetGridSpacing()
+        );
+
+        anchors = dungeonAnchorGenerator.GetAnchors();
+
+        dungeonObjectPlacer.Setup(anchors);
 
         DisplayComplexLayout();
+
+        DisplayObjects();
     }
 
     public void Reset()
     {
-        dungeonGenerator.Clear();
+        simpleLayout = null;
+        anchors = null;
+
         DestroyImmediate(simpleLayoutParent);
         DestroyImmediate(complexLayoutParent);
-        simpleLayout = null;
+        DestroyImmediate(anchorsParent);
+        DestroyImmediate(objectsParent);
     }
 
     public void DisplaySimpleLayout()
@@ -45,15 +71,15 @@ public class ProceduralPipeline : MonoBehaviour {
         Material material = new Material(Shader.Find("Diffuse"));
         material.color = new Color(200 / 255.0f, 125 / 255.0f, 30 / 255.0f);
 
-        for (int i = 0; i < dungeonGenerator.gridSize; i++)
+        for (int i = 0; i < dungeonLayoutGenerator.gridSize; i++)
         {
-            for (int j = 0; j < dungeonGenerator.gridSize; j++)
+            for (int j = 0; j < dungeonLayoutGenerator.gridSize; j++)
             {
                 if (simpleLayout[i, j].GetType() == typeof(DungeonGeneration.FloorCell))
                 {
                     GameObject instance = simpleLayout[i, j].Display();
                     instance.transform.SetParent(simpleLayoutParent.transform);
-                    instance.transform.Translate((i) * dungeonGenerator.GetGridSpacing(), 0.0f, (j) * dungeonGenerator.GetGridSpacing());
+                    instance.transform.Translate((i) * dungeonLayoutGenerator.GetGridSpacing(), 0.0f, (j) * dungeonLayoutGenerator.GetGridSpacing());
                     instance.transform.Rotate(90, 0, 0);
                     instance.GetComponent<Renderer>().material = material;
                 }
@@ -71,5 +97,27 @@ public class ProceduralPipeline : MonoBehaviour {
         complexLayoutParent.name = "ComplexLayout";
 
         dungeonAssetPopulator.Populate(complexLayoutParent);
+    }
+
+    public void DisplayAnchors()
+    {
+        DestroyImmediate(anchorsParent);
+
+        anchorsParent = new GameObject();
+        anchorsParent.name = "AnchorsDisplay";
+
+        dungeonAnchorGenerator.Display(anchorsParent);
+    }
+
+    public void DisplayObjects()
+    {
+        if (anchors == null) return;
+
+        DestroyImmediate(objectsParent);
+
+        objectsParent = new GameObject();
+        objectsParent.name = "DungeonObjects";
+
+        dungeonObjectPlacer.Populate(objectsParent);
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace DungeonGeneration {
 
-	public class DungeonGenerator : MonoBehaviour {
+	public class DungeonLayoutGenerator : MonoBehaviour {
 
 	    // User set fields
 	    public int gridSize = 10;
@@ -15,7 +15,7 @@ namespace DungeonGeneration {
         public GameObject simpleLayoutPrefab;
 
 	    // Internal fields
-	    private float gridSpacing;
+	    private float gridSpacing = 1;
 	    private int cellSize = 1;
 
 	    // Representation fields
@@ -29,26 +29,11 @@ namespace DungeonGeneration {
 	    private List<Room> rooms;
 		private List<Corridor> corridors;
 
-	    public void FixedUpdate()
-	    {
-	        if (Time.frameCount % 60 == 0)
-	        {
-	            Generate();
-	        }
-	    }
-
 	    public void Generate()
 	    {
-	        Clear();
+            Clear();
 
-	        gridSpacing = 1;
-
-	        PerformBSP();
-	    }
-
-	    private void PerformBSP()
-	    {
-	        nextPartitionId = 0;
+            nextPartitionId = 0;
 	        nextRoomId = 0;
 			nextCorridorId = 0;
 

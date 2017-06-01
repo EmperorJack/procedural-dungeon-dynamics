@@ -39,7 +39,7 @@ namespace DungeonGeneration {
 	        }
 	    }
 
-	    public static Corridor CreateCorridor(DungeonGenerator generator, Partition partitionA, Partition partitionB, bool horizontalCut)
+	    public static Corridor CreateCorridor(DungeonLayoutGenerator generator, Partition partitionA, Partition partitionB, bool horizontalCut)
 	    {
 	        List<ConnectableGridArea> areasA = new List<ConnectableGridArea>();
 	        partitionA.GetRooms(areasA);
@@ -241,6 +241,8 @@ namespace DungeonGeneration {
             // Setup connection relationships between areas
             chosenOverlap.areaA.AddConnectedCorridor(corridor);
             chosenOverlap.areaB.AddConnectedCorridor(corridor);
+            chosenOverlap.areaA.AddDoorPosition(new Vector2(chosenOverlap.posA.x - (horizontalCut ? 0.0f : 1.0f), chosenOverlap.posA.y - (horizontalCut ? 1.0f : 0.0f)));
+            chosenOverlap.areaB.AddDoorPosition(new Vector2(chosenOverlap.posB.x, chosenOverlap.posB.y));
 
             return corridor;
         }

@@ -6,7 +6,7 @@ namespace DungeonGeneration {
 
 	public abstract class GridArea
 	{
-	    protected DungeonGenerator generator;
+	    protected DungeonLayoutGenerator generator;
 	    public int id;
 
 	    // Worldspace fields
@@ -19,7 +19,7 @@ namespace DungeonGeneration {
 	    protected Cell[,] grid;
 	    protected GameObject gridParent;
 
-	    public GridArea(int id, DungeonGenerator generator, int x, int y, int width, int height)
+	    public GridArea(int id, DungeonLayoutGenerator generator, int x, int y, int width, int height)
 	    {
 	        this.id = id;
 	        this.generator = generator;
