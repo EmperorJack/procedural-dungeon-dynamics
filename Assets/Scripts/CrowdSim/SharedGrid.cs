@@ -18,8 +18,8 @@ namespace CrowdSim
 		// 'constant' values
 		float densityExp = 0.1f;
 
-		public float minDensity = 1;
-		public float maxDensity = 5;
+		public float minDensity = 0.1f;
+		public float maxDensity = 1;
 		public float minVelocity = 0.1f;
 		public float maxVelocity = 0.5f;
 		public float distanceWeight = 1;
@@ -71,23 +71,23 @@ namespace CrowdSim
 				for (int j = 0; j < dim; j++) {
 					Face[] faces = new Face[4];
 
-					faces [0] = new Face ();
+					faces [0] = new Face (0);
 					if (j + 1 < dim && grid[i, j+1] != null) {
 						faces [0].cell = grid [i, j + 1];
 					}
 
-					faces [1] = new Face ();
+					faces [1] = new Face (1);
 					if (i + 1 < dim && grid[i+1, j] != null) {
 						faces [1].cell = grid [i + 1, j];
 					}
 						
-					faces [2] = new Face ();
+					faces [2] = new Face (2);
 					if (j > 0 && grid[i, j-1] != null) {
 						faces [2].cell = grid [i, j - 1];
 					}
 				
 
-					faces [3] = new Face ();
+					faces [3] = new Face (3);
 					if (i > 0 && grid[i-1, j] != null) {
 						faces [3].cell = grid [i - 1, j];
 					}

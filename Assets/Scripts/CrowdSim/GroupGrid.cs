@@ -12,6 +12,9 @@ namespace CrowdSim
 		private SharedGrid sharedGrid;
 		private float max = float.MinValue;
 
+		private Helper<Cell> helper;
+
+
 		public GroupGrid (float cellWidth, int dim, SharedGrid sharedGrid, DungeonGeneration.Cell[,] dungeon) : base (cellWidth, dim, dungeon)
 		{
 			this.sharedGrid = sharedGrid;
@@ -22,6 +25,9 @@ namespace CrowdSim
 					}
 				}
 			}
+
+			helper = new Helper<Cell> (grid, cellWidth);
+
 		}
 
 		private void assignPotentials ()
@@ -74,12 +80,81 @@ namespace CrowdSim
 				addNeighbours (candidates, minCandidate);
 				accepted.Add (minCandidate);
 
+				//calculate gradients
+
+				// only the upwind direction has associated velocity
+				Face[] upwinds = getUpwinds (minCandidate);
+				for (int i = 0; i < upwinds.GetLength (0); i++) {
+					if (upwinds [i].cell != null) {
+						upwinds [i].potentialGrad = upwinds [i].cell.potential - minCandidate.potential;
+					}
+				}
+		
+				// normalize gradients and update velocties
+				Vector2 potGrad = new Vector2 (upwinds [0].potentialGrad, upwinds [1].potentialGrad);
+				upwinds [0].potentialGrad = potGrad.x;
+				upwinds [1].potentialGrad = potGrad.y;
+
+				upwinds [0].groupVelocity = -upwinds [0].potentialGrad * minCandidate.sharedCell.faces [upwinds [0].index].velocity;
+				upwinds [1].groupVelocity = -upwinds [1].potentialGrad * minCandidate.sharedCell.faces [upwinds [1].index].velocity;
 			}
 
 			//Debug.Log ("DONE");
 		}
 
-		private void removeCell(SortedList<float, List<Cell>> candidates, Cell cell, float oldKey){
+		private void interpolateVelocities (List<SimObject> simObjects)
+		{
+			foreach (SimObject simObject in simObjects) {
+				int[] index = helper.getCellIndex (simObject.position);
+				Cell leftCell = helper.accessGridCell (index);
+
+				// interpolate center of each surrounding cell
+
+				if (index [0] + 1 < dim && index [1] + 1 < dim && grid [index [0] + 1, index [1] + 1] != null) {
+					// simple case for grid
+					// a ----- b
+					// |       |
+					// d ----- d
+
+					Vector2 aVel = getCenterVelocity(grid[index[0], index[1] + 1]);
+						
+				}
+
+				// interpolate from neighbouring centers
+			}
+		}
+
+		private Vector2 getCenterVelocity(Cell cell){
+			Face[] faces = cell.faces;
+			float northVel = faces[0].groupVelocity;
+			if (northVel == 0 && faces[0].cell != null) {
+				northVel = faces [0].cell.faces [2].groupVelocity;
+			} 
+
+			float southVel = faces[2].groupVelocity;
+			if (southVel == 0 && faces[2].cell != null) {
+				southVel = faces [2].cell.faces [0].groupVelocity;
+			} 
+
+			float eastVel = faces[1].groupVelocity;
+			if (eastVel == 0 && faces[1].cell != null) {
+				eastVel = faces [1].cell.faces [3].groupVelocity;
+			} 
+
+			float westVel = faces[3].groupVelocity;
+			if (westVel == 0 && faces[3].cell != null) {
+				westVel = faces [3].cell.faces [1].groupVelocity;
+			} 
+
+			Vector2 velocity = new Vector2 ();
+			velocity.x = eastVel - westVel;
+			velocity.y = northVel - southVel;
+
+			return velocity;
+		}
+
+		private void removeCell (SortedList<float, List<Cell>> candidates, Cell cell, float oldKey)
+		{
 			if (candidates.ContainsKey (oldKey)) {
 				List<Cell> bucket = candidates [oldKey];
 				bucket.Remove (cell);
@@ -89,7 +164,8 @@ namespace CrowdSim
 			}
 		}
 
-		private void addNeighbours(SortedList<float, List<Cell>> candidates, Cell cell){
+		private void addNeighbours (SortedList<float, List<Cell>> candidates, Cell cell)
+		{
 			foreach (Face face in cell.faces) {
 				Cell neighbour = face.cell;
 				if (neighbour != null && neighbour.isAccepted == false) {
@@ -121,11 +197,9 @@ namespace CrowdSim
 				return float.MaxValue; // not ideal, shouldn't be happening
 			}
 
-			Face horUp = upwindFace (sharedCell.faces [1],
-				sharedCell.faces [3], 
-				cell.faces [1].cell, 
-				cell.faces [3].cell);
-			Face vertUp = upwindFace (sharedCell.faces [0], sharedCell.faces [2], cell.faces [0].cell, cell.faces [2].cell);
+			Face[] upwinds = getUpwinds (cell);
+			Face horUp = upwinds [0];
+			Face vertUp = upwinds [1];
 
 			if (horUp == null && vertUp == null) {
 				return float.MaxValue; 
@@ -138,11 +212,19 @@ namespace CrowdSim
 			}
 		}
 
+		private Face[] getUpwinds (Cell cell)
+		{
+			Cell sharedCell = cell.sharedCell;
+			Face horUp = upwindFace (sharedCell.faces [1], sharedCell.faces [3], cell.faces [1].cell, cell.faces [3].cell);
+			Face vertUp = upwindFace (sharedCell.faces [0], sharedCell.faces [2], cell.faces [0].cell, cell.faces [2].cell);
+			return new Face[]{ horUp, vertUp };
+		}
+
 		private Face upwindFace (Face face1, Face face2, Cell neighbour1, Cell neighbour2)
 		{
 			
 			if ((neighbour1 == null || neighbour1.potential == float.MaxValue) &&
-				(neighbour2 == null || neighbour2.potential == float.MaxValue)) {
+			    (neighbour2 == null || neighbour2.potential == float.MaxValue)) {
 				return null;
 			} else if (neighbour1 == null) {
 				return face2;

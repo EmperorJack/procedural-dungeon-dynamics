@@ -35,8 +35,8 @@ namespace Visualization
 			for (int i = 0; i < dim; i++) {
 				for (int j = 0; j < dim; j++) {
 					if (cells[i,j] != null && dataGrid[i,j] != null && dataGrid [i, j].isGoal == false) {
-						float ratio = 1-dataGrid [i, j].potential / max;
-						Color col = new Color (ratio, ratio, ratio);
+						float ratio = dataGrid [i, j].potential / max;
+						Color col = new Color (ratio, 1-ratio, 0);
 						cells [i, j].setColor (col);
 					}
 				}
