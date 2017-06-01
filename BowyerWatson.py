@@ -112,8 +112,11 @@ class Tessellation:
         self.outerTets = []
 
     def makeGeo(self):
+        groupName = object[0] + "_tessellation"
+        tessellationGroup = cmds.group(em=True, name=groupName)
         for t in self.tetras:
-            t.makeGeo()
+            tetGeo = t.makeGeo()
+            cmds.parent(tetGeo[0], tessellationGroup)
 
     def getCenters(self):
         return [t.center for t in self.tetras]
@@ -494,11 +497,12 @@ class Tessellation:
 
     def shatter(self):
         if self.object:
-            cmds.setAttr(object[0] + '.visibility', 0)
-            brokenGeoName = object[0] + "_broken"
+            cmds.setAttr(self.object + '.visibility', 0)
+            brokenGeoName = self.object + "_broken"
             brokenGroup = cmds.group(em=True, name=brokenGeoName)
             for v in self.vertices:
                 objectCopy = cmds.duplicate(self.object)
+                cmds.parent(objectCopy, brokenGroup)
                 for n in self.edges[v]:
                     aim = [(vec1 - vec2) for (vec1, vec2) in zip(v, n)]
 
@@ -623,7 +627,7 @@ for obj in object:
     points = s.randomSamples(12)
     dt.tessellate(points)
     dt.finish()
-    #dt.makeGeo()
+    dt.makeGeo()
     dt.shatter()
     #dt.printInfo()
 

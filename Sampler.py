@@ -26,12 +26,31 @@ class VertexSampler:
         cmds.select(cl=True)
         return vertList
 
+    def getVertexWeights(self):
+        weights = []
+        for v in self.vertexNames:
+            # get vertex normal
+            angle = 360
+            # get surrounding face normals
+            # for n in normals:
+            #   faceAngle = angle between vertex normal and n
+            #   if faceAngle < angle:
+            #       angle = faceAngle
+            weights.append(angle / 360)
+
     def randomSamples(self,numberOfSamples):
         return random.sample(set(self.vertexPositions), numberOfSamples)
 
     def randomPercent(self,samplePercent):
         numberOfSamples = len(self.vertices) * (samplePercent / 100.0)
         return self.randomAmount(int(round(numberOfSamples)))
+
+    def uniformSamples(self,numberOfSamples):
+        return np.random.choice(self.vertexPositions,numberOfSamples)
+
+    def geometricSamples(self,min,max,numberOfSamples):
+        sampleList = []
+
 
 
 
