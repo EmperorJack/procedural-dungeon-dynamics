@@ -42,8 +42,8 @@ class VertexSampler:
         return random.sample(set(self.vertexPositions), numberOfSamples)
 
     def randomPercent(self,samplePercent):
-        numberOfSamples = len(self.vertices) * (samplePercent / 100.0)
-        return self.randomAmount(int(round(numberOfSamples)))
+        numberOfSamples = len(self.vertexPositions) * (samplePercent / 100.0)
+        return self.randomSamples(int(round(numberOfSamples)))
 
     def uniformSamples(self,numberOfSamples):
         return np.random.choice(self.vertexPositions,numberOfSamples)

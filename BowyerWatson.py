@@ -62,7 +62,7 @@ class Tetra:
         self.center = findCenter(vertices)
 
         self.vertices = clockwise(vertices[0],vertices[1],vertices[2],vertices[3])
-
+        self.volume = self.calcVolume(self.vertices)
         self.faces = []
         # Faces are all possible 3 vertex combinations of the 4 points
         for f in itools.combinations(vertices, 3):
@@ -71,6 +71,13 @@ class Tetra:
             tessellation.addTetraToFace(newFace,self)
             if newFace in tessellation.outerFaces and self not in tessellation.outerTets:
                 tessellation.outerTets.append(self)
+
+    def calcVolume(self,vertices):
+        a = np.subtract(vertices[0],vertices[3])
+        b = np.subtract(vertices[1],vertices[3])
+        c = np.subtract(vertices[2],vertices[3])
+        volume = (1.000/6.000) * np.linalg.norm(np.dot(a,np.cross(b,c)))
+        return volume
 
     def printCoords(self):
         for v in self.vertices:
@@ -120,6 +127,10 @@ class Tessellation:
 
     def getCenters(self):
         return [t.center for t in self.tetras]
+
+    def getTetsByVolume(self):
+        sortedTets = sorted(self.tetras, key=lambda x: x.volume)
+        return sortedTets
 
     def addVertex(self,v):
         self.vertices.append(v)
@@ -620,15 +631,20 @@ def getVertices(object):
 
 
 
+
 object = cmds.ls(sl=True)
 for obj in object:
     dt = Tessellation(obj)
     s = Sampler.VertexSampler(obj)
     points = s.randomSamples(12)
+    #points = s.randomPercent(5)
     dt.tessellate(points)
     dt.finish()
-    dt.makeGeo()
-    dt.shatter()
+    volTets = dt.getTetsByVolume()
+    for t in volTets:
+        print t.volume
+    #dt.makeGeo()
+    #dt.shatter()
     #dt.printInfo()
 
 
