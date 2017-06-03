@@ -53,10 +53,10 @@ public class ProceduralPipeline : MonoBehaviour {
         simpleLayout = null;
         anchors = null;
 
-        DestroyImmediate(simpleLayoutParent);
-        DestroyImmediate(complexLayoutParent);
-        DestroyImmediate(anchorsParent);
-        DestroyImmediate(objectsParent);
+        DestroyImmediate(GameObject.Find("SimpleLayout"));
+        DestroyImmediate(GameObject.Find("ComplexLayout"));
+        DestroyImmediate(GameObject.Find("AnchorsDisplay"));
+        DestroyImmediate(GameObject.Find("DungeonObjects"));
     }
 
     public void DisplaySimpleLayout()
