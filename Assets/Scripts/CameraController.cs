@@ -7,11 +7,6 @@ public class CameraController : MonoBehaviour {
     public float moveSpeed = 1.0f;
     public float turnSpeed = 10.0f;
 
-    public void Start ()
-    {
-		
-	}
-
     public void Update ()
     {
         float scaledMoveSpeed = moveSpeed / 10.0f;
