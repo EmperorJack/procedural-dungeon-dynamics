@@ -42,7 +42,7 @@ namespace DungeonGeneration
                 {
                     GameObject instance = MonoBehaviour.Instantiate(selectedPrefab);
                     instance.transform.SetParent(parent.transform);
-                    instance.transform.Translate(anchor.x, 0.5f, anchor.y);
+                    instance.transform.Translate(anchor.x, 0.1f, anchor.y);
                 }
             }
         }
