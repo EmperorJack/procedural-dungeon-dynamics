@@ -42,8 +42,7 @@ namespace Visualization
 				}
 			}
 		}
-
-
+			
 		private void init ()
 		{
 			cells = new GridCell[dim, dim];

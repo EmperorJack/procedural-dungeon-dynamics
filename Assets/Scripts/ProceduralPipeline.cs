@@ -31,6 +31,8 @@ public class ProceduralPipeline : MonoBehaviour {
 	public int dim;
 	GameObject simObject;
 
+	public int displayField = 0;
+
 
 	string action = "select";
 
@@ -137,6 +139,50 @@ public class ProceduralPipeline : MonoBehaviour {
             }
         }
     }
+
+	public void displayFields(){
+		displayField++;
+		if (displayField >= 3) {
+			displayField = 0;
+		}
+
+		if (displayField == 1) {
+			Debug.Log ("Displaying potential Gradients");
+		}
+
+		if (displayField == 2) {
+			Debug.Log ("Displaying velocities");
+		}
+	}
+
+	public void OnDrawGizmos(){
+		if (displayField > 0) {
+			if (simAccess != null) {
+				Primitives.Cell[,] grid = simAccess.simManager.groupGrid.grid;
+				for (int i = 0; i < grid.GetLength (0); i++) {
+					for (int j = 0; j < grid.GetLength (0); j++) {
+						if (grid [i, j].exists) {
+							Vector2 norm = new Vector2 (0f, 0f);
+							if (displayField == 1) {
+								norm = 0.25f * grid [i, j].potGrad.normalized;
+							} else if (displayField == 2) {
+								norm = 0.25f * grid [i, j].groupVelocity.normalized;
+							}
+							Vector2 gPos = grid [i, j].position;
+							Vector2 from = gPos - norm * 0.5f;
+							Vector2 to = gPos + norm * 0.5f;
+							Gizmos.color = Color.white;
+							Gizmos.DrawLine (new Vector3 (from.x, 0.01f, from.y), new Vector3 (to.x, 0.01f, to.y));
+							Gizmos.color = Color.blue;
+							Gizmos.DrawCube (new Vector3 (to.x, 0f, to.y), new Vector3 (0.05f, 0.05f, 0.05f));
+						}
+					}
+				}
+			}
+		}
+	}
+
+
 
 	void Update(){
 

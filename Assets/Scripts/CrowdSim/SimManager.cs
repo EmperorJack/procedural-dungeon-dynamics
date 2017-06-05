@@ -84,6 +84,7 @@ namespace CrowdSim
 			}
 			simObjects.Add (simObject);
 			groupGrid.simObjects.Add (simObject);
+			sharedGrid.addAgent (simObject);
 		}
 
 		private void initGameObject(Vector2 pos, GameObject customObject){

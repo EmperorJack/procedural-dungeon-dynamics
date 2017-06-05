@@ -25,7 +25,6 @@ namespace Visualization
 			//this.vector = new GridVector (0.8f, 0f, Color.black, this.position, quad);
 
 			hide ();
-
 		}
 
 		public GridCell(float size, GameObject parent){

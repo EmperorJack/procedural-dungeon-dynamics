@@ -14,6 +14,7 @@ namespace Primitives
 
 		//Used only for group cells
 		public float potential;
+		public Vector2 potGrad;
 		public float tempPotential;
 		public bool isGoal;
 		public bool isAccepted = false;
