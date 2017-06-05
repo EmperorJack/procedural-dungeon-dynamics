@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using CrowdSim;
 
 public class ProceduralPipeline : MonoBehaviour {
 
@@ -19,6 +20,46 @@ public class ProceduralPipeline : MonoBehaviour {
     private GameObject complexLayoutParent;
     private GameObject anchorsParent;
     private GameObject objectsParent;
+
+	private SimAccess simAccess;
+
+	public GameObject colliderQuad;
+
+	public Vector2 pos;
+	public float cellWidth;
+	public int dim;
+
+	string action = "select";
+
+	public void setAddAgent(){
+		action = "agent";
+	}
+
+	public void setAddGoal(){
+		action = "goal";
+	}
+
+	public void setSelect(){
+		action = "select";
+	}
+
+	public void createSim()
+	{
+		if (simAccess == null) {
+			simAccess = new SimAccess ();
+		}
+
+		if (simpleLayout != null) {
+			simAccess.init (cellWidth, dim, simpleLayout);
+		} else {
+			simAccess.init (cellWidth, dim, simpleLayout);
+		}
+
+		Collider c = GetComponent<Collider> ();
+		c.transform.position = pos;
+		c.transform.localScale = new Vector3(cellWidth * dim, 0, cellWidth * dim);
+		c.transform.position = c.transform.position + new Vector3 ((cellWidth * (dim-1)) / 2, 0, (cellWidth * (dim-1)) / 2);
+	}
 
     public void Perform()
     {
@@ -59,6 +100,12 @@ public class ProceduralPipeline : MonoBehaviour {
         DestroyImmediate(GameObject.Find("DungeonObjects"));
     }
 
+	public void displaySim(){
+		if (simAccess != null) {
+			simAccess.displaySim ();
+		}
+	}
+
     public void DisplaySimpleLayout()
     {
         if (simpleLayout == null) return;
@@ -86,6 +133,42 @@ public class ProceduralPipeline : MonoBehaviour {
             }
         }
     }
+
+	void Update(){
+
+		if (simAccess != null) {
+			simAccess.update ();
+
+			Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+			RaycastHit hit;
+
+			if (Physics.Raycast (ray, out hit)) {
+				Vector3 hitPosition = hit.point;
+
+				if (Input.GetMouseButtonDown (0)) {
+
+					// set grid cell to a goal
+					if (action.Equals("goal")) {
+						int[] selectedIndex = simAccess.addGoal (new Vector2 (hitPosition.x, hitPosition.z));
+						if (selectedIndex != null) {
+							print ("Selected cell: " + selectedIndex [0] + " " + selectedIndex [1]);
+						} else {
+							print ("Failed to select cell at: " + hitPosition.x + " " + hitPosition.z);
+						}
+					}
+
+					// add an agent
+						if (action.Equals("agent")) {
+						simAccess.addAgent (new Vector2 (hitPosition.x, hitPosition.z));
+					}
+
+					if (action.Equals ("select")) {
+						simAccess.selectCell (new Vector2 (hitPosition.x, hitPosition.z));
+					}
+				}
+			}
+		}
+	}
 
     public void DisplayComplexLayout()
     {

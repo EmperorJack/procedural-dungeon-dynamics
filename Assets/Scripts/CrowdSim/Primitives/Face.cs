@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,22 +6,24 @@ namespace Primitives
 {
 	public class Face
 	{
-		public float velocity;
-		public float grad_Height;
-		public float cost;
-
-
-		public Cell cell;
-		public Cell neighbour;
-		public Vector2 neighbourIndex;
-
 		public int index;
 
-		public Face (Cell cell, Vector2 neighbourIndex, int index)
-		{
+		public float cost, velocity;
+		public Cell cell;
+
+		//used only for Group faces
+		public float groupVelocity, potentialGrad;
+
+		public Face(int index){
 			this.index = index;
-			this.cell = cell;
-			this.neighbourIndex = neighbourIndex;
+		}
+
+		public void reset(){
+			cost = float.MaxValue;
+			velocity = 0;
+			groupVelocity = 0;
+			potentialGrad = float.MaxValue;
 		}
 	}
 }
+

@@ -1,38 +1,40 @@
-﻿using System;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Primitives
 {
-	public class Cell
+	public class Cell 
 	{
-		public Vector2 position;
-		public Vector2 index;
+		public bool exists;
 
-		public enum Dir : int
-		{
-			east,
-			south,
-			west,
-			north}
+		public Vector2 position, avgVelocity;
+		public float density;
+		public Face[] faces;
 
-		;
+		//Used only for group cells
+		public float potential;
+		public float tempPotential;
+		public bool isGoal;
+		public bool isAccepted = false;
+		public Cell sharedCell; // same sharedCell across all groups
+		public Vector2 groupVelocity;
 
-		public Face[] faces = new Face[4];
+		public int[] index;
 
-		public void setFace (Dir dir, Face face)
-		{
-			faces [(int)dir] = face;
-		}
-
-		public Face getFace (Dir dir)
-		{
-			return faces [(int)dir];
-		}
-
-		public Cell (Vector2 pos, Vector2 index)
-		{
-			this.position = pos;
+		public Cell(int[] index){
 			this.index = index;
+		}
+
+		public void reset(){
+			foreach (Face face in faces) {
+				face.reset ();
+			}
+			avgVelocity = new Vector2 (0, 0);
+			density = 0;
+			potential = float.MaxValue;
+			tempPotential = float.MaxValue;
+			//isAccepted = false;
 		}
 
 	}
