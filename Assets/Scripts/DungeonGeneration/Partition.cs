@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace DungeonGeneration {
+
 	public class Partition : GridArea
 	{
 	    
@@ -12,9 +14,12 @@ namespace DungeonGeneration {
 	    public Partition left;
 		public Partition right;
 	    private Room room;
+        private Corridor corridor;
 
-	    public Partition(DungeonGenerator generator, int x, int y, int width, int height, int depth) : base(generator.NextPartitionId(), generator, x, y, width, height)
-	    { }
+        public Partition(DungeonLayoutGenerator generator, int x, int y, int width, int height, int depth) : base(generator.NextPartitionId(), generator, x, y, width, height)
+	    {
+            this.depth = depth;
+        }
 
 	    public void Print()
 		{
@@ -28,26 +33,39 @@ namespace DungeonGeneration {
 		{
 			int minimumSize = generator.minimumRoomSize + generator.roomBuffer * 2;
 
-	        // Check if this partition is big enough to cut
-	        if (this.width <= minimumSize * 2 || this.height <= minimumSize * 2) return;
+            float widthHeightRatio = width / (float) height;
 
-	        horizontalCut = true;
-			if (Random.value > 0.5) horizontalCut = false;
+            // Check if this partition is big enough to cut
+            if (width <= minimumSize * 2 && height <= minimumSize * 2) return;
+
+            if (widthHeightRatio > generator.maxRoomWidthHeightRatio)
+            {
+                horizontalCut = false;
+            }
+            else if (widthHeightRatio < generator.minRoomWidthHeightRatio)
+            {
+                horizontalCut = true;
+            }
+            else horizontalCut = UnityEngine.Random.value > 0.5f;
 
 			Partition partitionA;
 			Partition partitionB;
 
 			if (horizontalCut)
 			{
-				int yCut = Random.Range(generator.minimumRoomSize + generator.roomBuffer * 2, this.height - generator.minimumRoomSize - generator.roomBuffer * 2 + 1);
-				partitionA = new Partition(generator, this.x, this.y, this.width, yCut, this.depth + 1);
-				partitionB = new Partition(generator, this.x, this.y + yCut, this.width, this.height - yCut, this.depth + 1);
+                if (height <= minimumSize * 2) return;
+
+                int yCut = UnityEngine.Random.Range(generator.minimumRoomSize + generator.roomBuffer * 2, height - generator.minimumRoomSize - generator.roomBuffer * 2 + 1);
+				partitionA = new Partition(generator, x, y, width, yCut, depth + 1);
+				partitionB = new Partition(generator, x, y + yCut, width, height - yCut, depth + 1);
 			}
 			else // Vertical cut
 			{
-				int xCut = Random.Range(generator.minimumRoomSize + generator.roomBuffer * 2, this.width - generator.minimumRoomSize - generator.roomBuffer * 2 + 1);
-				partitionA = new Partition(generator, this.x, this.y, xCut, this.height, this.depth + 1);
-				partitionB = new Partition(generator, this.x + xCut, this.y, this.width - xCut, this.height, this.depth + 1);
+                if (width <= minimumSize * 2) return;
+
+                int xCut = UnityEngine.Random.Range(generator.minimumRoomSize + generator.roomBuffer * 2, width - generator.minimumRoomSize - generator.roomBuffer * 2 + 1);
+				partitionA = new Partition(generator, x, y, xCut, height, depth + 1);
+				partitionB = new Partition(generator, x + xCut, y, width - xCut, height, depth + 1);
 			}
 
 			this.left = partitionA; // Also top
@@ -81,8 +99,8 @@ namespace DungeonGeneration {
 				right.MakeCorridors(corridors);
 
 				// Connect left and right partitions by corridor
-				Corridor corridor = CorridorBuilder.CreateCorridor(generator, left, right, horizontalCut);
-				corridors.Add(corridor);
+				corridor = CorridorBuilder.CreateCorridor(generator, left, right, horizontalCut);
+                corridors.Add(corridor);
 			}
 			else // Leaf node
 			{
@@ -90,21 +108,37 @@ namespace DungeonGeneration {
 			}
 		}
 
-	    public void GetRooms(List<Room> rooms)
+	    public void GetRooms(List<ConnectableGridArea> areas)
 	    {
 	        // Intermediate node
 	        if (left != null && right != null)
 	        {
-	            left.GetRooms(rooms);
-	            right.GetRooms(rooms);
+	            left.GetRooms(areas);
+	            right.GetRooms(areas);
 	        }
 	        else // Leaf node
 	        {
-	            rooms.Add(room);
+                areas.Add(room);
 	        }
 	    }
 
-	    public new void Display(GameObject dungeonParent)
+        public void GetCorridors(List<ConnectableGridArea> areas)
+        {
+            // Intermediate node
+            if (left != null && right != null)
+            {
+                left.GetCorridors(areas);
+                right.GetCorridors(areas);
+            }
+            else // Leaf node
+            {
+                return;
+            }
+
+            areas.Add(corridor);
+        }
+
+        public new void Display(GameObject dungeonParent)
 	    {
 	        base.Display(dungeonParent);
 
@@ -112,12 +146,22 @@ namespace DungeonGeneration {
 	        if (right != null) right.Display(dungeonParent);
 	    }
 
-	    public new void Hide()
-	    {
-	        base.Hide();
+        public new void Hide()
+        {
+            base.Hide();
 
-	        if (left != null) left.Hide();
-	        if (right != null) right.Hide();
-	    }
-	}
+            if (left != null) left.Hide();
+            if (right != null) right.Hide();
+        }
+
+        public override Color DisplayColor()
+        {
+            return new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value);
+        }
+
+        public override int DisplayHeight()
+        {
+            return 20 - depth;
+        }
+    }
 }

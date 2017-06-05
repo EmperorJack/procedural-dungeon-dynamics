@@ -1,10 +1,12 @@
-﻿using UnityEngine;
-using UnityEditor;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace DungeonGeneration {
-	public class GridArea
+
+	public abstract class GridArea
 	{
-	    protected DungeonGenerator generator;
+	    protected DungeonLayoutGenerator generator;
 	    public int id;
 
 	    // Worldspace fields
@@ -17,7 +19,7 @@ namespace DungeonGeneration {
 	    protected Cell[,] grid;
 	    protected GameObject gridParent;
 
-	    public GridArea(int id, DungeonGenerator generator, int x, int y, int width, int height)
+	    public GridArea(int id, DungeonLayoutGenerator generator, int x, int y, int width, int height)
 	    {
 	        this.id = id;
 	        this.generator = generator;
@@ -37,7 +39,7 @@ namespace DungeonGeneration {
 	        {
 	            for (int j = 0; j < height; j++)
 	            {
-	                grid[i, j] = new FloorCell(generator.cellPrefab);
+	                grid[i, j] = new FloorCell(generator.simpleLayoutPrefab);
 	            }
 	        }
 	    }
@@ -47,7 +49,7 @@ namespace DungeonGeneration {
 	        Hide();
 
 	        Material material = new Material(Shader.Find("Diffuse"));
-	        material.color = new Color(Random.value, Random.value, Random.value);
+            material.color = DisplayColor();
 
 	        gridParent = new GameObject();
 	        gridParent.name = this.GetType().Name + id;
@@ -59,15 +61,19 @@ namespace DungeonGeneration {
 	            {
 	                GameObject instance = grid[i, j].Display();
 	                instance.transform.SetParent(gridParent.transform);
-	                instance.transform.Translate((x + i) * generator.GetGridSpacing(), (y + j) * generator.GetGridSpacing(), 0.0f);
-	                instance.GetComponent<Renderer>().material = material;
+	                instance.transform.Translate((x + i) * generator.GetGridSpacing(), DisplayHeight(), (y + j) * generator.GetGridSpacing());
+                    instance.transform.Rotate(90, 0, 0);
+                    instance.GetComponent<Renderer>().material = material;
 	            }
 	        }
 	    }
 
-	    public void Hide()
-	    {
-	        MonoBehaviour.DestroyImmediate(gridParent);
-	    }
+        public void Hide()
+        {
+            MonoBehaviour.DestroyImmediate(gridParent);
+        }
+
+        public abstract Color DisplayColor();
+        public abstract int DisplayHeight();
 	}
 }
