@@ -70,23 +70,33 @@ namespace CrowdSim
 			return groupGrid.grid;
 		}
 
-		public void addAgent(Vector2 pos){
-			GameObject dummyAgent = createDummyAgent (pos);
-			SimObject simObject = new SimObject (pos, new Vector2 (0, 0), dummyAgent);
+		public void addAgent(Vector2 pos, GameObject sceneObject){
+			SimObject simObject = null;
+			if (sceneObject == null) {
+				sceneObject = createDummyAgent (pos);
+				simObject = new SimObject (pos, new Vector2 (0, 0), sceneObject);
+			} else {
+				initGameObject (pos,sceneObject);
+				simObject = new SimObject (pos, new Vector2 (0, 0), GameObject.Instantiate(sceneObject));
+			}
 			simObjects.Add (simObject);
 			groupGrid.simObjects.Add (simObject);
+		}
+
+		private void initGameObject(Vector2 pos, GameObject customObject){
+			Transform t = customObject.transform;
+			t.parent = simObjectsParent.transform;
+			t.position = new Vector3(pos.x,0,pos.y);
+			t.localScale = new Vector3 (0.2f, 0.01f, 0.2f);
 		}
 
 		private GameObject createDummyAgent(Vector2 pos){
 			GameObject dummy = GameObject.CreatePrimitive (PrimitiveType.Cylinder);
 
 			Collider c = dummy.GetComponent<Collider> ();
-			c.enabled = false;
+			c.enabled = true;
 
-			Transform t = dummy.transform;
-			t.parent = simObjectsParent.transform;
-			t.position = new Vector3(pos.x,0,pos.y);
-			t.localScale = new Vector3 (0.2f, 0.01f, 0.2f);
+			initGameObject (pos, dummy);
 
 			Material mat = new Material (Shader.Find ("Diffuse"));
 			Renderer rend = dummy.GetComponent<Renderer> ();

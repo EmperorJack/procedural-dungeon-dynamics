@@ -24,6 +24,7 @@ public class ProceduralPipeline : MonoBehaviour {
 	private SimAccess simAccess;
 
 	public GameObject colliderQuad;
+	public GameObject simObject;
 
 	public Vector2 pos;
 	public float cellWidth;
@@ -31,7 +32,7 @@ public class ProceduralPipeline : MonoBehaviour {
 
 	string action = "select";
 
-	public void setAddAgent(){
+	public void setAddAgent(GameObject simObject){
 		action = "agent";
 	}
 
@@ -159,7 +160,7 @@ public class ProceduralPipeline : MonoBehaviour {
 
 					// add an agent
 						if (action.Equals("agent")) {
-						simAccess.addAgent (new Vector2 (hitPosition.x, hitPosition.z));
+						simAccess.addAgent (new Vector2 (hitPosition.x, hitPosition.z), simObject);
 					}
 
 					if (action.Equals ("select")) {

@@ -107,8 +107,8 @@ namespace CrowdSim
 			}
 		}
 
-		public void addAgent(Vector2 pos){
-			simManager.addAgent (pos);
+		public void addAgent(Vector2 pos, GameObject simObject){
+			simManager.addAgent (pos, simObject);
 		}
 			
 		private void displayGrid(GridGraphics graphics){

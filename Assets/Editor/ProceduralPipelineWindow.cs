@@ -19,8 +19,10 @@ public class ProceduralPipelineWindow : EditorWindow {
     private string displayAnchorsButton = "Display Anchors";
 
     private GameObject pipelineObject = null;
+	private GameObject simObject = null;
 
     [MenuItem("Window/Procedural Pipeline")]
+	[MenuItem("Window/Agent Object")]
     static void OpenWindow()
     {
         ProceduralPipelineWindow window = (ProceduralPipelineWindow) GetWindow(typeof(ProceduralPipelineWindow));
@@ -32,6 +34,8 @@ public class ProceduralPipelineWindow : EditorWindow {
     {
         pipelineObject = (GameObject) EditorGUILayout.ObjectField("Procedural Pipeline:", pipelineObject, typeof(GameObject), true);
 
+		simObject = (GameObject)EditorGUILayout.ObjectField ("Agent Object:", simObject, typeof(GameObject), true);
+
         if (GUILayout.Button(performButton)) GetPipeline().Perform();
 
         if (GUILayout.Button(resetButton)) GetPipeline().Reset();
@@ -42,7 +46,7 @@ public class ProceduralPipelineWindow : EditorWindow {
 			GetPipeline ().createSim ();
 
 		if (GUILayout.Button (addAgent)) 
-			GetPipeline ().setAddAgent();
+			GetPipeline ().setAddAgent(simObject);
 		
 
 		if (GUILayout.Button (addGoal))
