@@ -126,15 +126,6 @@ namespace CrowdSim
 
 		private void interpolateVelocities ()
 		{
-//			foreach (SimObject simObject in simObjects) {
-//				int[] index = helper.getCellIndex (simObject.getPosition ());
-//				Cell leftCell = helper.accessGridCell (index);
-//
-//				Vector2 newVel = 10.0f * leftCell.groupVelocity;
-//				//Debug.Log (simObject.velocity.x + " " + simObject.velocity.y);
-//				simObject.applyVelocity (newVel);
-//			}
-
 
 			foreach (SimObject simObject in simObjects) {
 				int[] index = helper.getCellIndex (simObject.getPosition ());

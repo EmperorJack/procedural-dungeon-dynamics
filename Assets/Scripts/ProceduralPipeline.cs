@@ -24,16 +24,19 @@ public class ProceduralPipeline : MonoBehaviour {
 	private SimAccess simAccess;
 
 	public GameObject colliderQuad;
-	public GameObject simObject;
 
+	public int gridRatio = 1;
 	public Vector2 pos;
 	public float cellWidth;
 	public int dim;
+	GameObject simObject;
+
 
 	string action = "select";
 
 	public void setAddAgent(GameObject simObject){
 		action = "agent";
+		this.simObject = simObject;
 	}
 
 	public void setAddGoal(){
@@ -51,15 +54,15 @@ public class ProceduralPipeline : MonoBehaviour {
 		}
 
 		if (simpleLayout != null) {
-			simAccess.init (cellWidth, dim, simpleLayout);
+			simAccess.init (cellWidth, dim, simpleLayout, gridRatio);
 		} else {
-			simAccess.init (cellWidth, dim, simpleLayout);
+			simAccess.init (cellWidth, dim, simpleLayout, gridRatio);
 		}
-
+			
 		Collider c = GetComponent<Collider> ();
 		c.transform.position = pos;
-		c.transform.localScale = new Vector3(cellWidth * dim, 0, cellWidth * dim);
-		c.transform.position = c.transform.position + new Vector3 ((cellWidth * (dim-1)) / 2, 0, (cellWidth * (dim-1)) / 2);
+		c.transform.localScale = new Vector3(cellWidth * dim * gridRatio, 0, cellWidth * dim*gridRatio);
+		c.transform.position = c.transform.position + new Vector3 ((cellWidth * gridRatio * (dim-1)) / 2, 0, (cellWidth *gridRatio* ( dim-1)) / 2);
 	}
 
     public void Perform()

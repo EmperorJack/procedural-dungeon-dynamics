@@ -39,7 +39,7 @@ namespace CrowdSim
 			if (simObjects.Count > 0) {
 				//Debug.Log (simObjects [0].sceneObject.GetComponent<Rigidbody> ().velocity);
 			}
-
+			//sharedGrid.assignAgents (simObjects);
 			sharedGrid.update ();
 			groupGrid.update ();
 
@@ -76,8 +76,11 @@ namespace CrowdSim
 				sceneObject = createDummyAgent (pos);
 				simObject = new SimObject (pos, new Vector2 (0, 0), sceneObject);
 			} else {
+				Debug.Log ("Adding slime agent at :" + pos.x + ", " + pos.y);
+				sceneObject = GameObject.Instantiate (sceneObject);
 				initGameObject (pos,sceneObject);
-				simObject = new SimObject (pos, new Vector2 (0, 0), GameObject.Instantiate(sceneObject));
+
+				simObject = new SimObject (pos, new Vector2 (0, 0), sceneObject);
 			}
 			simObjects.Add (simObject);
 			groupGrid.simObjects.Add (simObject);
@@ -86,8 +89,8 @@ namespace CrowdSim
 		private void initGameObject(Vector2 pos, GameObject customObject){
 			Transform t = customObject.transform;
 			t.parent = simObjectsParent.transform;
+			t.localScale = new Vector3 (0.5f, 0.5f, 0.5f);
 			t.position = new Vector3(pos.x,0,pos.y);
-			t.localScale = new Vector3 (0.2f, 0.01f, 0.2f);
 		}
 
 		private GameObject createDummyAgent(Vector2 pos){

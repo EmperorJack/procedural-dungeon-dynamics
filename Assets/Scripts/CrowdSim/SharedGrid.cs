@@ -19,7 +19,7 @@ namespace CrowdSim
 		float densityExp = 0.1f;
 
 		public float minDensity = 0.1f;
-		public float maxDensity = 1;
+		public float maxDensity = 1f;
 		public float minVelocity = 0.1f;
 		public float maxVelocity = 0.5f;
 		public float distanceWeight = 2.0f;
@@ -62,12 +62,12 @@ namespace CrowdSim
 				for (int j = 0; j < dim; j++) {
 					if (customDungeon == false || (isFloor(dungeon[i/ratio,j/ratio]))) {
 						grid [i, j] = new Cell (new int[]{ i, j });
-						grid [i, j].position = new Vector2 (i * cellWidth, j * cellWidth);
+						grid [i, j].position = new Vector2 (i * cellWidth -0.25f * ratio * cellWidth, j * cellWidth - 0.25f * ratio * cellWidth);
 						grid [i, j].exists = true;
 						realCells++;
 					} else if (customDungeon && isFloor(dungeon[i/ratio,j/ratio]) == false) {
 						grid [i, j] = new Cell (new int[]{ i, j });
-						grid [i, j].position = new Vector2 (i * cellWidth, j * cellWidth);
+						grid [i, j].position = new Vector2 (i * cellWidth - 0.25f * ratio * cellWidth, j * cellWidth -0.25f *  ratio * cellWidth);
 						grid [i, j].exists = false;
 					}
 				}
@@ -186,7 +186,7 @@ namespace CrowdSim
 							Cell cell = grid [i, j];
 							Face face = cell.faces [f];
 
-							if (face.cell == null) {
+							if (face.cell == null || face.cell.exists == false) {
 								face.cost = float.MaxValue;
 							} else {
 								if (face.velocity == 0) {

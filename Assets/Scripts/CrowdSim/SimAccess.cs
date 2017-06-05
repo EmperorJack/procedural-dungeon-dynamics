@@ -20,9 +20,8 @@ namespace CrowdSim
 
 		int frames = 0;
 		public int frameLimit = 10;
-		public float gridRatio = 1;
 			
-		public void init(float cellWidth, int dim){
+		public void init(float cellWidth, int dim, float gridRatio){
 			GameObject crowdSim = new GameObject ();
 			crowdSim.name = "CrowdSim";
 			crowdSim.transform.position = new Vector3 (0, 0, 0);
@@ -41,7 +40,7 @@ namespace CrowdSim
 
 		}
 
-		public void init(float cellWidth, int dim,DungeonGeneration.Cell[,] dungeon){
+		public void init(float cellWidth, int dim,DungeonGeneration.Cell[,] dungeon, float gridRatio){
 			GameObject crowdSim = new GameObject ();
 			crowdSim.name = "CrowdSim";
 			crowdSim.transform.position = new Vector3 (0, 0, 0);

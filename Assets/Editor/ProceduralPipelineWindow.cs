@@ -22,7 +22,6 @@ public class ProceduralPipelineWindow : EditorWindow {
 	private GameObject simObject = null;
 
     [MenuItem("Window/Procedural Pipeline")]
-	[MenuItem("Window/Agent Object")]
     static void OpenWindow()
     {
         ProceduralPipelineWindow window = (ProceduralPipelineWindow) GetWindow(typeof(ProceduralPipelineWindow));
