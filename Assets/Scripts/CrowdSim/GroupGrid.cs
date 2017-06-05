@@ -17,8 +17,10 @@ namespace CrowdSim
 		public List<SimObject> simObjects;
 
 
-		public GroupGrid (float cellWidth, int dim, SharedGrid sharedGrid, DungeonGeneration.Cell[,] dungeon) : base (cellWidth, dim, dungeon)
+		public GroupGrid (float cellWidth, int dim, SharedGrid sharedGrid, DungeonGeneration.Cell[,] dungeon, int gridRatio) : base (cellWidth, dim, dungeon, gridRatio)
 		{
+			dim = sharedGrid.grid.GetLength(0);
+			Debug.Log ("HI: "+dim + " " + grid.GetLength (0) + " ");
 			this.sharedGrid = sharedGrid;
 			for (int i = 0; i < dim; i++) {
 				for (int j = 0; j < dim; j++) {
@@ -214,7 +216,7 @@ namespace CrowdSim
 		{
 			foreach (Face face in cell.faces) {
 				Cell neighbour = face.cell;
-				if (neighbour != null && neighbour.isAccepted == false) {
+				if (neighbour != null && neighbour.isAccepted == false && neighbour.exists) {
 					float tempPotential = calculatePotential (neighbour);
 
 					if (tempPotential < neighbour.potential) {

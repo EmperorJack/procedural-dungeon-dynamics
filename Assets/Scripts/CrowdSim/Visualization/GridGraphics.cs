@@ -51,7 +51,7 @@ namespace Visualization
 			helper = new Helper<GridCell> (cells, cellSize);
 			for (int i = 0; i < dim; i++) {
 				for (int j = 0; j < dim; j++) {
-					if (dataGrid [i, j] != null) {
+					if (dataGrid [i, j] != null && dataGrid[i,j].exists) {
 						Vector2 cellPos = dataGrid [i, j].position;
 						cells [i, j] = new GridCell (cellSize, Color.black, cellPos, objectParent);
 						//cells [i, j].display ();

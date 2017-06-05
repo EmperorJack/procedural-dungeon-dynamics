@@ -17,6 +17,10 @@ namespace CrowdSim
 		int dim;
 
 		private bool visilbe = false;
+
+		int frames = 0;
+		public int frameLimit = 10;
+		public float gridRatio = 1;
 			
 		public void init(float cellWidth, int dim){
 			GameObject crowdSim = new GameObject ();
@@ -31,7 +35,7 @@ namespace CrowdSim
 			simObjects.name = "SimObjects";
 			simObjects.transform.parent = crowdSim.transform;
 
-			this.simManager = new SimManager(cellWidth,dim, simObjects, null);
+			this.simManager = new SimManager(cellWidth/gridRatio,(int)(dim*gridRatio), simObjects, null, (int)gridRatio);
 			this.cellWidth = simManager.cellWidth;
 			this.dim = simManager.dim;
 
@@ -50,19 +54,24 @@ namespace CrowdSim
 			simObjects.name = "SimObjects";
 			simObjects.transform.parent = crowdSim.transform;
 
-			this.simManager = new SimManager(cellWidth,dim, simObjects, dungeon);
+			this.simManager = new SimManager(cellWidth/gridRatio,(int)(dim*gridRatio), simObjects, dungeon, (int)gridRatio);
 			this.cellWidth = simManager.cellWidth;
 			this.dim = simManager.dim;
 
 		}
 
 		public void update(){
-			if (simManager != null) {
-				simManager.update ();
-				float max = simManager.getMax ();
-				if (sharedGraphics != null) {
-					sharedGraphics.updatePotentialColors (max);
+			if (frames >= frameLimit) {
+				if (simManager != null) {
+					simManager.update ();
+					float max = simManager.getMax ();
+					if (sharedGraphics != null) {
+						sharedGraphics.updatePotentialColors (max);
+					}
 				}
+				frames = 0;
+			} else {
+				frames++;
 			}
 		}
 

@@ -32,16 +32,19 @@ namespace CrowdSim
 
 		public int realCells;
 
-		public SharedGrid (float cellWidth, int dim, DungeonGeneration.Cell[,] dungeon)
+		int ratio;
+
+		public SharedGrid (float cellWidth, int dim, DungeonGeneration.Cell[,] dungeon, int ratio)
 		{
 			this.cellWidth = cellWidth;
 			this.dim = dim;
+			this.ratio = ratio;
 
 			if (dungeon == null) {
 				customDungeon = false;
 			} else {
 				customDungeon = true;
-				this.dim = dungeon.GetLength(0);
+				this.dim = dungeon.GetLength(0)* ratio;
 			}
 
 			Debug.Log ("DIM: " + this.dim);
@@ -57,12 +60,12 @@ namespace CrowdSim
 
 			for (int i = 0; i < dim; i++) {
 				for (int j = 0; j < dim; j++) {
-					if (customDungeon == false || isFloor (dungeon [i, j])) {
+					if (customDungeon == false || (isFloor(dungeon[i/ratio,j/ratio]))) {
 						grid [i, j] = new Cell (new int[]{ i, j });
 						grid [i, j].position = new Vector2 (i * cellWidth, j * cellWidth);
 						grid [i, j].exists = true;
 						realCells++;
-					} else if (customDungeon && isFloor (dungeon [i, j])) {
+					} else if (customDungeon && isFloor(dungeon[i/ratio,j/ratio]) == false) {
 						grid [i, j] = new Cell (new int[]{ i, j });
 						grid [i, j].position = new Vector2 (i * cellWidth, j * cellWidth);
 						grid [i, j].exists = false;
