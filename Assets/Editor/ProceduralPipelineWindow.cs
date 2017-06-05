@@ -9,16 +9,14 @@ public class ProceduralPipelineWindow : EditorWindow {
     private string performButton = "Perform";
     private string resetButton = "Reset";
     private string displaySimpleLayoutButton = "Display Simple Layout";
-<<<<<<< HEAD
+
 	private string createSim = "Initialize Crowd Simulator";
 	private string addAgent = "Add Agent";
 	private string addGoal = "Add Goal";
 	private string selectCell ="Select Cell";
 	private string displaySim = "Display Sim";
-=======
     private string displayComplexLayoutButton = "Display Complex Layout";
     private string displayAnchorsButton = "Display Anchors";
->>>>>>> master
 
     private GameObject pipelineObject = null;
 
@@ -40,7 +38,6 @@ public class ProceduralPipelineWindow : EditorWindow {
 
         if (GUILayout.Button(displaySimpleLayoutButton)) GetPipeline().DisplaySimpleLayout();
 
-<<<<<<< HEAD
 		if (GUILayout.Button (createSim))
 			GetPipeline ().createSim ();
 
@@ -56,11 +53,9 @@ public class ProceduralPipelineWindow : EditorWindow {
 
 		if (GUILayout.Button (displaySim))
 			GetPipeline ().displaySim ();
-=======
         if (GUILayout.Button(displayComplexLayoutButton)) GetPipeline().DisplayComplexLayout();
 
         if (GUILayout.Button(displayAnchorsButton)) GetPipeline().DisplayAnchors();
->>>>>>> master
     }
 
     private ProceduralPipeline GetPipeline()

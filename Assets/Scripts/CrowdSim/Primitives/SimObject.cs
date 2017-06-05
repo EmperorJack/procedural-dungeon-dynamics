@@ -19,10 +19,15 @@ namespace Primitives
 			this.sceneObject = sceneObject;
 			if (sceneObject.GetComponent<Rigidbody> () == null) {
 				rb = sceneObject.AddComponent<Rigidbody> ();
-				rb.position = new Vector3 (position.x, 0, position.y);
+				rb.position = new Vector3 (position.x, 0.2f, position.y);
 				rb.useGravity = false;
+
 			} else {
 				rb = sceneObject.GetComponent<Rigidbody> ();
+			}
+
+			if (sceneObject.GetComponent<Collider> () == null) {
+				BoxCollider bC = sceneObject.AddComponent<BoxCollider> ();
 			}
 		}
 			

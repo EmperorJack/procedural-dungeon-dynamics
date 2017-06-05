@@ -29,9 +29,6 @@ public class ProceduralPipeline : MonoBehaviour {
 	public float cellWidth;
 	public int dim;
 
-	 bool addAgent = true;
-	 bool addGoal = false;
-
 	string action = "select";
 
 	public void setAddAgent(){
@@ -68,10 +65,6 @@ public class ProceduralPipeline : MonoBehaviour {
     {
         Reset();
 
-<<<<<<< HEAD
-        dungeonGenerator.Generate();
-        simpleLayout = dungeonGenerator.GetSimpleLayout();
-=======
         dungeonLayoutGenerator.Generate();
 
         simpleLayout = dungeonLayoutGenerator.GetSimpleLayout();
@@ -94,7 +87,6 @@ public class ProceduralPipeline : MonoBehaviour {
         DisplayComplexLayout();
 
         DisplayObjects();
->>>>>>> master
     }
 
     public void Reset()
@@ -142,7 +134,6 @@ public class ProceduralPipeline : MonoBehaviour {
         }
     }
 
-<<<<<<< HEAD
 	void Update(){
 
 		if (simAccess != null) {
@@ -178,7 +169,7 @@ public class ProceduralPipeline : MonoBehaviour {
 			}
 		}
 	}
-=======
+
     public void DisplayComplexLayout()
     {
         if (simpleLayout == null) return;
@@ -212,5 +203,4 @@ public class ProceduralPipeline : MonoBehaviour {
 
         dungeonObjectPlacer.Populate(objectsParent);
     }
->>>>>>> master
 }
