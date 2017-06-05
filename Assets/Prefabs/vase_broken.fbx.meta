@@ -1,0 +1,164 @@
+fileFormatVersion: 2
+guid: 44f3ffb3f94354f4f812899855a0ab3a
+timeCreated: 1496624333
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: Ancient_Vase10
+    100002: Ancient_Vase11
+    100004: Ancient_Vase12
+    100006: Ancient_Vase13
+    100008: Ancient_Vase2
+    100010: Ancient_Vase3
+    100012: Ancient_Vase4
+    100014: Ancient_Vase5
+    100016: Ancient_Vase6
+    100018: Ancient_Vase7
+    100020: Ancient_Vase8
+    100022: Ancient_Vase9
+    100024: //RootNode
+    400000: Ancient_Vase10
+    400002: Ancient_Vase11
+    400004: Ancient_Vase12
+    400006: Ancient_Vase13
+    400008: Ancient_Vase2
+    400010: Ancient_Vase3
+    400012: Ancient_Vase4
+    400014: Ancient_Vase5
+    400016: Ancient_Vase6
+    400018: Ancient_Vase7
+    400020: Ancient_Vase8
+    400022: Ancient_Vase9
+    400024: //RootNode
+    2300000: Ancient_Vase10
+    2300002: Ancient_Vase11
+    2300004: Ancient_Vase12
+    2300006: Ancient_Vase13
+    2300008: Ancient_Vase2
+    2300010: Ancient_Vase3
+    2300012: Ancient_Vase4
+    2300014: Ancient_Vase5
+    2300016: Ancient_Vase6
+    2300018: Ancient_Vase7
+    2300020: Ancient_Vase8
+    2300022: Ancient_Vase9
+    3300000: Ancient_Vase10
+    3300002: Ancient_Vase11
+    3300004: Ancient_Vase12
+    3300006: Ancient_Vase13
+    3300008: Ancient_Vase2
+    3300010: Ancient_Vase3
+    3300012: Ancient_Vase4
+    3300014: Ancient_Vase5
+    3300016: Ancient_Vase6
+    3300018: Ancient_Vase7
+    3300020: Ancient_Vase8
+    3300022: Ancient_Vase9
+    4300000: Ancient_Vase2
+    4300002: Ancient_Vase3
+    4300004: Ancient_Vase4
+    4300006: Ancient_Vase5
+    4300008: Ancient_Vase6
+    4300010: Ancient_Vase7
+    4300012: Ancient_Vase8
+    4300014: Ancient_Vase9
+    4300016: Ancient_Vase10
+    4300018: Ancient_Vase11
+    4300020: Ancient_Vase12
+    4300022: Ancient_Vase13
+    5400000: Ancient_Vase10
+    5400002: Ancient_Vase11
+    5400004: Ancient_Vase12
+    5400006: Ancient_Vase13
+    5400008: Ancient_Vase2
+    5400010: Ancient_Vase3
+    5400012: Ancient_Vase4
+    5400014: Ancient_Vase5
+    5400016: Ancient_Vase6
+    5400018: Ancient_Vase7
+    5400020: Ancient_Vase8
+    5400022: Ancient_Vase9
+    6500000: Ancient_Vase10
+    6500002: Ancient_Vase11
+    6500004: Ancient_Vase12
+    6500006: Ancient_Vase13
+    6500008: Ancient_Vase2
+    6500010: Ancient_Vase3
+    6500012: Ancient_Vase4
+    6500014: Ancient_Vase5
+    6500016: Ancient_Vase6
+    6500018: Ancient_Vase7
+    6500020: Ancient_Vase8
+    6500022: Ancient_Vase9
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
