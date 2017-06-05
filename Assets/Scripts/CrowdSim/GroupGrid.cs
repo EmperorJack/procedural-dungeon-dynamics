@@ -41,6 +41,7 @@ namespace CrowdSim
 			for (int i = 0; i < dim; i++) {
 				for (int j = 0; j < dim; j++) {
 					if (grid [i, j] != null) {
+						grid [i, j].reset ();
 						if (grid [i, j].isGoal) {
 							grid [i, j].potential = 0;
 							grid [i, j].isAccepted = true;
@@ -88,96 +89,114 @@ namespace CrowdSim
 				// only the upwind direction has associated velocity
 				Face[] upwinds = getUpwinds (minCandidate);
 				for (int i = 0; i < upwinds.GetLength (0); i++) {
-					if (upwinds [i].cell != null) {
-						upwinds [i].potentialGrad = upwinds [i].cell.potential - minCandidate.potential;
+					if (upwinds != null) {
+						if (upwinds [i] != null && upwinds [i].cell != null) {
+							upwinds [i] = minCandidate.faces [upwinds [i].index];
+							upwinds [i].potentialGrad = upwinds [i].cell.potential - minCandidate.potential;
+						}
 					}
 				}
 		
 				// normalize gradients and update velocties
-				Vector2 potGrad = new Vector2 (upwinds [0].potentialGrad, upwinds [1].potentialGrad);
+				Vector2 potGrad = new Vector2 (0, 0);
+				if (upwinds [0] != null) {
+					potGrad.x = upwinds [0].potentialGrad;
+				}
+
+				if (upwinds [1] != null) {
+					potGrad.y = upwinds [1].potentialGrad;
+				}
 				potGrad.Normalize ();
-				upwinds [0].potentialGrad = potGrad.x;
-				upwinds [1].potentialGrad = potGrad.y;
 
-				//TODO: Grad is always max
-				Debug.Log ("GRAD: " + upwinds [0].potentialGrad + " " + upwinds [1].potentialGrad);
+				if (upwinds [0] != null) {
+					upwinds [0].potentialGrad = potGrad.x;
+					upwinds [0].groupVelocity = -upwinds [0].potentialGrad * minCandidate.sharedCell.faces [upwinds [0].index].velocity;
+				}
 
-				upwinds [0].groupVelocity = -upwinds [0].potentialGrad * minCandidate.sharedCell.faces [upwinds [0].index].velocity;
-				upwinds [1].groupVelocity = -upwinds [1].potentialGrad * minCandidate.sharedCell.faces [upwinds [1].index].velocity;
+				if (upwinds [1] != null) {
+					upwinds [1].potentialGrad = potGrad.y;
+					upwinds [1].groupVelocity = -upwinds [1].potentialGrad * minCandidate.sharedCell.faces [upwinds [1].index].velocity;
+				}
 
-				Debug.Log ("UW: " + upwinds [0].groupVelocity + " " + upwinds [1].groupVelocity);
+				minCandidate.groupVelocity = getCenterVelocity (minCandidate);
 			}
-
-			//Debug.Log ("DONE");
 		}
 
 		private void interpolateVelocities ()
 		{
+//			foreach (SimObject simObject in simObjects) {
+//				int[] index = helper.getCellIndex (simObject.getPosition ());
+//				Cell leftCell = helper.accessGridCell (index);
+//
+//				Vector2 newVel = 10.0f * leftCell.groupVelocity;
+//				//Debug.Log (simObject.velocity.x + " " + simObject.velocity.y);
+//				simObject.applyVelocity (newVel);
+//			}
+
+
 			foreach (SimObject simObject in simObjects) {
-				int[] index = helper.getCellIndex (simObject.position);
+				int[] index = helper.getCellIndex (simObject.getPosition ());
 				Cell leftCell = helper.accessGridCell (index);
 
 				// interpolate center of each surrounding cell
 
-				float deltaX = simObject.position.x - leftCell.position.x;
-				float deltaY = simObject.position.y - leftCell.position.y;
+				float deltaX = simObject.getPosition ().x - leftCell.position.x;
+				float deltaY = simObject.getPosition ().y - leftCell.position.y;
 
 				//if (index [0] + 1 < dim && index [1] + 1 < dim && grid [index [0] + 1, index [1] + 1] != null) {
-					// simple case for grid
-					// a ----- b
-					// |       |
-					// d ----- c
+				// simple case for grid
+				// a ----- b
+				// |       |
+				// d ----- c
 
-					Vector2 aVel = getCenterVelocity(grid[index[0], index[1] + 1]);
-					Vector2 bVel = getCenterVelocity(grid[index[0] + 1, index[1] + 1]);
-					Vector2 cVel = getCenterVelocity (grid [index [0] + 1, index [1]]);
-					Vector2 dVel = getCenterVelocity (leftCell);
+				Vector2 aVel = getCenterVelocity (grid [index [0], index [1] + 1]);
+				Vector2 bVel = getCenterVelocity (grid [index [0] + 1, index [1] + 1]);
+				Vector2 cVel = getCenterVelocity (grid [index [0] + 1, index [1]]);
+				Vector2 dVel = getCenterVelocity (leftCell);
 
-					Vector2 abx = Vector2.Lerp (aVel, bVel, deltaX);
-					Vector2 dcx = Vector2.Lerp (dVel, cVel, deltaX);
+				Vector2 abx = Vector2.Lerp (aVel, bVel, deltaX);
+				Vector2 dcx = Vector2.Lerp (dVel, cVel, deltaX);
 
-					Vector2 interp = Vector2.Lerp (abx, dcx, deltaY);
+				Vector2 interp = Vector2.Lerp (abx, dcx, deltaY);
 
-				Debug.Log (interp.x + " " + interp.y);
+				//Debug.Log (interp.x + " " + interp.y);
 
-					simObject.velocity = interp;
-					simObject.position = simObject.position + simObject.velocity;
-					simObject.updatePosition();
+				simObject.velocity = 10.0f * interp;
+				simObject.applyVelocity (simObject.velocity);
 				//}
-
-				// interpolate from neighbouring centers
+//
+//				// interpolate from neighbouring centers
 			}
 		}
 
-		private Vector2 getCenterVelocity(Cell cell){
-			Face[] faces = cell.faces;
-			float northVel = faces[0].groupVelocity;
-			if (northVel == 0 && faces[0].cell != null) {
-				northVel = faces [0].cell.faces [2].groupVelocity;
-			} 
+		private Vector2 getCenterVelocity (Cell cell)
+		{
+			if (cell != null) {
+				Face[] faces = cell.faces;
 
-			float southVel = faces[2].groupVelocity;
-			if (southVel == 0 && faces[2].cell != null) {
-				southVel = faces [2].cell.faces [0].groupVelocity;
-			} 
+				Vector2 velocity = new Vector2 (0, 0);
+				if (faces [1] != null) {
+					velocity.x = faces [1].groupVelocity;
+				}
 
-			float eastVel = faces[1].groupVelocity;
-			if (eastVel == 0 && faces[1].cell != null) {
-				eastVel = faces [1].cell.faces [3].groupVelocity;
-			} 
+				if (faces [3] != null) {
+					velocity.x = velocity.x - faces [3].groupVelocity;
+				}
 
-			float westVel = faces[3].groupVelocity;
-			if (westVel == 0 && faces[3].cell != null) {
-				westVel = faces [3].cell.faces [1].groupVelocity;
-			} 
+				if (faces [0] != null) {
+					velocity.y = faces [0].groupVelocity;
+				}
 
-			Vector2 velocity = new Vector2 ();
-			velocity.x = eastVel - westVel;
-			velocity.y = northVel - southVel;
+				if (faces [2] != null) {
+					velocity.y = velocity.y - faces [2].groupVelocity;
+				}
 
-			Debug.Log ("CENTER: " + velocity);
+				//Debug.Log ("CENTER: " + velocity);
 
-			return velocity;
+				return velocity;
+			} else {
+				return new Vector2 (0f, 0f);
+			}
 		}
 
 		private void removeCell (SortedList<float, List<Cell>> candidates, Cell cell, float oldKey)
@@ -247,6 +266,7 @@ namespace CrowdSim
 			return new Face[]{ horUp, vertUp };
 		}
 
+		//Returns the shared upwind face
 		private Face upwindFace (Face face1, Face face2, Cell neighbour1, Cell neighbour2)
 		{
 			

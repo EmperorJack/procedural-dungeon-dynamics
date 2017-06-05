@@ -11,6 +11,7 @@ namespace Visualization
 		private Vector2 position;
 
 		GameObject quad;
+		GridVector vector;
 		GameObject parent;
 
 		public GridCell (float size, Color color, Vector2 position, GameObject parent)
@@ -20,7 +21,11 @@ namespace Visualization
 			this.position = position;
 			this.parent = parent;
 			initQuad ();
+
+			//this.vector = new GridVector (0.8f, 0f, Color.black, this.position, quad);
+
 			hide ();
+
 		}
 
 		public GridCell(float size, GameObject parent){
@@ -33,6 +38,7 @@ namespace Visualization
 		}
 
 		private void initQuad(){
+
 			quad = GameObject.CreatePrimitive(PrimitiveType.Cube);
 			Collider c = quad.GetComponent<Collider> ();
 			c.enabled = false;
@@ -59,6 +65,7 @@ namespace Visualization
 		}
 
 		public void display(){
+			
 			quad.SetActive (true);
 		}
 

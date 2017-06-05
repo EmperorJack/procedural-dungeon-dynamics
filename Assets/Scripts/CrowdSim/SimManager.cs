@@ -35,6 +35,11 @@ namespace CrowdSim
 		}
 
 		public void update(){
+
+			if (simObjects.Count > 0) {
+				//Debug.Log (simObjects [0].sceneObject.GetComponent<Rigidbody> ().velocity);
+			}
+
 			sharedGrid.update ();
 			groupGrid.update ();
 

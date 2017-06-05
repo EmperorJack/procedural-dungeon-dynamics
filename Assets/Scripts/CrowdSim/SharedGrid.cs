@@ -22,8 +22,8 @@ namespace CrowdSim
 		public float maxDensity = 1;
 		public float minVelocity = 0.1f;
 		public float maxVelocity = 0.5f;
-		public float distanceWeight = 1;
-		public float timeWeight = 1;
+		public float distanceWeight = 2.0f;
+		public float timeWeight = 2.0f;
 		public float discomfortWeight = 1;
 
 		private bool customDungeon = false;
@@ -60,7 +60,12 @@ namespace CrowdSim
 					if (customDungeon == false || isFloor (dungeon [i, j])) {
 						grid [i, j] = new Cell (new int[]{ i, j });
 						grid [i, j].position = new Vector2 (i * cellWidth, j * cellWidth);
+						grid [i, j].exists = true;
 						realCells++;
+					} else if (customDungeon && isFloor (dungeon [i, j])) {
+						grid [i, j] = new Cell (new int[]{ i, j });
+						grid [i, j].position = new Vector2 (i * cellWidth, j * cellWidth);
+						grid [i, j].exists = false;
 					}
 				}
 			}
@@ -120,12 +125,12 @@ namespace CrowdSim
 			List<Cell> affectedCells = new List<Cell>(); // all cells who have an agent denstiy contribution
 
 			foreach(SimObject simObject in simObjects){
-				int[] index = helper.getCellIndex (simObject.position);
+				int[] index = helper.getCellIndex (simObject.getPosition());
 				Cell leftCell = helper.accessGridCell(index);
 
 				if (leftCell != null && leftCell.exists) {
-					float deltaX = simObject.position.x - leftCell.position.x;
-					float deltaY = simObject.position.y - leftCell.position.y;
+					float deltaX = simObject.getPosition().x - leftCell.position.x;
+					float deltaY = simObject.getPosition().y - leftCell.position.y;
 
 					// D --- C
 					// |     |

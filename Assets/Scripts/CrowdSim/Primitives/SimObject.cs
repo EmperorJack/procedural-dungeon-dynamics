@@ -6,20 +6,35 @@ namespace Primitives
 {
 	public class SimObject
 	{
-		public Vector2 position;
+		Vector2 position;
 		public Vector2 velocity;
 
-		GameObject sceneObject;
+		public GameObject sceneObject;
+
+		private Rigidbody rb;
 
 		public SimObject(Vector2 position, Vector2 velocity, GameObject sceneObject){
 			this.position = position;
 			this.velocity = velocity;
 			this.sceneObject = sceneObject;
+			if (sceneObject.GetComponent<Rigidbody> () == null) {
+				rb = sceneObject.AddComponent<Rigidbody> ();
+				rb.position = new Vector3 (position.x, 0, position.y);
+				rb.useGravity = false;
+			} else {
+				rb = sceneObject.GetComponent<Rigidbody> ();
+			}
+		}
+			
+
+		public void applyVelocity(Vector2 vel){
+			//Debug.Log (vel.x + " " + vel.y);
+			sceneObject.GetComponent<Rigidbody>().velocity = new Vector3(vel.x, 0, vel.y);
+			//sceneObject.transform.position = new Vector3 (position.x + velocity.x, 0, position.y + velocity.y);
 		}
 
-		public void updatePosition(){
-			//Debug.Log (position.x + " " + position.y);
-			sceneObject.transform.position = new Vector3(position.x, sceneObject.transform.position.y, position.y);
+		public Vector2 getPosition(){
+			return new Vector2 (rb.position.x, rb.position.z);
 		}
 	}
 }

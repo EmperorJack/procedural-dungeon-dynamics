@@ -16,8 +16,9 @@ namespace Primitives
 		public float potential;
 		public float tempPotential;
 		public bool isGoal;
-		public bool isAccepted;
+		public bool isAccepted = false;
 		public Cell sharedCell; // same sharedCell across all groups
+		public Vector2 groupVelocity;
 
 		public int[] index;
 
@@ -33,7 +34,7 @@ namespace Primitives
 			density = 0;
 			potential = float.MaxValue;
 			tempPotential = float.MaxValue;
-			isAccepted = false;
+			//isAccepted = false;
 		}
 
 	}

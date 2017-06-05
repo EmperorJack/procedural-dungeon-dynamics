@@ -89,9 +89,9 @@ namespace CrowdSim
 				Debug.Log (selected.index [0] + ", " + selected.index [1] + ": Potential: " + selected.potential);
 				Debug.Log ("Faces: ");
 				for(int i = 0; i < 4; i++){
-					Primitives.Face face = selected.sharedCell.faces [i];
+					Primitives.Face face = selected.faces [i];
 					if (face != null) {
-						Debug.Log (i + " Cost: " + face.cost);
+						Debug.Log (i + " Cost: " + face.cost+" grad: "+face.potentialGrad+" vel: ["+selected.groupVelocity.x+", "+selected.groupVelocity.y+"]");
 					}
 				}
 				Debug.Log ("-------------");
