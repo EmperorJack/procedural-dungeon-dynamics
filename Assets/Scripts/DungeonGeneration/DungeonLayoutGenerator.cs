@@ -39,7 +39,7 @@ namespace DungeonGeneration {
 
 	        int worldSize = gridSize * cellSize;
 	        rooms = new List<Room>();
-			corridors = new List<Corridor> ();
+			corridors = new List<Corridor>();
 
 	        root = new Partition(this, 0, 0, worldSize, worldSize, 0);
 

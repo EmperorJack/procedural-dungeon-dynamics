@@ -6,10 +6,50 @@ ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
     100000: //RootNode
+    100002: anchor_plate01
+    100004: anchor_plate02
+    100006: anchor_plate03
+    100008: anchor_plate04
+    100010: anchor_plate05
+    100012: anchor_plate06
+    100014: anchor_plate07
+    100016: anchor_plate08
     400000: //RootNode
+    400002: anchor_plate01
+    400004: anchor_plate02
+    400006: anchor_plate03
+    400008: anchor_plate04
+    400010: anchor_plate05
+    400012: anchor_plate06
+    400014: anchor_plate07
+    400016: anchor_plate08
     2300000: //RootNode
+    2300002: anchor_plate01
+    2300004: anchor_plate02
+    2300006: anchor_plate03
+    2300008: anchor_plate04
+    2300010: anchor_plate05
+    2300012: anchor_plate06
+    2300014: anchor_plate07
+    2300016: anchor_plate08
     3300000: //RootNode
+    3300002: anchor_plate01
+    3300004: anchor_plate02
+    3300006: anchor_plate03
+    3300008: anchor_plate04
+    3300010: anchor_plate05
+    3300012: anchor_plate06
+    3300014: anchor_plate07
+    3300016: anchor_plate08
     4300000: table
+    4300002: anchor_plate01
+    4300004: anchor_plate02
+    4300006: anchor_plate03
+    4300008: anchor_plate04
+    4300010: anchor_plate05
+    4300012: anchor_plate06
+    4300014: anchor_plate07
+    4300016: anchor_plate08
     9500000: //RootNode
   materials:
     importMaterials: 1
