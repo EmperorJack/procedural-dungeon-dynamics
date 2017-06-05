@@ -5,10 +5,21 @@ using CrowdSim;
 
 public class ProceduralPipeline : MonoBehaviour {
 
-    public DungeonGeneration.DungeonGenerator dungeonGenerator;
+    // Dungeon components
+    public DungeonGeneration.DungeonLayoutGenerator dungeonLayoutGenerator;
+    public DungeonGeneration.DungeonAssetPopulator dungeonAssetPopulator;
+    public DungeonGeneration.DungeonAnchorGenerator dungeonAnchorGenerator;
+    public DungeonGeneration.DungeonObjectPlacer dungeonObjectPlacer;
 
-    private GameObject layoutParent;
+    // Component reuslts
     private DungeonGeneration.Cell[,] simpleLayout;
+    private List<DungeonGeneration.Anchor> anchors;
+
+    // Parent transform objects
+    private GameObject simpleLayoutParent;
+    private GameObject complexLayoutParent;
+    private GameObject anchorsParent;
+    private GameObject objectsParent;
 
 	private SimAccess simAccess;
 
@@ -57,15 +68,44 @@ public class ProceduralPipeline : MonoBehaviour {
     {
         Reset();
 
+<<<<<<< HEAD
         dungeonGenerator.Generate();
         simpleLayout = dungeonGenerator.GetSimpleLayout();
+=======
+        dungeonLayoutGenerator.Generate();
+
+        simpleLayout = dungeonLayoutGenerator.GetSimpleLayout();
+
+        dungeonAssetPopulator.Setup(
+            dungeonLayoutGenerator.GetRooms(),
+            dungeonLayoutGenerator.GetCorridors(),
+            dungeonLayoutGenerator.GetGridSpacing()
+        );
+
+        dungeonAnchorGenerator.Generate(
+            dungeonLayoutGenerator.GetRooms(),
+            dungeonLayoutGenerator.GetGridSpacing()
+        );
+
+        anchors = dungeonAnchorGenerator.GetAnchors();
+
+        dungeonObjectPlacer.Setup(anchors);
+
+        DisplayComplexLayout();
+
+        DisplayObjects();
+>>>>>>> master
     }
 
     public void Reset()
     {
-        dungeonGenerator.Clear();
-        DestroyImmediate(layoutParent);
         simpleLayout = null;
+        anchors = null;
+
+        DestroyImmediate(GameObject.Find("SimpleLayout"));
+        DestroyImmediate(GameObject.Find("ComplexLayout"));
+        DestroyImmediate(GameObject.Find("AnchorsDisplay"));
+        DestroyImmediate(GameObject.Find("DungeonObjects"));
     }
 
 	public void displaySim(){
@@ -78,29 +118,31 @@ public class ProceduralPipeline : MonoBehaviour {
     {
         if (simpleLayout == null) return;
 
-        DestroyImmediate(layoutParent);
+        DestroyImmediate(simpleLayoutParent);
 
-        layoutParent = new GameObject();
-        layoutParent.name = "SimpleLayout";
+        simpleLayoutParent = new GameObject();
+        simpleLayoutParent.name = "SimpleLayout";
 
         Material material = new Material(Shader.Find("Diffuse"));
         material.color = new Color(200 / 255.0f, 125 / 255.0f, 30 / 255.0f);
 
-        for (int i = 0; i < dungeonGenerator.gridSize; i++)
+        for (int i = 0; i < dungeonLayoutGenerator.gridSize; i++)
         {
-            for (int j = 0; j < dungeonGenerator.gridSize; j++)
+            for (int j = 0; j < dungeonLayoutGenerator.gridSize; j++)
             {
                 if (simpleLayout[i, j].GetType() == typeof(DungeonGeneration.FloorCell))
                 {
                     GameObject instance = simpleLayout[i, j].Display();
-                    instance.transform.SetParent(layoutParent.transform);
-                    instance.transform.Translate((i) * dungeonGenerator.GetGridSpacing(), (j) * dungeonGenerator.GetGridSpacing(), 0.0f);
+                    instance.transform.SetParent(simpleLayoutParent.transform);
+                    instance.transform.Translate((i) * dungeonLayoutGenerator.GetGridSpacing(), 0.0f, (j) * dungeonLayoutGenerator.GetGridSpacing());
+                    instance.transform.Rotate(90, 0, 0);
                     instance.GetComponent<Renderer>().material = material;
                 }
             }
         }
     }
 
+<<<<<<< HEAD
 	void Update(){
 
 		if (simAccess != null) {
@@ -136,4 +178,39 @@ public class ProceduralPipeline : MonoBehaviour {
 			}
 		}
 	}
+=======
+    public void DisplayComplexLayout()
+    {
+        if (simpleLayout == null) return;
+
+        DestroyImmediate(complexLayoutParent);
+
+        complexLayoutParent = new GameObject();
+        complexLayoutParent.name = "ComplexLayout";
+
+        dungeonAssetPopulator.Populate(complexLayoutParent);
+    }
+
+    public void DisplayAnchors()
+    {
+        DestroyImmediate(anchorsParent);
+
+        anchorsParent = new GameObject();
+        anchorsParent.name = "AnchorsDisplay";
+
+        dungeonAnchorGenerator.Display(anchorsParent);
+    }
+
+    public void DisplayObjects()
+    {
+        if (anchors == null) return;
+
+        DestroyImmediate(objectsParent);
+
+        objectsParent = new GameObject();
+        objectsParent.name = "DungeonObjects";
+
+        dungeonObjectPlacer.Populate(objectsParent);
+    }
+>>>>>>> master
 }

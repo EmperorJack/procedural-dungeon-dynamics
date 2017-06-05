@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace DungeonGeneration {
 
-	public class DungeonGenerator : MonoBehaviour {
+	public class DungeonLayoutGenerator : MonoBehaviour {
 
 	    // User set fields
 	    public int gridSize = 10;
@@ -12,10 +12,10 @@ namespace DungeonGeneration {
 	    public int roomBuffer = 1;
         public float minRoomWidthHeightRatio = 1.0f;
         public float maxRoomWidthHeightRatio = 1.0f;
-        public GameObject cellPrefab;
+        public GameObject simpleLayoutPrefab;
 
 	    // Internal fields
-	    private float gridSpacing;
+	    private float gridSpacing = 1;
 	    private int cellSize = 1;
 
 	    // Representation fields
@@ -29,32 +29,17 @@ namespace DungeonGeneration {
 	    private List<Room> rooms;
 		private List<Corridor> corridors;
 
-	    public void FixedUpdate()
-	    {
-	        if (Time.frameCount % 60 == 0)
-	        {
-	            Generate();
-	        }
-	    }
-
 	    public void Generate()
 	    {
-	        Clear();
+            Clear();
 
-	        gridSpacing = 1;
-
-	        PerformBSP();
-	    }
-
-	    private void PerformBSP()
-	    {
-	        nextPartitionId = 0;
+            nextPartitionId = 0;
 	        nextRoomId = 0;
 			nextCorridorId = 0;
 
 	        int worldSize = gridSize * cellSize;
 	        rooms = new List<Room>();
-			corridors = new List<Corridor> ();
+			corridors = new List<Corridor>();
 
 	        root = new Partition(this, 0, 0, worldSize, worldSize, 0);
 
@@ -95,7 +80,7 @@ namespace DungeonGeneration {
             {
                 for (int j = area.y; j < area.y + area.height; j++)
                 {
-                    layout[i, j] = new FloorCell(cellPrefab);
+                    layout[i, j] = new FloorCell(simpleLayoutPrefab);
                 }
             }
         }
@@ -126,7 +111,6 @@ namespace DungeonGeneration {
 
             DisplayRooms();
             DisplayCorridors();
-            //DisplayPartitions();
         }
 
         public void DisplayRooms()
@@ -164,6 +148,16 @@ namespace DungeonGeneration {
             DestroyImmediate(dungeonParent);
             root = null;
             rooms = null;
+        }
+
+        public List<Room> GetRooms()
+        {
+            return rooms;
+        }
+
+        public List<Corridor> GetCorridors()
+        {
+            return corridors;
         }
     }
 }

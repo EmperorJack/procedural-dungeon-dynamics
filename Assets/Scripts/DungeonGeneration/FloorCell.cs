@@ -16,7 +16,7 @@ namespace DungeonGeneration {
 
 	    public override GameObject Display()
 	    {
-			Object instance = MonoBehaviour.Instantiate(prefab, Vector3.zero, Quaternion.Euler(90, 0, 0));
+			Object instance = MonoBehaviour.Instantiate(prefab, Vector3.zero, Quaternion.Euler(0, 0, 0));
 	        return (GameObject) instance;
 	    }
 	}
