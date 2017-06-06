@@ -9,7 +9,7 @@ namespace CrowdSim
 {
 	public class SimAccess
 	{
-		private SimManager simManager; // class which runs the simulation
+		public SimManager simManager; // class which runs the simulation
 		GridGraphics sharedGraphics;
 		GameObject gridParent;
 
@@ -18,7 +18,7 @@ namespace CrowdSim
 
 		private bool visilbe = false;
 
-		int frames = 0;
+		int frames = 1;
 		public int frameLimit = 10;
 			
 		public void init(float cellWidth, int dim, float gridRatio){
@@ -61,16 +61,20 @@ namespace CrowdSim
 
 		public void update(){
 			if (frames >= frameLimit) {
-				if (simManager != null) {
-					simManager.update ();
-					float max = simManager.getMax ();
-					if (sharedGraphics != null) {
-						sharedGraphics.updatePotentialColors (max);
-					}
-				}
+				executeUpdate ();
 				frames = 0;
 			} else {
 				frames++;
+			}
+		}
+
+		private void executeUpdate(){
+			if (simManager != null) {
+				simManager.update ();
+				float max = simManager.getMax ();
+				if (sharedGraphics != null) {
+					sharedGraphics.updatePotentialColors (max);
+				}
 			}
 		}
 
@@ -107,7 +111,9 @@ namespace CrowdSim
 		}
 
 		public void addAgent(Vector2 pos, GameObject simObject){
-			simManager.addAgent (pos, simObject);
+			Debug.Log("Total agents: "+simManager.addAgent (pos, simObject));
+			executeUpdate ();
+
 		}
 			
 		private void displayGrid(GridGraphics graphics){

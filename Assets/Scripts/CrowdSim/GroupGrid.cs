@@ -92,9 +92,11 @@ namespace CrowdSim
 				Face[] upwinds = getUpwinds (minCandidate);
 				for (int i = 0; i < upwinds.GetLength (0); i++) {
 					if (upwinds != null) {
+						upwinds [i] = minCandidate.faces [upwinds [i].index];
 						if (upwinds [i] != null && upwinds [i].cell != null) {
-							upwinds [i] = minCandidate.faces [upwinds [i].index];
 							upwinds [i].potentialGrad = upwinds [i].cell.potential - minCandidate.potential;
+						} else if (upwinds [i] != null && upwinds [i].cell.exists == false) {
+							upwinds [i].potentialGrad = float.MaxValue;
 						}
 					}
 				}
@@ -113,14 +115,18 @@ namespace CrowdSim
 				if (upwinds [0] != null) {
 					upwinds [0].potentialGrad = potGrad.x;
 					upwinds [0].groupVelocity = -upwinds [0].potentialGrad * minCandidate.sharedCell.faces [upwinds [0].index].velocity;
+				} else if (upwinds [0].cell.exists == false) {
+					upwinds [0].groupVelocity = 0f;
 				}
 
 				if (upwinds [1] != null) {
 					upwinds [1].potentialGrad = potGrad.y;
 					upwinds [1].groupVelocity = -upwinds [1].potentialGrad * minCandidate.sharedCell.faces [upwinds [1].index].velocity;
+				} else if (upwinds [1].cell.exists == false) {
+					upwinds [1].groupVelocity = 0f;
 				}
-
-				minCandidate.groupVelocity = getCenterVelocity (minCandidate);
+				minCandidate.potGrad = potGrad;
+				minCandidate.groupVelocity = getCenterVelocity (minCandidate).normalized;
 			}
 		}
 
@@ -136,30 +142,60 @@ namespace CrowdSim
 				float deltaX = simObject.getPosition ().x - leftCell.position.x;
 				float deltaY = simObject.getPosition ().y - leftCell.position.y;
 
-				//if (index [0] + 1 < dim && index [1] + 1 < dim && grid [index [0] + 1, index [1] + 1] != null) {
-				// simple case for grid
-				// a ----- b
-				// |       |
 				// d ----- c
+				// |       |
+				// a ----- b
 
-				Vector2 aVel = getCenterVelocity (grid [index [0], index [1] + 1]);
-				Vector2 bVel = getCenterVelocity (grid [index [0] + 1, index [1] + 1]);
-				Vector2 cVel = getCenterVelocity (grid [index [0] + 1, index [1]]);
-				Vector2 dVel = getCenterVelocity (leftCell);
+				Vector2 dVel = getCenterVelocity (grid [index [0], index [1] + 1]);
+				Vector2 cVel = getCenterVelocity (grid [index [0] + 1, index [1] + 1]);
+				Vector2 bVel = getCenterVelocity (grid [index [0] + 1, index [1]]);
+				Vector2 aVel = getCenterVelocity (leftCell);
 
-				Vector2 abx = Vector2.Lerp (aVel, bVel, deltaX);
-				Vector2 dcx = Vector2.Lerp (dVel, cVel, deltaX);
+				Vector2 velocity = new Vector2(0f,0f);
+				Vector2 cPos = grid [index [0] + 1, index [1] + 1].position;
+				Vector2 lPos = leftCell.position;
+				Vector2 pos = simObject.getPosition ();
 
-				Vector2 interp = Vector2.Lerp (abx, dcx, deltaY);
+				if (deltaX == 0f) {
+					velocity = interp2 (pos.y, lPos.y, cPos.y, bVel, cVel);
+				} else if (zeroVec (aVel) && zeroVec (dVel)) {
+					velocity = interp2 (pos.y, lPos.y, cPos.y, bVel, cVel);
+					velocity.x = Mathf.Min (velocity.x, 0f);
+				} else if (zeroVec (cVel) && zeroVec (bVel)) {
+					velocity = interp2 (pos.y, lPos.y, cPos.y, aVel, dVel);
+					velocity.x = Mathf.Min (velocity.x, 0f);
+				} else if (deltaY == 0f) {
+					velocity = interp2 (pos.x, lPos.x, cPos.x, dVel, cVel);
+				} else if (zeroVec (aVel) && zeroVec (bVel)) {
+					velocity = interp2 (pos.x, lPos.x, cPos.x, dVel, cVel);
+					velocity.y = Mathf.Min (velocity.y, 0f);
+				} else if (zeroVec (cVel) && zeroVec (dVel)) {
+					velocity = interp2 (pos.x, lPos.x, cPos.x, aVel, bVel);
+					velocity.y = Mathf.Min (velocity.y, 0f);
+				} else {
+					simObject.velocity = velocity;
 
-				//Debug.Log (interp.x + " " + interp.y);
+					float firstX = (cPos.x - pos.x) / (cPos.x - lPos.x);
+					float secondX = (pos.x - lPos.x) / (cPos.x - lPos.x);
 
-				simObject.velocity = 10.0f * interp;
+					Vector2 v1 = aVel * firstX + dVel * secondX;
+					Vector2 v2 = bVel * firstX + cVel * secondX;
+
+					Vector2 interp = v1 * ((cPos.y - pos.y) / (cPos.y - lPos.y)) + v2 * ((pos.y - lPos.y) / (cPos.y - lPos.y));
+
+					simObject.velocity = 3.0f * interp;
+				}
 				simObject.applyVelocity (simObject.velocity);
-				//}
-//
-//				// interpolate from neighbouring centers
 			}
+		}
+
+		private Vector2 interp2(float x, float x1, float x2, Vector2 v1, Vector2 v2){
+			Vector2 interp = v1 * ((x2 - x) / (x2 - x1)) + v2 * ((x - x1) / (x2 - x1));
+			return interp;
+		}
+			
+		private bool zeroVec(Vector2 v){
+			return v.Equals (Vector2.zero);
 		}
 
 		private Vector2 getCenterVelocity (Cell cell)
@@ -183,9 +219,7 @@ namespace CrowdSim
 				if (faces [2] != null) {
 					velocity.y = velocity.y - faces [2].groupVelocity;
 				}
-
-				//Debug.Log ("CENTER: " + velocity);
-
+	
 				return velocity;
 			} else {
 				return new Vector2 (0f, 0f);
@@ -263,12 +297,12 @@ namespace CrowdSim
 		private Face upwindFace (Face face1, Face face2, Cell neighbour1, Cell neighbour2)
 		{
 			
-			if ((neighbour1 == null || neighbour1.potential == float.MaxValue) &&
-			    (neighbour2 == null || neighbour2.potential == float.MaxValue)) {
+			if ((neighbour1 == null || neighbour1.potential == float.MaxValue || !neighbour1.exists) &&
+				(neighbour2 == null || neighbour2.potential == float.MaxValue || !neighbour2.exists)) {
 				return null;
-			} else if (neighbour1 == null) {
+			} else if (neighbour1 == null || neighbour1.potential == float.MaxValue || !neighbour1.exists) {
 				return face2;
-			} else if (neighbour2 == null) {
+			} else if (neighbour2 == null || neighbour2.potential == float.MaxValue || !neighbour2.exists) {
 				return face1;
 			} else {
 				float totalCost1 = neighbour1.potential + face1.cost;

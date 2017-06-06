@@ -17,6 +17,7 @@ public class ProceduralPipelineWindow : EditorWindow {
 	private string displaySim = "Display Sim";
     private string displayComplexLayoutButton = "Display Complex Layout";
     private string displayAnchorsButton = "Display Anchors";
+	private string displayFields = "Switch Display Fields";
 
     private GameObject pipelineObject = null;
 	private GameObject simObject = null;
@@ -59,6 +60,9 @@ public class ProceduralPipelineWindow : EditorWindow {
         if (GUILayout.Button(displayComplexLayoutButton)) GetPipeline().DisplayComplexLayout();
 
         if (GUILayout.Button(displayAnchorsButton)) GetPipeline().DisplayAnchors();
+
+		if (GUILayout.Button (displayFields))
+			GetPipeline ().displayFields ();
     }
 
     private ProceduralPipeline GetPipeline()
