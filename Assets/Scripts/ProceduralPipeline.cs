@@ -195,7 +195,7 @@ public class ProceduralPipeline : MonoBehaviour {
 			if (Physics.Raycast (ray, out hit)) {
 				Vector3 hitPosition = hit.point;
 
-				if (Input.GetMouseButtonDown (0)) {
+				if (Input.GetMouseButton (0)) {
 
 					// set grid cell to a goal
 					if (action.Equals("goal")) {
