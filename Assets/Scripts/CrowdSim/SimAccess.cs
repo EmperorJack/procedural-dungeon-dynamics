@@ -20,6 +20,8 @@ namespace CrowdSim
 
 		int frames = 1;
 		public int frameLimit = 10;
+
+		private float gridRatio;
 			
 		public void init(float cellWidth, int dim, float gridRatio){
 			GameObject crowdSim = new GameObject ();
@@ -37,6 +39,7 @@ namespace CrowdSim
 			this.simManager = new SimManager(cellWidth/gridRatio,(int)(dim*gridRatio), simObjects, null, (int)gridRatio);
 			this.cellWidth = simManager.cellWidth;
 			this.dim = simManager.dim;
+			this.gridRatio = gridRatio;
 
 		}
 
@@ -56,6 +59,7 @@ namespace CrowdSim
 			this.simManager = new SimManager(cellWidth/gridRatio,(int)(dim*gridRatio), simObjects, dungeon, (int)gridRatio);
 			this.cellWidth = simManager.cellWidth;
 			this.dim = simManager.dim;
+			this.gridRatio = gridRatio;
 
 		}
 
@@ -135,7 +139,7 @@ namespace CrowdSim
 				visilbe = false;
 			} else {
 				if (sharedGraphics == null) {
-					sharedGraphics = new GridGraphics (cellWidth, simManager.getGrid(), gridParent);
+					sharedGraphics = new GridGraphics (cellWidth, simManager.getGrid(), gridParent, (int)gridRatio);
 				}
 				displayGrid (sharedGraphics);
 				visilbe = true;

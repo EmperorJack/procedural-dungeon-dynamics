@@ -21,7 +21,8 @@ namespace Visualization
 
 		GameObject objectParent;
 
-		public GridGraphics (float cellSize, Cell[,] dataGrid, GameObject objectParent)
+		private int ratio;
+		public GridGraphics (float cellSize, Cell[,] dataGrid, GameObject objectParent, int ratio)
 		{
 			//this.width = dim * cellSize;
 			this.cellSize = cellSize;
@@ -29,6 +30,7 @@ namespace Visualization
 			this.dataGrid = dataGrid;
 			this.objectParent = objectParent;
 			init ();
+			this.ratio = ratio;
 		}
 
 		public void updatePotentialColors(float max){
@@ -47,7 +49,7 @@ namespace Visualization
 		{
 			cells = new GridCell[dim, dim];
 
-			helper = new Helper<GridCell> (cells, cellSize);
+			helper = new Helper<GridCell> (cells, cellSize, ratio);
 			for (int i = 0; i < dim; i++) {
 				for (int j = 0; j < dim; j++) {
 					if (dataGrid [i, j] != null && dataGrid[i,j].exists) {

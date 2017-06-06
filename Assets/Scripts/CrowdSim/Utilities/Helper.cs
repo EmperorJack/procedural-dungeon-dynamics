@@ -10,10 +10,12 @@ namespace Utilities
 	{
 		private T[,] grid;
 		private float cellWidth;
+		private int ratio;
 
-		public Helper(T[,] grid, float cellWidth){
+		public Helper(T[,] grid, float cellWidth, int ratio){
 			this.grid = grid;
 			this.cellWidth = cellWidth;
+			this.ratio = ratio;
 		}
 
 		public  T getLeft(Cell cell){
@@ -32,8 +34,8 @@ namespace Utilities
 			float cellX = position.x - position.x % (cellWidth / 2);
 			float cellY = position.y - position.y % (cellWidth / 2);
 
-			int cellRow = (int)(cellX / cellWidth);
-			int cellCol = (int)(cellY / cellWidth);
+			int cellRow = (int)(cellX / cellWidth);//- ratio - 1;
+			int cellCol = (int)(cellY / cellWidth);// - ratio - 1;
 
 			return new int[]{ cellRow, cellCol };
 		}

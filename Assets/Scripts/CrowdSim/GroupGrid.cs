@@ -32,7 +32,7 @@ namespace CrowdSim
 			}
 			simObjects = new List<SimObject> ();
 
-			helper = new Helper<Cell> (grid, cellWidth);
+			helper = new Helper<Cell> (grid, cellWidth, gridRatio);
 
 		}
 
@@ -234,13 +234,15 @@ namespace CrowdSim
 					aVel = bVel;
 				} else if (deltaY == 0f) {
 					velocity = interp2 (pos.x, lPos.x, cPos.x, dVel, cVel);
-				} else if (zeroVec (aVel) && zeroVec (bVel)) {
-					aVel = dVel;
-					bVel = cVel;
-				} else if (zeroVec (cVel) && zeroVec (dVel)) {
-					cVel = bVel;
-					dVel = aVel;
 				} 
+
+//				else if (zeroVec (aVel) && zeroVec (bVel)) {
+//					aVel = dVel;
+//					bVel = cVel;
+//				} else if (zeroVec (cVel) && zeroVec (dVel)) {
+//					cVel = bVel;
+//					dVel = aVel;
+//				} 
 
 				// corner cells
 //				else if (zeroVec (dVel)) {
