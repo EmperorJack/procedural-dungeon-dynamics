@@ -18,6 +18,7 @@ public class ProceduralPipelineWindow : EditorWindow {
     private string displayComplexLayoutButton = "Display Complex Layout";
     private string displayAnchorsButton = "Display Anchors";
 	private string displayFields = "Switch Display Fields";
+	private string trigger ="Trigger";
 
     private GameObject pipelineObject = null;
 	private GameObject simObject = null;
@@ -63,6 +64,9 @@ public class ProceduralPipelineWindow : EditorWindow {
 
 		if (GUILayout.Button (displayFields))
 			GetPipeline ().displayFields ();
+
+		if (GUILayout.Button (trigger))
+			GetPipeline ().trigger ();
     }
 
     private ProceduralPipeline GetPipeline()

@@ -141,6 +141,10 @@ namespace CrowdSim
 				visilbe = true;
 			}
 		}
+
+		public void trigger(){
+			simManager.trigger ();
+		}
 			
 	}
 }

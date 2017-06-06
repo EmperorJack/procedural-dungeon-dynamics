@@ -155,6 +155,10 @@ public class ProceduralPipeline : MonoBehaviour {
 		}
 	}
 
+	public void trigger(){
+		simAccess.trigger ();
+	}
+
 	public void OnDrawGizmos(){
 		if (displayField > 0) {
 			if (simAccess != null) {

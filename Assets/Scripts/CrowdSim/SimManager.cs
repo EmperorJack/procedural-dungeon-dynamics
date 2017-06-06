@@ -116,6 +116,15 @@ namespace CrowdSim
 			return groupGrid.getMax();
 		}
 
+		public void trigger(){
+			if (groupGrid.trigger) {
+				groupGrid.trigger = false;
+			} else {
+				groupGrid.trigger = true;
+			}
+			Debug.Log ("Trigger: " + groupGrid.trigger);
+		}
+
 	}
 }
 
