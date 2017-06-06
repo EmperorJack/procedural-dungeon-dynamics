@@ -132,7 +132,8 @@ namespace CrowdSim
 			}
 		}
 
-		private void setPotGrads(){
+		private void setPotGrads ()
+		{
 			for (int i = 0; i < dim; i++) {
 				for (int j = 0; j < dim; j++) {
 					Cell cell = grid [i, j];
@@ -164,7 +165,7 @@ namespace CrowdSim
 							faces [2].potentialGrad = faces [0].potentialGrad;
 						}
 
-						cell.potGrad = new Vector2 (faces[1].potentialGrad - faces[3].potentialGrad, faces[0].potentialGrad - faces[2].potentialGrad);
+						cell.potGrad = new Vector2 (faces [1].potentialGrad - faces [3].potentialGrad, faces [0].potentialGrad - faces [2].potentialGrad);
 						cell.potGrad = cell.potGrad.normalized;
 						cell.groupVelocity = -cell.potGrad;
 					}
@@ -203,6 +204,8 @@ namespace CrowdSim
 				int[] index = helper.getCellIndex (simObject.getPosition ());
 				Cell leftCell = helper.accessGridCell (index);
 
+				//simObject.velocity = leftCell.groupVelocity;
+
 				// interpolate center of each surrounding cell
 
 				float deltaX = simObject.getPosition ().x - leftCell.position.x;
@@ -221,24 +224,35 @@ namespace CrowdSim
 				Vector2 cPos = grid [index [0] + 1, index [1] + 1].position;
 				Vector2 lPos = leftCell.position;
 				Vector2 pos = simObject.getPosition ();
-
 				if (deltaX == 0f) {
 					velocity = interp2 (pos.y, lPos.y, cPos.y, bVel, cVel);
 				} else if (zeroVec (aVel) && zeroVec (dVel)) {
-					velocity = interp2 (pos.y, lPos.y, cPos.y, bVel, cVel);
-					velocity.x = Mathf.Min (velocity.x, 0f);
+					aVel = bVel;
+					dVel = cVel;
 				} else if (zeroVec (cVel) && zeroVec (bVel)) {
-					velocity = interp2 (pos.y, lPos.y, cPos.y, aVel, dVel);
-					velocity.x = Mathf.Min (velocity.x, 0f);
+					cVel = dVel;
+					aVel = bVel;
 				} else if (deltaY == 0f) {
 					velocity = interp2 (pos.x, lPos.x, cPos.x, dVel, cVel);
 				} else if (zeroVec (aVel) && zeroVec (bVel)) {
-					velocity = interp2 (pos.x, lPos.x, cPos.x, dVel, cVel);
-					velocity.y = Mathf.Min (velocity.y, 0f);
+					aVel = dVel;
+					bVel = cVel;
 				} else if (zeroVec (cVel) && zeroVec (dVel)) {
-					velocity = interp2 (pos.x, lPos.x, cPos.x, aVel, bVel);
-					velocity.y = Mathf.Min (velocity.y, 0f);
-				} else {
+					cVel = bVel;
+					dVel = aVel;
+				} 
+
+				// corner cells
+//				else if (zeroVec (dVel)) {
+//					dVel = bVel;
+//				} else if (zeroVec (cVel)) {
+//					cVel = aVel;
+//				} else if (zeroVec (aVel)) {
+//					aVel = cVel;
+//				} else if (zeroVec (dVel)) {
+//					dVel = bVel;
+//				} 
+				else {
 					simObject.velocity = velocity;
 
 					float firstX = (cPos.x - pos.x) / (cPos.x - lPos.x);
@@ -423,12 +437,16 @@ namespace CrowdSim
 				
 			float doubleDif = Mathf.Max ((-b + Mathf.Sqrt (underRoot)) / (2 * a), (-b - Mathf.Sqrt (underRoot)) / (2 * a));
 
-			if (doubleDif < face1.cell.potential || doubleDif < face2.cell.potential) {
-					if (pot1 > pot2) {
-						return singleDif (face2);
-					} else {
-						return singleDif (face1);
+			foreach (Face face in cell.faces) {
+				if (cell.isAccepted) {
+					if (doubleDif <= cell.potential) {
+						if (pot1 > pot2) {
+							return singleDif (face2);
+						} else {
+							return singleDif (face1);
+						}
 					}
+				}
 			}
 				
 			
