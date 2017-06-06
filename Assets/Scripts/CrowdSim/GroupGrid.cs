@@ -183,7 +183,7 @@ namespace CrowdSim
 
 					Vector2 interp = v1 * ((cPos.y - pos.y) / (cPos.y - lPos.y)) + v2 * ((pos.y - lPos.y) / (cPos.y - lPos.y));
 
-					simObject.velocity = 10.0f * interp;
+					simObject.velocity = 3.0f * interp;
 				}
 				simObject.applyVelocity (simObject.velocity);
 			}

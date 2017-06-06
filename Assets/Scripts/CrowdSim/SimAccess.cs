@@ -19,7 +19,7 @@ namespace CrowdSim
 		private bool visilbe = false;
 
 		int frames = 1;
-		public int frameLimit = 1;
+		public int frameLimit = 10;
 			
 		public void init(float cellWidth, int dim, float gridRatio){
 			GameObject crowdSim = new GameObject ();
@@ -111,7 +111,7 @@ namespace CrowdSim
 		}
 
 		public void addAgent(Vector2 pos, GameObject simObject){
-			simManager.addAgent (pos, simObject);
+			Debug.Log("Total agents: "+simManager.addAgent (pos, simObject));
 			executeUpdate ();
 
 		}

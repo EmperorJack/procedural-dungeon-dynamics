@@ -195,10 +195,10 @@ public class ProceduralPipeline : MonoBehaviour {
 			if (Physics.Raycast (ray, out hit)) {
 				Vector3 hitPosition = hit.point;
 
-				if (Input.GetMouseButton (0)) {
+				if (Input.GetMouseButtonDown (0)) {
 
 					// set grid cell to a goal
-					if (action.Equals("goal")) {
+					if (action.Equals ("goal")) {
 						int[] selectedIndex = simAccess.addGoal (new Vector2 (hitPosition.x, hitPosition.z));
 						if (selectedIndex != null) {
 							print ("Selected cell: " + selectedIndex [0] + " " + selectedIndex [1]);
@@ -207,13 +207,18 @@ public class ProceduralPipeline : MonoBehaviour {
 						}
 					}
 
-					// add an agent
-						if (action.Equals("agent")) {
-						simAccess.addAgent (new Vector2 (hitPosition.x, hitPosition.z), simObject);
-					}
-
 					if (action.Equals ("select")) {
 						simAccess.selectCell (new Vector2 (hitPosition.x, hitPosition.z));
+					}
+
+					// add an agent
+					if (action.Equals ("agent")) {
+						simAccess.addAgent (new Vector2 (hitPosition.x, hitPosition.z), simObject);
+					}
+				} else if (Input.GetMouseButton (1)) {
+					// add an agent
+					if (action.Equals ("agent")) {
+						simAccess.addAgent (new Vector2 (hitPosition.x, hitPosition.z), simObject);
 					}
 				}
 			}

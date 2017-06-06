@@ -68,12 +68,12 @@ namespace CrowdSim
 				for (int j = 0; j < dim; j++) {
 					if (customDungeon == false || (isFloor(dungeon[i/ratio,j/ratio]))) {
 						grid [i, j] = new Cell (new int[]{ i, j });
-						grid [i, j].position = new Vector2 (i * cellWidth -0.25f * ratio * cellWidth, j * cellWidth - 0.25f * ratio * cellWidth);
+						grid [i, j].position = new Vector2 (i * cellWidth - (ratio-1) * cellWidth * 0.5f, j * cellWidth- (ratio-1) * cellWidth * 0.5f);
 						grid [i, j].exists = true;
 						realCells++;
 					} else if (customDungeon && isFloor(dungeon[i/ratio,j/ratio]) == false) {
 						grid [i, j] = new Cell (new int[]{ i, j });
-						grid [i, j].position = new Vector2 (i * cellWidth - 0.25f * ratio * cellWidth, j * cellWidth -0.25f *  ratio * cellWidth);
+						grid [i, j].position = new Vector2 (i * cellWidth- (ratio-1) * cellWidth * 0.5f, j * cellWidth - (ratio-1) * cellWidth * 0.5f);
 						grid [i, j].exists = false;
 					}
 				}

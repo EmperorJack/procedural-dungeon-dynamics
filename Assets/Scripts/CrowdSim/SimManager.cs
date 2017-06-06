@@ -70,7 +70,7 @@ namespace CrowdSim
 			return groupGrid.grid;
 		}
 
-		public void addAgent(Vector2 pos, GameObject sceneObject){
+		public int addAgent(Vector2 pos, GameObject sceneObject){
 			SimObject simObject = null;
 			if (sceneObject == null) {
 				sceneObject = createDummyAgent (pos);
@@ -85,6 +85,8 @@ namespace CrowdSim
 			simObjects.Add (simObject);
 			groupGrid.simObjects.Add (simObject);
 			sharedGrid.addAgent (simObject);
+
+			return simObjects.Count;
 		}
 
 		private void initGameObject(Vector2 pos, GameObject customObject){
