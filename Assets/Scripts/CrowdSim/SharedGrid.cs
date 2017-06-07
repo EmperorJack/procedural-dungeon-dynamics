@@ -220,18 +220,21 @@ namespace CrowdSim
 							if (face.cell == null || face.cell.exists == false) {
 								face.velocity = 0;
 							} else {
-								
 								if (grid [i, j].density < minDensity) {
 									face.velocity = topoSpeed (face);
 								} else if (grid [i, j].density > maxDensity) {
+									Debug.Log ("Max Case");
 									face.velocity = flowSpeed (grid[i,j],face, f);
 								} else {
-									if (face.cell.exists == false) {
-										face.velocity = 0;
-									} else {
-										face.velocity = topoSpeed (face) + ((face.cell.density - minDensity) / (maxDensity - minDensity)) *
-										(flowSpeed (grid[i,j],face, f) - topoSpeed (face));
-									}
+									face.velocity = flowSpeed (grid[i,j],face, f);
+
+//									Debug.Log ("Interp Case");
+//									if (face.cell.exists == false) {
+//										face.velocity = 0;
+//									} else {
+//										face.velocity = topoSpeed (face) + ((face.cell.density - minDensity) / (maxDensity - minDensity)) *
+//										(flowSpeed (grid[i,j],face, f) - topoSpeed (face));
+//									}
 								}
 							}
 						}
@@ -264,7 +267,7 @@ namespace CrowdSim
 
 		public virtual void update(){
 			resetGrid ();
-			assignAgents (simObjects);
+			//assignAgents (simObjects);
 			assignSpeedField ();
 			assignCosts ();
 		}

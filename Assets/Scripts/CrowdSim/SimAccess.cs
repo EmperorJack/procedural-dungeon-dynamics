@@ -37,7 +37,7 @@ namespace CrowdSim
 			simObjects.transform.parent = crowdSim.transform;
 
 			this.simManager = new SimManager(cellWidth/gridRatio,(int)(dim*gridRatio), simObjects, null, (int)gridRatio);
-			this.cellWidth = simManager.cellWidth;
+			this.cellWidth = cellWidth;
 			this.dim = simManager.dim;
 			this.gridRatio = gridRatio;
 
@@ -57,7 +57,7 @@ namespace CrowdSim
 			simObjects.transform.parent = crowdSim.transform;
 
 			this.simManager = new SimManager(cellWidth/gridRatio,(int)(dim*gridRatio), simObjects, dungeon, (int)gridRatio);
-			this.cellWidth = simManager.cellWidth;
+			this.cellWidth = cellWidth;
 			this.dim = simManager.dim;
 			this.gridRatio = gridRatio;
 
@@ -139,7 +139,7 @@ namespace CrowdSim
 				visilbe = false;
 			} else {
 				if (sharedGraphics == null) {
-					sharedGraphics = new GridGraphics (cellWidth, simManager.getGrid(), gridParent, (int)gridRatio);
+					sharedGraphics = new GridGraphics (cellWidth/gridRatio, simManager.getGrid(), gridParent, (int)gridRatio);
 				}
 				displayGrid (sharedGraphics);
 				visilbe = true;

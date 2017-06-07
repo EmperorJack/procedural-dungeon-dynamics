@@ -31,11 +31,25 @@ namespace Utilities
 		/// <param name="cellWidth">Cell width.</param>
 		/// <param name="grid">Grid.</param>
 		public  int[] getLeft(Vector2 position){
-			float cellX = position.x - position.x % (cellWidth / 2);
-			float cellY = position.y - position.y % (cellWidth / 2);
+			position = position * ratio;
+			position = position + new Vector2 ((cellWidth * (ratio-1)) / 2, (cellWidth * (ratio-1)) / 2);
+			cellWidth = cellWidth * ratio;
 
-			int cellRow = (int)(cellX / cellWidth);//- ratio - 1;
-			int cellCol = (int)(cellY / cellWidth);// - ratio - 1;
+			int cellRow = (int)Mathf.Floor (position.x);
+			int cellCol = (int)Mathf.Floor (position.y);
+
+			cellWidth /= ratio;
+			position = position - new Vector2 ((cellWidth * (ratio-1)) / 2, (cellWidth * (ratio-1)) / 2);
+			position = position / ratio;
+
+			cellRow = Mathf.Max (cellRow, 0);
+			cellCol = Mathf.Max (cellCol, 0);
+
+//			float cellX = position.x - position.x % (cellWidth / 2);
+//			float cellY = position.y - position.y % (cellWidth / 2);
+//
+//			int cellRow = (int)(cellX / cellWidth);//- ratio - 1;
+//			int cellCol = (int)(cellY / cellWidth);// - ratio - 1;
 
 			return new int[]{ cellRow, cellCol };
 		}

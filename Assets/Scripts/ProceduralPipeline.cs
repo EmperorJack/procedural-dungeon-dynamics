@@ -160,6 +160,9 @@ public class ProceduralPipeline : MonoBehaviour {
 	}
 
 	public void OnDrawGizmos(){
+		Gizmos.color = Color.yellow;
+		Gizmos.DrawLine (new Vector3(0,0.1f,0), new Vector3 (0, 0.1f, 10f));
+		Gizmos.DrawLine (new Vector3(0,0.1f,0), new Vector3 (10f, 0.1f, 0));
 		if (displayField > 0) {
 			if (simAccess != null) {
 				Primitives.Cell[,] grid = simAccess.simManager.groupGrid.grid;
