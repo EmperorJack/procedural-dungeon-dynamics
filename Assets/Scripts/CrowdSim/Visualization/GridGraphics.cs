@@ -21,6 +21,14 @@ namespace Visualization
 
 		GameObject objectParent;
 
+		public void reset(){
+			for (int i = 0; i < dim; i++) {
+				for (int j = 0; j < dim; j++) {
+					cells [i, j].reset();
+				}
+			}
+		}
+
 		private int ratio;
 		public GridGraphics (float cellSize, Cell[,] dataGrid, GameObject objectParent, int ratio)
 		{

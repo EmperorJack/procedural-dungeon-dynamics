@@ -19,6 +19,8 @@ namespace CrowdSim
 		public bool trigger = false;
 		float cellWidth;
 
+		public bool updateField = true;
+
 		public GroupGrid (float cellWidth, int dim, SharedGrid sharedGrid, DungeonGeneration.Cell[,] dungeon, int gridRatio) : base (cellWidth, dim, dungeon, gridRatio)
 		{
 			dim = sharedGrid.grid.GetLength (0);
@@ -457,8 +459,10 @@ namespace CrowdSim
 
 		public override void update ()
 		{
-			assignPotentials ();
-			setPotGrads ();
+			if (updateField) {
+				assignPotentials ();
+				setPotGrads ();
+			}
 			interpolateVelocities ();
 		}
 	}

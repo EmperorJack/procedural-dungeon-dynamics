@@ -20,6 +20,12 @@ namespace CrowdSim
 		List<SimObject> simObjects;
 		GameObject simObjectsParent;
 
+		public void reset(){
+			foreach (SimObject simObject in simObjects) {
+				Object.Destroy (simObject.sceneObject);
+			}
+		}
+
 		public SimManager (float cellWidth, int dim, GameObject simObjectsParent, DungeonGeneration.Cell[,] dungeon, int gridRatio)
 		{
 			this.cellWidth = cellWidth;
