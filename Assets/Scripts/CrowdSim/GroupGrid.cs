@@ -17,6 +17,7 @@ namespace CrowdSim
 		public List<SimObject> simObjects;
 
 		public bool trigger = false;
+		float cellWidth;
 
 		public GroupGrid (float cellWidth, int dim, SharedGrid sharedGrid, DungeonGeneration.Cell[,] dungeon, int gridRatio) : base (cellWidth, dim, dungeon, gridRatio)
 		{
@@ -30,6 +31,8 @@ namespace CrowdSim
 					}
 				}
 			}
+
+			this.cellWidth = cellWidth;
 			simObjects = new List<SimObject> ();
 
 			helper = new Helper<Cell> (grid, cellWidth, gridRatio);
@@ -201,7 +204,7 @@ namespace CrowdSim
 		{
 
 			foreach (SimObject simObject in simObjects) {
-				int[] index = helper.getCellIndex (simObject.getPosition ());
+				int[] index = helper.getLeft (simObject.getPosition ());
 				Cell leftCell = helper.accessGridCell (index);
 
 				//simObject.velocity = leftCell.groupVelocity;
@@ -224,49 +227,40 @@ namespace CrowdSim
 				Vector2 cPos = grid [index [0] + 1, index [1] + 1].position;
 				Vector2 lPos = leftCell.position;
 				Vector2 pos = simObject.getPosition ();
-				if (deltaX == 0f) {
-					velocity = interp2 (pos.y, lPos.y, cPos.y, bVel, cVel);
-				} else if (zeroVec (aVel) && zeroVec (dVel)) {
+
+				if (zeroVec (aVel) && zeroVec (dVel)) {
 					aVel = bVel;
 					dVel = cVel;
 				} else if (zeroVec (cVel) && zeroVec (bVel)) {
 					cVel = dVel;
 					aVel = bVel;
-				} else if (deltaY == 0f) {
-					velocity = interp2 (pos.x, lPos.x, cPos.x, dVel, cVel);
 				} 
 
-//				else if (zeroVec (aVel) && zeroVec (bVel)) {
-//					aVel = dVel;
-//					bVel = cVel;
-//				} else if (zeroVec (cVel) && zeroVec (dVel)) {
-//					cVel = bVel;
-//					dVel = aVel;
-//				} 
+				else if (zeroVec (aVel) && zeroVec (bVel)) {
+					aVel = dVel;
+					bVel = cVel;
+				} else if (zeroVec (cVel) && zeroVec (dVel)) {
+					cVel = bVel;
+					dVel = aVel;
+				} 
+					
+				else if (zeroVec (dVel)) {
+					dVel = bVel;
+				} else if (zeroVec (cVel)) {
+					cVel = aVel;
+				} else if (zeroVec (aVel)) {
+					aVel = cVel;
+				} else if (zeroVec (dVel)) {
+					dVel = bVel;
+				} 
 
-				// corner cells
-//				else if (zeroVec (dVel)) {
-//					dVel = bVel;
-//				} else if (zeroVec (cVel)) {
-//					cVel = aVel;
-//				} else if (zeroVec (aVel)) {
-//					aVel = cVel;
-//				} else if (zeroVec (dVel)) {
-//					dVel = bVel;
-//				} 
-				else {
-					simObject.velocity = velocity;
+				Vector2 dcx = Vector2.Lerp (dVel, cVel, deltaX / cellWidth);
+				Vector2 abx = Vector2.Lerp (aVel, bVel, deltaX / cellWidth);
+				Vector2 interp = Vector2.Lerp (dcx, abx, deltaY / cellWidth);
 
-					float firstX = (cPos.x - pos.x) / (cPos.x - lPos.x);
-					float secondX = (pos.x - lPos.x) / (cPos.x - lPos.x);
 
-					Vector2 v1 = aVel * firstX + dVel * secondX;
-					Vector2 v2 = bVel * firstX + cVel * secondX;
-
-					Vector2 interp = v1 * ((cPos.y - pos.y) / (cPos.y - lPos.y)) + v2 * ((pos.y - lPos.y) / (cPos.y - lPos.y));
-
-					simObject.velocity = 3.0f * interp;
-				}
+				simObject.velocity = 1.0f * interp;
+			
 				simObject.applyVelocity (simObject.velocity);
 			}
 		}
