@@ -82,6 +82,18 @@ public class ProceduralPipeline : MonoBehaviour
 		createSim ();
 	}
 
+	public void swapGroups(){
+		if (simAccess != null) {
+			simAccess.swapGroups ();
+		}
+	}
+
+	public void addGroup(){
+		if (simAccess != null) {
+			simAccess.addGroup ();
+		}
+	}
+
 	public void Reset ()
 	{
 		simpleLayout = null;

@@ -16,7 +16,7 @@ namespace CrowdSim
 		private Helper<Cell> helper;
 
 		// 'constant' values
-		float densityExp = 0.1f;
+		float densityExp = 0.8f;
 		public float maxCalcDensity = 0f;
 		public float minDensity = 0.1f;
 		public float maxDensity = 2f;
@@ -267,7 +267,7 @@ namespace CrowdSim
 
 		public virtual void update(){
 			resetGrid ();
-			//assignAgents (simObjects);
+			assignAgents (simObjects);
 			assignSpeedField ();
 			assignCosts ();
 		}

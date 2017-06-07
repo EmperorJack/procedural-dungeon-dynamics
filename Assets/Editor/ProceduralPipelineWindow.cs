@@ -11,6 +11,8 @@ public class ProceduralPipelineWindow : EditorWindow {
     private string displaySimpleLayoutButton = "Display Simple Layout";
 
 	private string createSim = "Initialize Crowd Simulator";
+	private string addGroup = "Add Group";
+	private string swapGroup = "Swap Group";
 	private string addAgent = "Add Agent";
 	private string addGoal = "Add Goal";
 	private string selectCell ="Select Cell";
@@ -19,6 +21,7 @@ public class ProceduralPipelineWindow : EditorWindow {
     private string displayAnchorsButton = "Display Anchors";
 	private string displayFields = "Switch Display Fields";
 	private string trigger ="Trigger";
+
 
     private GameObject pipelineObject = null;
 
@@ -64,6 +67,12 @@ public class ProceduralPipelineWindow : EditorWindow {
 
 		if (GUILayout.Button (trigger))
 			GetPipeline ().trigger ();
+
+		if (GUILayout.Button (addGroup))
+			GetPipeline ().addGroup ();
+
+		if (GUILayout.Button (swapGroup))
+			GetPipeline ().swapGroups ();
     }
 
     private ProceduralPipeline GetPipeline()

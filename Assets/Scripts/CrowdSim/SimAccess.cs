@@ -58,6 +58,18 @@ namespace CrowdSim
 //			}
 		}
 
+		public void swapGroups(){
+			if(simManager != null){
+			simManager.swapGroup();
+			}
+		}
+
+		public void addGroup(){
+			if (simManager != null) {
+				simManager.addGroup ();
+			}
+		}
+
 		public SimAccess(){
 			//init (null);
 		}
