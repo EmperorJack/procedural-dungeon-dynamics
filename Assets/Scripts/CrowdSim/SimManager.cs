@@ -11,7 +11,7 @@ namespace CrowdSim
 	public class SimManager
 	{
 		SharedGrid sharedGrid;
-		private int groupId =-1;
+		public int groupId =-1;
 		public GroupGrid groupGrid;
 		public List<GroupGrid> groups;
 
@@ -34,7 +34,17 @@ namespace CrowdSim
 			}
 		}
 
-		public SimManager (float cellWidth, int dim, GameObject simObjectsParent, DungeonGeneration.Cell[,] dungeon, int gridRatio)
+		public void togglePause(){
+			foreach (GroupGrid group in groups) {
+				group.paused = !group.paused;
+				foreach (SimObject simObject in group.simObjects) {
+					simObject.applyVelocity (Vector2.zero);
+					simObject.toggleKinematic ();
+				}
+			}
+		}
+
+		public SimManager (float cellWidth, int dim, GameObject simObjectsParent, DungeonGeneration.Cell[,] dungeon, int gridRatio, bool defaultSetup)
 		{
 			this.cellWidth = cellWidth;
 			this.dim = dim;
@@ -50,33 +60,36 @@ namespace CrowdSim
 			groups = new List<GroupGrid> ();
 
 			//groupGrid = new GroupGrid (cellWidth, dim, sharedGrid, dungeon,gridRatio);
-			addGroup ();
-
+			Debug.Log("Default: "+defaultSetup);
+			if (defaultSetup) {
+				defaultInit ();
+			} else {
+				addGroup ();
+			}
 			helper = new Helper<Cell> (groups [0].grid, cellWidth, gridRatio);
 		}
 
-		public void update ()
+		public void update (float time)
 		{
 
 			if (simObjects.Count > 0) {
-				//Debug.Log (simObjects [0].sceneObject.GetComponent<Rigidbody> ().velocity);
-			}
-			//sharedGrid.assignAgents (simObjects);
-			sharedGrid.update ();
+				//sharedGrid.assignAgents (simObjects);
+				sharedGrid.update (time);
 
-			foreach (GroupGrid group in groups) {
-				group.update ();
+				foreach (GroupGrid group in groups) {
+					group.update (time);
+				}
 			}
 
 		}
 
-		public int[] selectCell (Vector2 pos)
+		public int[] selectCell (Vector2 pos, bool justAdd)
 		{
 			Cell cell = helper.getCell (pos);
 			int[] index = helper.getCellIndex (pos);
 
 			if (cell != null) {
-				if (cell.isGoal) {
+				if (cell.isGoal && justAdd == false) {
 					cell.isGoal = false;
 				} else {
 					cell.isGoal = true;
@@ -191,6 +204,22 @@ namespace CrowdSim
 			helper = new Helper<Cell> (groups [groupId].grid, cellWidth, gridRatio);
 
 			Debug.Log ("Now editing group: " + groupId);
+		}
+
+		public void defaultInit(){
+
+			addGroup ();
+
+
+			for (int i = 0; i < groupGrid.grid.GetLength (0); i++) {
+				groupGrid.grid [0, i].isGoal = true;
+			}
+
+			addGroup ();
+
+			for (int i = 0; i < groupGrid.grid.GetLength (0); i++) {
+				groupGrid.grid [groupGrid.grid.GetLength(0)-1, i].isGoal = true;
+			}
 		}
 
 		public void swapGroup ()

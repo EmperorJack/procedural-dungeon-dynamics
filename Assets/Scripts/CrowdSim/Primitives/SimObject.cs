@@ -29,8 +29,12 @@ namespace Primitives
 			if (sceneObject.GetComponent<Collider> () == null) {
 				BoxCollider bC = sceneObject.AddComponent<BoxCollider> ();
 			}
+			rb.isKinematic = false;
 		}
 			
+		public void toggleKinematic(){
+			rb.isKinematic = !rb.isKinematic;
+		}
 
 		public void applyVelocity(Vector2 vel){
 			//Debug.Log (vel.x + " " + vel.y);

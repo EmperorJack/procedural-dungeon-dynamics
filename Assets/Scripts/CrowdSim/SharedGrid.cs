@@ -7,7 +7,7 @@ using Utilities;
 
 namespace CrowdSim
 {
-	public class SharedGrid
+	public class SharedGrid : MonoBehaviour
 	{
 		public Cell[,] grid;
 		float cellWidth;
@@ -56,6 +56,7 @@ namespace CrowdSim
 			this.dungeon = dungeon;
 
 			initGrid ();
+
 		}
 
 		public void addAgent(SimObject simObject){
@@ -130,7 +131,7 @@ namespace CrowdSim
 			}
 		}
 
-		public void assignAgents(List<SimObject> simObjects){
+		public void assignAgents(List<SimObject> simObjects, float time){
 
 			foreach(SimObject simObject in simObjects){
 				int[] index = helper.getCellIndex (simObject.getPosition());
@@ -176,6 +177,10 @@ namespace CrowdSim
 						dCell.avgVelocity += dDensity * simObject.velocity;
 					}
 				}
+
+				Vector2 newPos = simObject.getPosition () + time * simObject.velocity;
+				Cell newCell = helper.getCell (newPos);
+				newCell.discomfort += 0.1f;
 			}
 			// calculate average velocity
 
@@ -265,9 +270,9 @@ namespace CrowdSim
 			return Mathf.Max(Vector2.Dot(neighbour.avgVelocity, offset),0.01f);
 		}
 
-		public virtual void update(){
+		public virtual void update(float time){
 			resetGrid ();
-			assignAgents (simObjects);
+			assignAgents (simObjects, time);
 			assignSpeedField ();
 			assignCosts ();
 		}

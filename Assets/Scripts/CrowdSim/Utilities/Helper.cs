@@ -64,7 +64,7 @@ namespace Utilities
 
 		public  T accessGridCell(int[] index){
 
-			if (index [0] < 0 || index [1] < 0 || index [0] >= grid.Length || index [1] >= grid.Length) {
+			if (index [0] < 0 || index [1] < 0 || index [0] >= grid.GetLength(0) || index [1] >= grid.GetLength(0)) {
 				return default(T);
 			}
 			return grid [index [0], index [1]];

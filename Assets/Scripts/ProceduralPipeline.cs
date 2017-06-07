@@ -94,6 +94,12 @@ public class ProceduralPipeline : MonoBehaviour
 		}
 	}
 
+	public void togglePause(){
+		if (simAccess != null) {
+			simAccess.togglePause ();
+		}
+	}
+
 	public void Reset ()
 	{
 		simpleLayout = null;
@@ -108,7 +114,7 @@ public class ProceduralPipeline : MonoBehaviour
 			simAccess.reset ();
 		}
 	}
-
+		
 	public void displaySim ()
 	{
 		Debug.Log ("Displaying Sim");

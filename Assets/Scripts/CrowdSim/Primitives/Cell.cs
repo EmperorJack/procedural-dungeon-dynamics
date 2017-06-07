@@ -9,7 +9,7 @@ namespace Primitives
 		public bool exists;
 
 		public Vector2 position, avgVelocity;
-		public float density;
+		public float density, discomfort;
 		public Face[] faces;
 
 		//Used only for group cells
@@ -34,6 +34,7 @@ namespace Primitives
 			}
 			avgVelocity = new Vector2 (0, 0);
 			density = 0;
+			discomfort = 0;
 			potential = float.MaxValue;
 			tempPotential = float.MaxValue;
 			//isAccepted = false;

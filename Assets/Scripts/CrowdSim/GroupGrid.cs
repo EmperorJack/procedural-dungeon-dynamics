@@ -17,6 +17,7 @@ namespace CrowdSim
 		public List<SimObject> simObjects;
 
 		public bool trigger = false;
+		public bool paused = false;
 		float cellWidth;
 
 		public bool updateField = true;
@@ -457,13 +458,16 @@ namespace CrowdSim
 			return max;
 		}
 
-		public override void update ()
+		public override void update (float time)
 		{
 			if (updateField) {
 				assignPotentials ();
 				setPotGrads ();
 			}
-			interpolateVelocities ();
+
+			if (paused == false) {
+				interpolateVelocities ();
+			}
 		}
 	}
 }
