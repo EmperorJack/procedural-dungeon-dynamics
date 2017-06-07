@@ -8,6 +8,7 @@ namespace Primitives
 	{
 		Vector2 position;
 		public Vector2 velocity;
+		public float densityWeight = 1.0f;
 
 		public GameObject sceneObject;
 
@@ -30,6 +31,10 @@ namespace Primitives
 				BoxCollider bC = sceneObject.AddComponent<BoxCollider> ();
 			}
 			rb.isKinematic = false;
+		}
+
+		public void destroy(){
+			Object.Destroy (sceneObject);
 		}
 			
 		public void toggleKinematic(){

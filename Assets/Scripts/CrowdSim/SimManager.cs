@@ -27,6 +27,7 @@ namespace CrowdSim
 		DungeonGeneration.Cell[,] dungeon;
 		int gridRatio;
 
+
 		public void reset ()
 		{
 			foreach (SimObject simObject in simObjects) {
@@ -120,8 +121,8 @@ namespace CrowdSim
 				sceneObject = createDummyAgent (pos);
 				simObject = new SimObject (pos, new Vector2 (0, 0), sceneObject);
 			} else {
-				Debug.Log ("Adding slime agent at :" + pos.x + ", " + pos.y);
-				Debug.Log ("Grid index: [" + index [0] + ", " + index [1] + "]");
+				//Debug.Log ("Adding slime agent at :" + pos.x + ", " + pos.y);
+				//Debug.Log ("Grid index: [" + index [0] + ", " + index [1] + "]");
 				sceneObject = GameObject.Instantiate (sceneObject);
 				if (groupId > 0) {
 					Material mat = new Material (Shader.Find ("Diffuse"));

@@ -32,14 +32,14 @@ namespace Utilities
 		/// <param name="grid">Grid.</param>
 		public  int[] getLeft(Vector2 position){
 			position = position * ratio;
-			position = position + new Vector2 ((cellWidth * (ratio-1)) / 2, (cellWidth * (ratio-1)) / 2);
 			cellWidth = cellWidth * ratio;
+			position = position + new Vector2 ((cellWidth * (ratio-1)) / 2, (cellWidth * (ratio-1)) / 2);
 
 			int cellRow = (int)Mathf.Floor (position.x);
 			int cellCol = (int)Mathf.Floor (position.y);
 
-			cellWidth /= ratio;
 			position = position - new Vector2 ((cellWidth * (ratio-1)) / 2, (cellWidth * (ratio-1)) / 2);
+			cellWidth /= ratio;
 			position = position / ratio;
 
 			cellRow = Mathf.Max (cellRow, 0);

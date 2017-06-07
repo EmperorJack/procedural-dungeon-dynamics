@@ -170,10 +170,9 @@ namespace CrowdSim
 						if (faces [2].potentialGrad == 0 && faces [0].potentialGrad > 0) {
 							faces [2].potentialGrad = faces [0].potentialGrad;
 						}
-
-						cell.potGrad = new Vector2 (faces [1].potentialGrad - faces [3].potentialGrad, faces [0].potentialGrad - faces [2].potentialGrad);
-						cell.potGrad = cell.potGrad.normalized;
-						cell.groupVelocity = -cell.potGrad;
+							
+						calculateGroupVelocity (cell);
+						//cell.groupVelocity = new Vector2 (-cell.potGrad.x * (faces [1].velocity - faces [3].velocity), -cell.potGrad.y * (faces [0].velocity - faces [2].velocity));
 					}
 				}
 			}
@@ -194,13 +193,44 @@ namespace CrowdSim
 								}
 							}
 							Vector2 newGrad = new Vector2 (totalXGrad / existFaces, totalYGrad / existFaces);
-							cell.potGrad = newGrad.normalized;
+							cell.potGrad = newGrad;
 
-							cell.groupVelocity = -cell.potGrad;
+							calculateGroupVelocity (cell);
+
+							//cell.groupVelocity = new Vector2 (-cell.potGrad.x * (faces [1].velocity - faces [3].velocity), -cell.potGrad.y * (faces [0].velocity - faces [2].velocity));
+												
 						}
 					}
 				}
 			}
+		}
+
+		private void calculateGroupVelocity(Cell cell){
+			Face[] faces = cell.faces;
+
+			float ratioZero = faces [0].potentialGrad / (faces [0].potentialGrad - faces [2].potentialGrad);
+			float ratioOne = faces [1].potentialGrad / (faces [1].potentialGrad - faces [3].potentialGrad);
+			float ratioTwo = faces [2].potentialGrad / (faces [0].potentialGrad - faces [2].potentialGrad);
+			float ratioThree = faces [3].potentialGrad / (faces [1].potentialGrad - faces [3].potentialGrad);
+
+			cell.potGrad = new Vector2 (faces [1].potentialGrad - faces [3].potentialGrad, faces [0].potentialGrad - faces [2].potentialGrad);
+			cell.potGrad = cell.potGrad.normalized;
+
+			faces[0].potentialGrad = ratioZero * cell.potGrad.y;
+			faces[1].potentialGrad = ratioOne * cell.potGrad.x;
+			faces[2].potentialGrad = ratioTwo * cell.potGrad.y;
+			faces[3].potentialGrad = ratioThree * cell.potGrad.x;
+
+			Face[] sharedFaces = cell.sharedCell.faces;
+
+			faces [0].groupVelocity = -faces [0].potentialGrad * sharedFaces [0].velocity;
+			faces [1].groupVelocity = -faces [1].potentialGrad * sharedFaces [1].velocity;
+			faces [2].groupVelocity = -faces [2].potentialGrad * sharedFaces [2].velocity;
+			faces [3].groupVelocity = -faces [3].potentialGrad * sharedFaces [3].velocity;
+
+
+			cell.groupVelocity = -cell.potGrad;//new Vector2 (faces [0].groupVelocity - faces [2].groupVelocity, faces [1].groupVelocity - faces [3].groupVelocity);
+			//Debug.Log (cell.groupVelocity.x + " " + cell.groupVelocity.y);
 		}
 
 		private void interpolateVelocities ()
