@@ -16,10 +16,10 @@ namespace CrowdSim
 		private Helper<Cell> helper;
 
 		// 'constant' values
-		float densityExp = 0.9f;
-
+		float densityExp = 0.1f;
+		public float maxCalcDensity = 0f;
 		public float minDensity = 0.1f;
-		public float maxDensity = 1f;
+		public float maxDensity = 2f;
 		public float minVelocity = 0.1f;
 		public float maxVelocity = 0.5f;
 		public float distanceWeight = 1.0f;
@@ -52,7 +52,7 @@ namespace CrowdSim
 			Debug.Log ("DIM: " + this.dim);
 
 			grid = new Cell[this.dim,this.dim];
-			helper = new Helper<Cell> (grid, cellWidth);
+			helper = new Helper<Cell> (grid, cellWidth, ratio);
 			this.dungeon = dungeon;
 
 			initGrid ();
@@ -131,13 +131,12 @@ namespace CrowdSim
 		}
 
 		public void assignAgents(List<SimObject> simObjects){
-			List<Cell> affectedCells = new List<Cell>(); // all cells who have an agent denstiy contribution
 
 			foreach(SimObject simObject in simObjects){
 				int[] index = helper.getCellIndex (simObject.getPosition());
 				Cell leftCell = helper.accessGridCell(index);
 
-				if (leftCell != null && leftCell.exists) {
+				if (leftCell != null) {
 					float deltaX = simObject.getPosition().x - leftCell.position.x;
 					float deltaY = simObject.getPosition().y - leftCell.position.y;
 
@@ -145,42 +144,46 @@ namespace CrowdSim
 					// |     |
 					// A --- B
 
+
 					// add density contribution to neighbouring cell
 					float leftDensity = Mathf.Pow (Mathf.Min (1 - deltaX, 1 - deltaY), densityExp);
 					// add average velocity contribution
 					leftCell.density += leftDensity;
+					maxCalcDensity = Mathf.Max (leftCell.density, maxCalcDensity);
 					leftCell.avgVelocity += leftDensity * simObject.velocity; // cell A
-					affectedCells.Add(leftCell);
 
 					Cell bCell = helper.accessGridCell (new int[]{ index [0] + 1, index [1] });
-					if (bCell != null) {
+					if (bCell != null && bCell.exists) {
 						float bDensity = Mathf.Pow (Mathf.Min (deltaX, 1 - deltaY), densityExp);
 						bCell.density += bDensity;
+						maxCalcDensity = Mathf.Max (bCell.density, maxCalcDensity);
 						bCell.avgVelocity += bDensity * simObject.velocity;
-						affectedCells.Add (bCell);
 					}
 
 					Cell cCell = helper.accessGridCell (new int[]{ index [0] + 1, index [1] +1 });
-					if (cCell != null) {
+					if (cCell != null && cCell.exists) {
 						float cDensity = Mathf.Pow (Mathf.Min (deltaX,deltaY), densityExp);
 						cCell.density += cDensity;
+						maxCalcDensity = Mathf.Max (cCell.density, maxCalcDensity);
 						cCell.avgVelocity += cDensity * simObject.velocity;
-						affectedCells.Add (cCell);
 					}
 
 					Cell dCell = helper.accessGridCell (new int[]{ index [0], index [1] + 1 });
-					if (dCell != null) {
+					if (dCell != null && dCell.exists) {
 						float dDensity = Mathf.Pow (Mathf.Min (1 - deltaX, deltaY), densityExp);
 						dCell.density += dDensity;
+						maxCalcDensity = Mathf.Max (dCell.density, maxCalcDensity);
 						dCell.avgVelocity += dDensity * simObject.velocity;
-						affectedCells.Add (dCell);
 					}
 				}
 			}
 			// calculate average velocity
 
-			foreach (Cell cell in affectedCells) {
-				cell.avgVelocity = cell.avgVelocity / cell.density;
+			for (int i = 0; i < dim; i++) {
+				for (int j = 0; j < dim; j++) {
+					Cell cell = grid [i, j];
+					cell.avgVelocity = cell.avgVelocity / cell.density;
+				}
 			}
 		}
 
@@ -217,12 +220,15 @@ namespace CrowdSim
 							if (face.cell == null || face.cell.exists == false) {
 								face.velocity = 0;
 							} else {
-								
 								if (grid [i, j].density < minDensity) {
 									face.velocity = topoSpeed (face);
 								} else if (grid [i, j].density > maxDensity) {
+									//Debug.Log ("Max Case");
 									face.velocity = flowSpeed (grid[i,j],face, f);
 								} else {
+									//face.velocity = flowSpeed (grid[i,j],face, f);
+
+									//Debug.Log ("Interp Case");
 									if (face.cell.exists == false) {
 										face.velocity = 0;
 									} else {
@@ -243,11 +249,20 @@ namespace CrowdSim
 
 		private float flowSpeed(Cell cell, Face face, int dir){
 			Cell neighbour = face.cell;
-			Vector2 offset = neighbour.position - cell.position;
+
+			Vector2 offset = neighbour.position;
+
+			if (dir == 0) {
+				offset += new Vector2 (0f, cellWidth);
+			} else if (dir == 1) {
+				offset += new Vector2 (cellWidth, 0f);
+			} else if (dir == 2) {
+				offset += new Vector2 (0f, -cellWidth);
+			} else {
+				offset += new Vector2 (-cellWidth, 0f);
+			}
 
 			return Mathf.Max(Vector2.Dot(neighbour.avgVelocity, offset),0.01f);
-		
-		
 		}
 
 		public virtual void update(){

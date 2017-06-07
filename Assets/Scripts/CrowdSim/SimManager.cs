@@ -20,6 +20,12 @@ namespace CrowdSim
 		List<SimObject> simObjects;
 		GameObject simObjectsParent;
 
+		public void reset(){
+			foreach (SimObject simObject in simObjects) {
+				Object.Destroy (simObject.sceneObject);
+			}
+		}
+
 		public SimManager (float cellWidth, int dim, GameObject simObjectsParent, DungeonGeneration.Cell[,] dungeon, int gridRatio)
 		{
 			this.cellWidth = cellWidth;
@@ -31,7 +37,7 @@ namespace CrowdSim
 			simObjects = new List<SimObject> ();
 
 			groupGrid = new GroupGrid (cellWidth, dim, sharedGrid, dungeon,gridRatio);
-			helper = new Helper<Cell>(groupGrid.grid, cellWidth);
+			helper = new Helper<Cell>(groupGrid.grid, cellWidth, gridRatio);
 		}
 
 		public void update(){
@@ -72,11 +78,14 @@ namespace CrowdSim
 
 		public int addAgent(Vector2 pos, GameObject sceneObject){
 			SimObject simObject = null;
+			int[] index = helper.getLeft (pos);
+
 			if (sceneObject == null) {
 				sceneObject = createDummyAgent (pos);
 				simObject = new SimObject (pos, new Vector2 (0, 0), sceneObject);
 			} else {
 				Debug.Log ("Adding slime agent at :" + pos.x + ", " + pos.y);
+				Debug.Log ("Grid index: [" + index [0] + ", " + index [1] + "]");
 				sceneObject = GameObject.Instantiate (sceneObject);
 				initGameObject (pos,sceneObject);
 
@@ -114,6 +123,19 @@ namespace CrowdSim
 
 		public float getMax(){
 			return groupGrid.getMax();
+		}
+
+		public float getMaxDensity(){
+			return groupGrid.maxCalcDensity;
+		}
+
+		public void trigger(){
+			if (groupGrid.trigger) {
+				groupGrid.trigger = false;
+			} else {
+				groupGrid.trigger = true;
+			}
+			Debug.Log ("Trigger: " + groupGrid.trigger);
 		}
 
 	}

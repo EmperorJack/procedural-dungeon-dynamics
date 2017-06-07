@@ -22,6 +22,7 @@ namespace Primitives
 		public Vector2 groupVelocity;
 
 		public int[] index;
+		public float maxDensity;
 
 		public Cell(int[] index){
 			this.index = index;
