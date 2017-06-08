@@ -33,6 +33,11 @@ namespace CrowdSim
 			foreach (SimObject simObject in simObjects) {
 				Object.Destroy (simObject.sceneObject);
 			}
+
+			groups = new List<GroupGrid>();
+			groupId = 0;
+
+
 		}
 
 		public void togglePause(){
