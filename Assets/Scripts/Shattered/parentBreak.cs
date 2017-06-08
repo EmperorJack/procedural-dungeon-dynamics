@@ -24,12 +24,17 @@ public class parentBreak : MonoBehaviour {
 	}
 
 	void setupMaterials(){
-		PhysicMaterial mat = gameObject.GetComponent<Collider> ().material;
-		if (mat != null){
-			foreach (Transform child in brokenGeo.transform) {
+		Material mat = gameObject.GetComponent<Renderer> ().material;
+		PhysicMaterial pMat = gameObject.GetComponent<Collider> ().material;
+		foreach (Transform child in brokenGeo.transform) {
+			if (mat != null) {
+				child.GetComponent<Renderer> ().material = mat;
+
+			}
+			if (pMat != null){
 				if (child.gameObject.GetComponent<PhysicMaterial> () == null) {
 					Debug.Log ("Setting piece material");
-					child.gameObject.GetComponent<Collider> ().material = mat;
+					child.gameObject.GetComponent<Collider> ().material = pMat;
 					//child.gameObject.GetComponent<MeshCollider> ().enabled = false;
 					//child.gameObject.GetComponent<MeshCollider> ().enabled = true;
 
