@@ -176,7 +176,7 @@ namespace CrowdSim
 			}
 		}
 
-		void LateUpdate ()
+		void Update ()
 		{
 			
 			updateSim (Time.deltaTime);
