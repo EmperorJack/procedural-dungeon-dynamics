@@ -241,6 +241,11 @@ namespace CrowdSim
 			Debug.Log ("Now editing group: " + groupId);
 		}
 
+		public void setUpdateField(bool updateField){
+			foreach (GroupGrid groupGrid in groups) {
+				groupGrid.updateField = updateField;
+			}
+		}
 	}
 }
 

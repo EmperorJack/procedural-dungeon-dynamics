@@ -238,8 +238,8 @@ namespace CrowdSim
 
 		private void setGroupUpdateField (bool updateField)
 		{
-			if (simManager != null && simManager.groupGrid != null) {
-				simManager.groupGrid.updateField = updateField;
+			if (simManager != null) {
+				simManager.setUpdateField (updateField);
 			}
 		}
 
