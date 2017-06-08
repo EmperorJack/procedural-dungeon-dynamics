@@ -35,7 +35,7 @@ namespace CrowdSim
 		public bool defaultSetup = false;
 		// default setup for a plane grid, for testing
 		 
-
+		Primitives.Cell leftSelected;
 
 		string action = "select";
 		private int displayField = 0;
@@ -122,6 +122,12 @@ namespace CrowdSim
 
 		public void OnDrawGizmos ()
 		{
+			if (leftSelected != null) {
+				Vector2 pos = leftSelected.position;
+				Gizmos.color = Color.blue;
+				Gizmos.DrawCube(new Vector3(pos.x, 0.01f, pos.y), new Vector3(0.1f, 0.1f,0.1f));
+			}
+
 			Gizmos.color = Color.yellow;
 			Gizmos.DrawLine (new Vector3 (0, 0.1f, 0), new Vector3 (0, 0.1f, 10f));
 			Gizmos.DrawLine (new Vector3 (0, 0.1f, 0), new Vector3 (10f, 0.1f, 0));
@@ -170,7 +176,7 @@ namespace CrowdSim
 			}
 		}
 
-		void Update ()
+		void LateUpdate ()
 		{
 			
 			updateSim (Time.deltaTime);
@@ -182,6 +188,9 @@ namespace CrowdSim
 
 				 if (Input.GetMouseButtonDown (0) && action != null) {
 					// set grid cell to a goal
+
+					int[] index = simManager.helper.getLeft (new Vector2 (hitPosition.x, hitPosition.z));
+					leftSelected = simManager.helper.accessGridCell (index);
 
 					justAdd = false;
 					if (action.Equals ("goal")) {
@@ -284,6 +293,7 @@ namespace CrowdSim
 			int[] index = simManager.getCell (pos);
 			Primitives.Cell selected = simManager.groupGrid.grid [index [0], index [1]];
 			if (selected != null) {
+
 				Debug.Log (selected.index [0] + ", " + selected.index [1] + ": Potential: " + selected.potential);
 				Debug.Log ("Faces: ");
 				for (int i = 0; i < 4; i++) {

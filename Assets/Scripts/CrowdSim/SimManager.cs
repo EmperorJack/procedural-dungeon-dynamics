@@ -17,7 +17,7 @@ namespace CrowdSim
 
 		public float cellWidth;
 		public int dim;
-		Helper<Cell> helper;
+		public Helper<Cell> helper;
 
 		List<SimObject> simObjects;
 		GameObject simObjectsParent;

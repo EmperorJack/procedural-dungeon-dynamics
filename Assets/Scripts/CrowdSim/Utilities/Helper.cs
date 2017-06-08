@@ -33,36 +33,20 @@ namespace Utilities
 		public  int[] getLeft(Vector2 position){
 			//position = position * ratio;
 
-			Vector2 newPos = position = position + new Vector2 ((cellWidth * (ratio-1)) / 2, (cellWidth * (ratio-1)) / 2);
+			Vector2 newPos = position;//+ new Vector2 ((cellWidth * (ratio-1)) / 2, (cellWidth * (ratio-1)) / 2);
 				
 
-			float x = newPos.x / cellWidth;
-			float y = newPos.y / cellWidth;
+			float x = newPos.x + (cellWidth * (ratio - 1)) / 2;
+			float y = newPos.y + (cellWidth * (ratio - 1)) / 2;
 
-			int i = ((int) (x + grid.GetLength(0))) - grid.GetLength(0);
-			int j = ((int) (y + grid.GetLength(0))) - grid.GetLength(0);
+			x *= ratio;
+			y *= ratio;
+
+			int i = (int)Mathf.Floor (x);
+			int j = (int)Mathf.Floor (y);
 
 			int cellRow = Mathf.Max (i, 0);
 			int cellCol = Mathf.Max (j, 0);
-
-//			cellWidth = cellWidth * ratio;
-//			position = position + new Vector2 ((cellWidth * (ratio-1)) / 2, (cellWidth * (ratio-1)) / 2);
-//
-//			int cellRow = (int)Mathf.Floor (position.x);
-//			int cellCol = (int)Mathf.Floor (position.y);
-//
-//			position = position - new Vector2 ((cellWidth * (ratio-1)) / 2, (cellWidth * (ratio-1)) / 2);
-//			cellWidth /= ratio;
-//			//position = position / ratio;
-//
-//			cellRow = Mathf.Max (cellRow, 0);
-//			cellCol = Mathf.Max (cellCol, 0);
-
-//			float cellX = position.x - position.x % (cellWidth / 2);
-//			float cellY = position.y - position.y % (cellWidth / 2);
-//
-//			int cellRow = (int)(cellX / cellWidth);//- ratio - 1;
-//			int cellCol = (int)(cellY / cellWidth);// - ratio - 1;
 
 			return new int[]{ cellRow, cellCol };
 		}

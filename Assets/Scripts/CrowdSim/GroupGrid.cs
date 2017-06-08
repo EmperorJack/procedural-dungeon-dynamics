@@ -291,9 +291,9 @@ namespace CrowdSim
 				Vector2 abx = Vector2.Lerp (aVel, bVel, deltaX / cellWidth);
 				Vector2 interp = Vector2.Lerp (dcx, abx, deltaY / cellWidth);
 
-
+				//simObject.setVelocity (3.0f * interp);
 				simObject.velocity = 1.0f * interp;
-			
+//			
 				simObject.applyVelocity (simObject.velocity);
 			}
 		}

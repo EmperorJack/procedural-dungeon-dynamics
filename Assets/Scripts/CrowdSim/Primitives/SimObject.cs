@@ -41,6 +41,12 @@ namespace Primitives
 			rb.isKinematic = !rb.isKinematic;
 		}
 
+		public void setVelocity(Vector2 vel){
+			sceneObject.GetComponent<Rigidbody>().velocity -= new Vector3(velocity.x, 0, velocity.y);
+			this.velocity = vel;
+			sceneObject.GetComponent<Rigidbody>().velocity += new Vector3(vel.x, 0, vel.y);
+		}
+
 		public void applyVelocity(Vector2 vel){
 			//Debug.Log (vel.x + " " + vel.y);
 			sceneObject.GetComponent<Rigidbody>().velocity = new Vector3(vel.x, 0, vel.y);
