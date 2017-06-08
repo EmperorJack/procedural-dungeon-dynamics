@@ -11,7 +11,6 @@ namespace Visualization
 		private Vector2 position;
 
 		GameObject quad;
-		GridVector vector;
 		GameObject parent;
 
 		public GridCell (float size, Color color, Vector2 position, GameObject parent)
@@ -25,7 +24,10 @@ namespace Visualization
 			//this.vector = new GridVector (0.8f, 0f, Color.black, this.position, quad);
 
 			hide ();
+		}
 
+		public void reset(){
+			Object.Destroy (quad);
 		}
 
 		public GridCell(float size, GameObject parent){

@@ -16,14 +16,14 @@ namespace CrowdSim
 		private Helper<Cell> helper;
 
 		// 'constant' values
-		float densityExp = 0.1f;
-
+		float densityExp = 0.8f;
+		public float maxCalcDensity = 0f;
 		public float minDensity = 0.1f;
-		public float maxDensity = 1f;
+		public float maxDensity = 2f;
 		public float minVelocity = 0.1f;
 		public float maxVelocity = 0.5f;
-		public float distanceWeight = 2.0f;
-		public float timeWeight = 2.0f;
+		public float distanceWeight = 1.0f;
+		public float timeWeight = 1.0f;
 		public float discomfortWeight = 1;
 
 		private bool customDungeon = false;
@@ -31,6 +31,8 @@ namespace CrowdSim
 		private DungeonGeneration.Cell[,] dungeon;
 
 		public int realCells;
+
+		private List<SimObject> simObjects = new List<SimObject> ();
 
 		int ratio;
 
@@ -50,10 +52,14 @@ namespace CrowdSim
 			Debug.Log ("DIM: " + this.dim);
 
 			grid = new Cell[this.dim,this.dim];
-			helper = new Helper<Cell> (grid, cellWidth);
+			helper = new Helper<Cell> (grid, cellWidth, ratio);
 			this.dungeon = dungeon;
 
 			initGrid ();
+		}
+
+		public void addAgent(SimObject simObject){
+			simObjects.Add (simObject);
 		}
 
 		private void initGrid(){
@@ -62,12 +68,12 @@ namespace CrowdSim
 				for (int j = 0; j < dim; j++) {
 					if (customDungeon == false || (isFloor(dungeon[i/ratio,j/ratio]))) {
 						grid [i, j] = new Cell (new int[]{ i, j });
-						grid [i, j].position = new Vector2 (i * cellWidth -0.25f * ratio * cellWidth, j * cellWidth - 0.25f * ratio * cellWidth);
+						grid [i, j].position = new Vector2 (i * cellWidth - (ratio-1) * cellWidth * 0.5f, j * cellWidth- (ratio-1) * cellWidth * 0.5f);
 						grid [i, j].exists = true;
 						realCells++;
 					} else if (customDungeon && isFloor(dungeon[i/ratio,j/ratio]) == false) {
 						grid [i, j] = new Cell (new int[]{ i, j });
-						grid [i, j].position = new Vector2 (i * cellWidth - 0.25f * ratio * cellWidth, j * cellWidth -0.25f *  ratio * cellWidth);
+						grid [i, j].position = new Vector2 (i * cellWidth- (ratio-1) * cellWidth * 0.5f, j * cellWidth - (ratio-1) * cellWidth * 0.5f);
 						grid [i, j].exists = false;
 					}
 				}
@@ -125,13 +131,12 @@ namespace CrowdSim
 		}
 
 		public void assignAgents(List<SimObject> simObjects){
-			List<Cell> affectedCells = new List<Cell>(); // all cells who have an agent denstiy contribution
 
 			foreach(SimObject simObject in simObjects){
 				int[] index = helper.getCellIndex (simObject.getPosition());
 				Cell leftCell = helper.accessGridCell(index);
 
-				if (leftCell != null && leftCell.exists) {
+				if (leftCell != null) {
 					float deltaX = simObject.getPosition().x - leftCell.position.x;
 					float deltaY = simObject.getPosition().y - leftCell.position.y;
 
@@ -139,42 +144,46 @@ namespace CrowdSim
 					// |     |
 					// A --- B
 
+
 					// add density contribution to neighbouring cell
 					float leftDensity = Mathf.Pow (Mathf.Min (1 - deltaX, 1 - deltaY), densityExp);
 					// add average velocity contribution
 					leftCell.density += leftDensity;
+					maxCalcDensity = Mathf.Max (leftCell.density, maxCalcDensity);
 					leftCell.avgVelocity += leftDensity * simObject.velocity; // cell A
-					affectedCells.Add(leftCell);
 
 					Cell bCell = helper.accessGridCell (new int[]{ index [0] + 1, index [1] });
-					if (bCell != null) {
+					if (bCell != null && bCell.exists) {
 						float bDensity = Mathf.Pow (Mathf.Min (deltaX, 1 - deltaY), densityExp);
 						bCell.density += bDensity;
+						maxCalcDensity = Mathf.Max (bCell.density, maxCalcDensity);
 						bCell.avgVelocity += bDensity * simObject.velocity;
-						affectedCells.Add (bCell);
 					}
 
 					Cell cCell = helper.accessGridCell (new int[]{ index [0] + 1, index [1] +1 });
-					if (cCell != null) {
+					if (cCell != null && cCell.exists) {
 						float cDensity = Mathf.Pow (Mathf.Min (deltaX,deltaY), densityExp);
 						cCell.density += cDensity;
+						maxCalcDensity = Mathf.Max (cCell.density, maxCalcDensity);
 						cCell.avgVelocity += cDensity * simObject.velocity;
-						affectedCells.Add (cCell);
 					}
 
 					Cell dCell = helper.accessGridCell (new int[]{ index [0], index [1] + 1 });
-					if (dCell != null) {
+					if (dCell != null && dCell.exists) {
 						float dDensity = Mathf.Pow (Mathf.Min (1 - deltaX, deltaY), densityExp);
 						dCell.density += dDensity;
+						maxCalcDensity = Mathf.Max (dCell.density, maxCalcDensity);
 						dCell.avgVelocity += dDensity * simObject.velocity;
-						affectedCells.Add (dCell);
 					}
 				}
 			}
 			// calculate average velocity
 
-			foreach (Cell cell in affectedCells) {
-				cell.avgVelocity = cell.avgVelocity / cell.density;
+			for (int i = 0; i < dim; i++) {
+				for (int j = 0; j < dim; j++) {
+					Cell cell = grid [i, j];
+					cell.avgVelocity = cell.avgVelocity / cell.density;
+				}
 			}
 		}
 
@@ -208,16 +217,24 @@ namespace CrowdSim
 					if (grid [i, j] != null) {
 						for (int f = 0; f < grid [i, j].faces.Length; f++) {
 							Face face = grid [i, j].faces [f];
-							if (face.cell == null) {
+							if (face.cell == null || face.cell.exists == false) {
 								face.velocity = 0;
 							} else {
 								if (grid [i, j].density < minDensity) {
 									face.velocity = topoSpeed (face);
 								} else if (grid [i, j].density > maxDensity) {
-									face.velocity = flowSpeed (face, f);
+									//Debug.Log ("Max Case");
+									face.velocity = flowSpeed (grid[i,j],face, f);
 								} else {
-									face.velocity = topoSpeed (face) + ((face.cell.density - minDensity) / (maxDensity - minDensity)) *
-									(flowSpeed (face, f) - topoSpeed (face));
+									//face.velocity = flowSpeed (grid[i,j],face, f);
+
+									//Debug.Log ("Interp Case");
+									if (face.cell.exists == false) {
+										face.velocity = 0;
+									} else {
+										face.velocity = topoSpeed (face) + ((face.cell.density - minDensity) / (maxDensity - minDensity)) *
+										(flowSpeed (grid[i,j],face, f) - topoSpeed (face));
+									}
 								}
 							}
 						}
@@ -230,17 +247,27 @@ namespace CrowdSim
 			return maxVelocity; // is more complicated when considering height variations
 		}
 
-		private float flowSpeed(Face face, int dir){
+		private float flowSpeed(Cell cell, Face face, int dir){
 			Cell neighbour = face.cell;
-			if (dir ==0 || dir == 2) {
-				return neighbour.avgVelocity.y;
+
+			Vector2 offset = neighbour.position;
+
+			if (dir == 0) {
+				offset += new Vector2 (0f, cellWidth);
+			} else if (dir == 1) {
+				offset += new Vector2 (cellWidth, 0f);
+			} else if (dir == 2) {
+				offset += new Vector2 (0f, -cellWidth);
 			} else {
-				return neighbour.avgVelocity.x;
+				offset += new Vector2 (-cellWidth, 0f);
 			}
+
+			return Mathf.Max(Vector2.Dot(neighbour.avgVelocity, offset),0.01f);
 		}
 
 		public virtual void update(){
 			resetGrid ();
+			assignAgents (simObjects);
 			assignSpeedField ();
 			assignCosts ();
 		}

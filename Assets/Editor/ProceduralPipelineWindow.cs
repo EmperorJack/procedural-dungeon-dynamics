@@ -11,15 +11,19 @@ public class ProceduralPipelineWindow : EditorWindow {
     private string displaySimpleLayoutButton = "Display Simple Layout";
 
 	private string createSim = "Initialize Crowd Simulator";
+	private string addGroup = "Add Group";
+	private string swapGroup = "Swap Group";
 	private string addAgent = "Add Agent";
 	private string addGoal = "Add Goal";
 	private string selectCell ="Select Cell";
 	private string displaySim = "Display Sim";
     private string displayComplexLayoutButton = "Display Complex Layout";
     private string displayAnchorsButton = "Display Anchors";
+	private string displayFields = "Switch Display Fields";
+	private string trigger ="Trigger";
+
 
     private GameObject pipelineObject = null;
-	private GameObject simObject = null;
 
     [MenuItem("Window/Procedural Pipeline")]
     static void OpenWindow()
@@ -33,8 +37,6 @@ public class ProceduralPipelineWindow : EditorWindow {
     {
         pipelineObject = (GameObject) EditorGUILayout.ObjectField("Procedural Pipeline:", pipelineObject, typeof(GameObject), true);
 
-		simObject = (GameObject)EditorGUILayout.ObjectField ("Agent Object:", simObject, typeof(GameObject), true);
-
         if (GUILayout.Button(performButton)) GetPipeline().Perform();
 
         if (GUILayout.Button(resetButton)) GetPipeline().Reset();
@@ -45,7 +47,7 @@ public class ProceduralPipelineWindow : EditorWindow {
 			GetPipeline ().createSim ();
 
 		if (GUILayout.Button (addAgent)) 
-			GetPipeline ().setAddAgent(simObject);
+			GetPipeline ().setAddAgent();
 		
 
 		if (GUILayout.Button (addGoal))
@@ -59,6 +61,18 @@ public class ProceduralPipelineWindow : EditorWindow {
         if (GUILayout.Button(displayComplexLayoutButton)) GetPipeline().DisplayComplexLayout();
 
         if (GUILayout.Button(displayAnchorsButton)) GetPipeline().DisplayAnchors();
+
+		if (GUILayout.Button (displayFields))
+			GetPipeline ().displayFields ();
+
+		if (GUILayout.Button (trigger))
+			GetPipeline ().trigger ();
+
+		if (GUILayout.Button (addGroup))
+			GetPipeline ().addGroup ();
+
+		if (GUILayout.Button (swapGroup))
+			GetPipeline ().swapGroups ();
     }
 
     private ProceduralPipeline GetPipeline()

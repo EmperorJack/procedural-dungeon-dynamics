@@ -14,6 +14,7 @@ namespace Primitives
 
 		//Used only for group cells
 		public float potential;
+		public Vector2 potGrad;
 		public float tempPotential;
 		public bool isGoal;
 		public bool isAccepted = false;
@@ -21,6 +22,7 @@ namespace Primitives
 		public Vector2 groupVelocity;
 
 		public int[] index;
+		public float maxDensity;
 
 		public Cell(int[] index){
 			this.index = index;
