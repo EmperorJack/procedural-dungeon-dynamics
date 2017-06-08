@@ -19,12 +19,11 @@ namespace CrowdSim
 		float densityExp = 0.1f; // 0 (spread out) -> 10 (form lines)
 		public float maxCalcDensity = 0f;
 		public float minDensity = 1.0f;
-		public float maxDensity = 2000f;
-		public float minVelocity = 0.01f;
-		public float maxVelocity = 0.1f;
+		public float maxDensity = 2.0f;
+		public float maxVelocity = 0.5f;
 		public float distanceWeight = 0.5f;
 		public float timeWeight = 0.5f;
-		public float discomfortWeight = 1.0f;
+		public float discomfortWeight = 0.0f;
 
 		private bool customDungeon = false;
 
@@ -225,24 +224,29 @@ namespace CrowdSim
 							if (face.cell == null || face.cell.exists == false) {
 								face.velocity = 0;
 							} else {
+
 								if (grid [i, j].density < minDensity) {
 									face.velocity = topoSpeed (face);
 								} else if (grid [i, j].density > maxDensity) {
-									//Debug.Log ("Max Case");
-									//face.velocity = topoSpeed (face);
+									face.velocity = flowSpeed (grid[i,j],face, f);
 
-									face.velocity = flowSpeed (grid[i,j],face, f);
 								} else {
-									face.velocity = flowSpeed (grid[i,j],face, f);
-//									//Debug.Log ("Interp Case");
-//									if (face.cell.exists == false) {
-//										face.velocity = 0;
-//									} else {
-//										face.velocity = topoSpeed (face) + ((face.cell.density - minDensity) / (maxDensity - minDensity)) *
-//										(flowSpeed (grid[i,j],face, f) - topoSpeed (face));
-//									}
+
+									if (face.cell.exists == false) {
+										face.velocity = 0;
+									} else {
+										float deltaP = maxDensity - minDensity;
+										face.velocity = topoSpeed (face);
+//										if (deltaP == 0) {
+//											face.velocity = topoSpeed (face);
+//										} else {
+//											face.velocity = topoSpeed (face) + ((face.cell.density - minDensity) / (deltaP));
+//										}
+									}
 								}
+									
 							}
+
 						}
 					}
 				}
@@ -273,7 +277,7 @@ namespace CrowdSim
 
 		public virtual void update(float time){
 			resetGrid ();
-			//assignAgents (simObjects, time);
+			assignAgents (simObjects, time);
 			assignSpeedField ();
 			assignCosts ();
 		}

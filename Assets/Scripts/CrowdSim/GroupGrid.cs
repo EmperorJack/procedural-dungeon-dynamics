@@ -22,6 +22,9 @@ namespace CrowdSim
 
 		public bool updateField = true;
 
+		int counter = 0;
+
+
 		public GroupGrid (float cellWidth, int dim, SharedGrid sharedGrid, DungeonGeneration.Cell[,] dungeon, int gridRatio) : base (cellWidth, dim, dungeon, gridRatio)
 		{
 			dim = sharedGrid.grid.GetLength (0);
@@ -178,7 +181,7 @@ namespace CrowdSim
 				}
 			}
 
-			if (true) {
+			if (trigger) {
 				for (int i = 0; i < dim; i++) {
 					for (int j = 0; j < dim; j++) {
 						Cell cell = grid [i, j];
@@ -240,11 +243,13 @@ namespace CrowdSim
 				cell.groupVelocity = Vector2.zero;
 			} else {
 				Face[] faces = cell.faces;
-				Face[] sharedFaces = cell.sharedCell.faces;
-				faces [0].groupVelocity = -faces [0].potentialGrad;//* sharedFaces [0].velocity;
-				faces [1].groupVelocity = -faces [1].potentialGrad;// * sharedFaces [1].velocity;
-				faces [2].groupVelocity = -faces [2].potentialGrad;// * sharedFaces [2].velocity;
-				faces [3].groupVelocity = -faces [3].potentialGrad;// * sharedFaces [3].velocity;
+				int[] index = cell.index;
+				Face[] sharedFaces = sharedGrid.grid[index[0],index[1]].faces;
+
+				faces [0].groupVelocity = -faces [0].potentialGrad * sharedFaces [0].velocity;
+				faces [1].groupVelocity = -faces [1].potentialGrad * sharedFaces [1].velocity;
+				faces [2].groupVelocity = -faces [2].potentialGrad * sharedFaces [2].velocity;
+				faces [3].groupVelocity = -faces [3].potentialGrad * sharedFaces [3].velocity;
 			
 				cell.groupVelocity = new Vector2 (faces [1].groupVelocity - faces [3].groupVelocity, faces [0].groupVelocity - faces [2].groupVelocity);
 			}
@@ -470,6 +475,7 @@ namespace CrowdSim
 			} else if (neighbour2 == null || neighbour2.potential == float.MaxValue || !neighbour2.exists) {
 				return face1;
 			} else {
+
 				float totalCost1 = neighbour1.potential + face1.cost;
 				float totalCost2 = neighbour2.potential + face2.cost;
 
@@ -537,8 +543,10 @@ namespace CrowdSim
 			return max;
 		}
 
+
 		public override void update (float time)
 		{
+
 			if (updateField) {
 				assignPotentials ();
 				setPotGrads ();
@@ -547,6 +555,8 @@ namespace CrowdSim
 			if (paused == false) {
 				interpolateVelocities ();
 			}
+
+			counter++;
 		}
 	}
 }
