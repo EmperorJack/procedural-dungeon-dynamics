@@ -137,8 +137,8 @@ namespace CrowdSim
 				Cell leftCell = helper.accessGridCell(index);
 
 				if (leftCell != null) {
-					float deltaX = simObject.getPosition().x - leftCell.position.x;
-					float deltaY = simObject.getPosition().y - leftCell.position.y;
+					float deltaX = (simObject.getPosition().x - leftCell.position.x)/cellWidth;
+					float deltaY = (simObject.getPosition().y - leftCell.position.y)/cellWidth;
 
 					// D --- C
 					// |     |
@@ -226,9 +226,12 @@ namespace CrowdSim
 							} else {
 
 								if (grid [i, j].density < minDensity) {
-									face.velocity = topoSpeed (face);
+									//face.velocity = topoSpeed (face);
+									face.velocity = flowSpeed (grid[i,j],face, f);
+
 								} else if (grid [i, j].density > maxDensity) {
 									face.velocity = flowSpeed (grid[i,j],face, f);
+									//face.velocity = topoSpeed (face);
 
 								} else {
 
@@ -236,7 +239,9 @@ namespace CrowdSim
 										face.velocity = 0;
 									} else {
 										float deltaP = maxDensity - minDensity;
-										face.velocity = topoSpeed (face);
+										face.velocity = flowSpeed (grid[i,j],face, f);
+
+										//face.velocity = topoSpeed (face);
 //										if (deltaP == 0) {
 //											face.velocity = topoSpeed (face);
 //										} else {
@@ -260,19 +265,15 @@ namespace CrowdSim
 		private float flowSpeed(Cell cell, Face face, int dir){
 			Cell neighbour = face.cell;
 
-			Vector2 offset = neighbour.position;
-
-			if (dir == 0) {
-				offset += new Vector2 (0f, cellWidth);
-			} else if (dir == 1) {
-				offset += new Vector2 (cellWidth, 0f);
-			} else if (dir == 2) {
-				offset += new Vector2 (0f, -cellWidth);
-			} else {
-				offset += new Vector2 (-cellWidth, 0f);
-			}
-
+			Vector2 offset = neighbour.position - cell.position;
+		
 			return Mathf.Max(Vector2.Dot(neighbour.avgVelocity, offset),0.01f);
+
+//			if (dir == 0 || dir == 2) {
+//				return Mathf.Max (face.cell.avgVelocity.x, 0.1f);
+//			} else {
+//				return Mathf.Max (face.cell.avgVelocity.y, 0.1f);
+//			}
 		}
 
 		public virtual void update(float time){

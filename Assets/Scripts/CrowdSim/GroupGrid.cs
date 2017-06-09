@@ -176,7 +176,6 @@ namespace CrowdSim
 							
 						normaliseGrads (cell);
 						calculateGroupVelocity (cell);
-						//cell.groupVelocity = new Vector2 (-cell.potGrad.x * (faces [1].velocity - faces [3].velocity), -cell.potGrad.y * (faces [0].velocity - faces [2].velocity));
 					}
 				}
 			}
@@ -188,15 +187,18 @@ namespace CrowdSim
 						if (cell != null) {
 							float totalXGrad = 0f;
 							float totalYGrad = 0f;
+							Vector2 totalGrad = Vector2.zero;
 							int existFaces = 0;
 							foreach (Face face in cell.faces) {
 								if (face.cell != null && face.cell.potGrad != null) {
 									totalXGrad += face.cell.potGrad.x;
 									totalYGrad += face.cell.potGrad.y;
+									totalGrad += face.cell.potGrad;
+
 									existFaces++;
 								}
 							}
-							Vector2 newGrad = new Vector2 (totalXGrad / existFaces, totalYGrad / existFaces);
+							Vector2 newGrad = totalGrad/existFaces;//new Vector2 (totalXGrad / existFaces, totalYGrad / existFaces);
 							cell.potGrad = newGrad;
 
 							normaliseGrads (cell);
@@ -246,10 +248,10 @@ namespace CrowdSim
 				int[] index = cell.index;
 				Face[] sharedFaces = sharedGrid.grid[index[0],index[1]].faces;
 
-				faces [0].groupVelocity = -faces [0].potentialGrad * sharedFaces [0].velocity;
-				faces [1].groupVelocity = -faces [1].potentialGrad * sharedFaces [1].velocity;
-				faces [2].groupVelocity = -faces [2].potentialGrad * sharedFaces [2].velocity;
-				faces [3].groupVelocity = -faces [3].potentialGrad * sharedFaces [3].velocity;
+				faces [0].groupVelocity = Mathf.Max(-faces [0].potentialGrad * sharedFaces [0].velocity,-faces [0].potentialGrad );
+				faces [1].groupVelocity =  Mathf.Max(-faces [1].potentialGrad * sharedFaces [1].velocity,-faces [1].potentialGrad );
+				faces [2].groupVelocity =  Mathf.Max(-faces [2].potentialGrad * sharedFaces [2].velocity,-faces [2].potentialGrad );
+				faces [3].groupVelocity =  Mathf.Max(-faces [3].potentialGrad * sharedFaces [3].velocity,-faces [3].potentialGrad );
 			
 				cell.groupVelocity = new Vector2 (faces [1].groupVelocity - faces [3].groupVelocity, faces [0].groupVelocity - faces [2].groupVelocity);
 			}
@@ -284,6 +286,8 @@ namespace CrowdSim
 			south.potentialGrad *= yMul;
 			east.potentialGrad *= xMul;
 			west.potentialGrad *= xMul;
+
+			cell.potGrad = new Vector2 (east.potentialGrad - west.potentialGrad, north.potentialGrad - south.potentialGrad);
 
 		}
 
