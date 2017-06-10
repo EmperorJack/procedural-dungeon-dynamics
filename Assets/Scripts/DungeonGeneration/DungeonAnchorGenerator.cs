@@ -10,6 +10,8 @@ namespace DungeonGeneration
 
         // User set fields
         public GameObject anchorPrefab;
+        [Range(1, 10)] public float centerSpacing = 1;
+        [Range(1, 10)] public float edgeSpacing = 1;
 
         // Anchor fields
         private int nextAnchorId;
