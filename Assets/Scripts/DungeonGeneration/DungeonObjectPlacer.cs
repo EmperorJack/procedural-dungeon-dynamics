@@ -10,6 +10,7 @@ namespace DungeonGeneration
     {
 
         // User set fields
+        public List<GameObject> edgeObjectPrefabs;
         public List<GameObject> cornerObjectPrefabs;
         public List<GameObject> centerObjectPrefabs;
 
@@ -37,6 +38,10 @@ namespace DungeonGeneration
                 {
                     selectedPrefab = centerObjectPrefabs[UnityEngine.Random.Range(0, centerObjectPrefabs.Count)];
                 }
+                else if (anchor.type == AnchorType.EDGE && edgeObjectPrefabs.Count > 0)
+                {
+                    selectedPrefab = edgeObjectPrefabs[UnityEngine.Random.Range(0, edgeObjectPrefabs.Count)];
+                }
                 else if (anchor.type == AnchorType.CORNER && centerObjectPrefabs.Count > 0)
                 {
                     selectedPrefab = cornerObjectPrefabs[UnityEngine.Random.Range(0, cornerObjectPrefabs.Count)];
@@ -47,6 +52,7 @@ namespace DungeonGeneration
                     GameObject instance = MonoBehaviour.Instantiate(selectedPrefab);
                     instance.transform.SetParent(parent.transform);
                     instance.transform.Translate(anchor.x, 0.0f, anchor.y);
+                    instance.transform.Rotate(0.0f, anchor.rotation, 0.0f);
 
                     populatedObjects.Add(instance);
 
