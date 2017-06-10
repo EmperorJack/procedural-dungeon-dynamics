@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace DungeonGeneration
@@ -35,6 +36,11 @@ namespace DungeonGeneration
         public void AddDoorPosition(Vector2 doorPosition)
         {
             doorPositions.Add(doorPosition);
+        }
+
+        public bool ConnectedTo(ConnectableGridArea other)
+        {
+            return connectedCorridors.Exists(c => other.connectedCorridors.Contains(c));
         }
     }
 }

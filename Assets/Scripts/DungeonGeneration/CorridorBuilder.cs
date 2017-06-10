@@ -39,7 +39,7 @@ namespace DungeonGeneration {
 	        }
 	    }
 
-	    public static Corridor CreateCorridor(DungeonLayoutGenerator generator, Partition partitionA, Partition partitionB, bool horizontalCut)
+	    public static Corridor CreateCorridor(DungeonLayoutGenerator generator, Partition partitionA, Partition partitionB, bool horizontalCut, List<Corridor> existingCorridors)
 	    {
 	        List<ConnectableGridArea> areasA = new List<ConnectableGridArea>();
 	        partitionA.GetRooms(areasA);
@@ -139,6 +139,49 @@ namespace DungeonGeneration {
             List<PossiblePlacement> removeFromRangeA = new List<PossiblePlacement>();
             List<PossiblePlacement> removeFromRangeB = new List<PossiblePlacement>();
 
+            // Remove any possible placements that overlap with existing corridors
+            foreach (Corridor area in existingCorridors)
+            {
+                if (horizontalCut)
+                {
+                    foreach (PossiblePlacement pos in rangeA)
+                    {
+                        if (area.x - generator.roomBuffer <= pos.x && pos.x <= area.x + generator.roomBuffer &&
+                            pos.y == area.y)
+                        {
+                            removeFromRangeA.Add(pos);
+                        }
+                    }
+                    foreach (PossiblePlacement pos in rangeB)
+                    {
+                        if (area.x - generator.roomBuffer <= pos.x && pos.x <= area.x + generator.roomBuffer &&
+                            pos.y == area.y + area.height)
+                        {
+                            removeFromRangeB.Add(pos);
+                        }
+                    }
+                }
+                else // Vertical cut
+                {
+                    foreach (PossiblePlacement pos in rangeA)
+                    {
+                        if (pos.x == area.x &&
+                            area.y - generator.roomBuffer <= pos.y && pos.y <= area.y + generator.roomBuffer)
+                        {
+                            removeFromRangeA.Add(pos);
+                        }
+                    }
+                    foreach (PossiblePlacement pos in rangeB)
+                    {
+                        if (pos.x == area.x + area.width &&
+                            area.y - generator.roomBuffer <= pos.y && pos.y <= area.y + generator.roomBuffer)
+                        {
+                            removeFromRangeB.Add(pos);
+                        }
+                    }
+                }
+            }
+
             // Compute and remove any possible placements that overlap with the room buffer
             if (horizontalCut)
             {
@@ -205,14 +248,16 @@ namespace DungeonGeneration {
             {
                 foreach (PossiblePlacement posB in rangeB)
                 {
-					if ((horizontalCut && posA.x == posB.x) || (!horizontalCut && posA.y == posB.y))
+                    bool loopCondition = generator.allowLoopsBetweenTwoRooms || !posA.area.ConnectedTo(posB.area);
+
+                    if (((horizontalCut && posA.x == posB.x) || (!horizontalCut && posA.y == posB.y)) && loopCondition)
                         overlap.Add(new PossibleOverlap(new Vector3(posA.x, posA.y), new Vector3(posB.x, posB.y), posA.area, posB.area));
                 }
             }
 
             if (overlap.Count == 0)
             {
-                throw new Exception("No possible was overlap found for corridor placement!");
+                return null;
             }
 
             // Choose a corridor placement

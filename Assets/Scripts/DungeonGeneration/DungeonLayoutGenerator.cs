@@ -9,13 +9,18 @@ namespace DungeonGeneration {
 	    // User set fields
 	    public int gridSize = 10;
 	    public int minimumRoomSize = 4;
-	    public int roomBuffer = 1;
+        public int roomBuffer = 1;
         public float minRoomWidthHeightRatio = 1.0f;
         public float maxRoomWidthHeightRatio = 1.0f;
         public GameObject simpleLayoutPrefab;
+        public int maxDepth = 5;
+        public int addLoopsFromLevel = 0;
+        public int addLoopsToLevel = 0;
+        public float loopSpawnChance = 0.5f;
+        public bool allowLoopsBetweenTwoRooms = false;
 
-	    // Internal fields
-	    private float gridSpacing = 1;
+        // Internal fields
+        private float gridSpacing = 1;
 	    private int cellSize = 1;
 
 	    // Representation fields
@@ -28,6 +33,7 @@ namespace DungeonGeneration {
 		private int nextCorridorId;
 	    private List<Room> rooms;
 		private List<Corridor> corridors;
+        private int treeDepth;
 
 	    public void Generate()
 	    {
@@ -43,7 +49,7 @@ namespace DungeonGeneration {
 
 	        root = new Partition(this, 0, 0, worldSize, worldSize, 0);
 
-			root.MakeParition();
+			treeDepth = root.MakeParition();
 
 	        root.MakeRoom(rooms);
 
@@ -88,6 +94,11 @@ namespace DungeonGeneration {
         public float GetGridSpacing()
         {
             return gridSpacing;
+        }
+
+        public int GetTreeDepth()
+        {
+            return treeDepth;
         }
 
         public int NextPartitionId()
