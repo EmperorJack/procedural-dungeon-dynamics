@@ -11,8 +11,16 @@ namespace DungeonGeneration
 
         // User set fields
         public List<GameObject> edgeObjectPrefabs;
+        public Vector3 edgeTranslationOffset = new Vector3(0.0f, 0.0f, 0.0f);
+        public Vector3 edgeRotationOffset = new Vector3(0.0f, 0.0f, 0.0f);
+
         public List<GameObject> cornerObjectPrefabs;
+        public Vector3 cornerTranslationOffset = new Vector3(0.0f, 0.0f, 0.0f);
+        public Vector3 cornerRotationOffset = new Vector3(0.0f, 0.0f, 0.0f);
+
         public List<GameObject> centerObjectPrefabs;
+        public Vector3 centerTranslationOffset = new Vector3(0.0f, 0.0f, 0.0f);
+        public Vector3 centerRotationOffset = new Vector3(0.0f, 0.0f, 0.0f);
 
         // Anchor fields
         private List<Anchor> anchors;
@@ -54,6 +62,10 @@ namespace DungeonGeneration
                     instance.transform.Translate(anchor.x, 0.0f, anchor.y);
                     instance.transform.Rotate(0.0f, anchor.rotation, 0.0f);
 
+                    // Apply random offset and rotation to the anchor point
+                    instance.transform.Translate(GetTranslationOffset(anchor) * UnityEngine.Random.Range(-1.0f, 1.0f));
+                    instance.transform.Rotate(GetRotationOffset(anchor) * UnityEngine.Random.Range(-1.0f, 1.0f));
+
                     populatedObjects.Add(instance);
 
                     // Populate any nested objects if they exist
@@ -65,7 +77,43 @@ namespace DungeonGeneration
             }
         }
 
-		private void PopulateNested(GameObject instance, GameObject parent)
+        private Vector3 GetTranslationOffset(Anchor anchor)
+        {
+            if (anchor.type == AnchorType.CENTER)
+            {
+                return centerTranslationOffset;
+            }
+            else if (anchor.type == AnchorType.EDGE)
+            {
+                return edgeTranslationOffset;
+            }
+            else if (anchor.type == AnchorType.CORNER)
+            {
+                return cornerTranslationOffset;
+            }
+
+            return Vector3.zero;
+        }
+
+        private Vector3 GetRotationOffset(Anchor anchor)
+        {
+            if (anchor.type == AnchorType.CENTER)
+            {
+                return centerRotationOffset;
+            }
+            else if (anchor.type == AnchorType.EDGE)
+            {
+                return edgeRotationOffset;
+            }
+            else if (anchor.type == AnchorType.CORNER)
+            {
+                return cornerRotationOffset;
+            }
+
+            return Vector3.zero;
+        }
+
+        private void PopulateNested(GameObject instance, GameObject parent)
 		{
 			// Get all the types of nested objects this instance has
 			List<NestedObject> nestedObjects = new List<NestedObject>(instance.GetComponents<NestedObject>());
