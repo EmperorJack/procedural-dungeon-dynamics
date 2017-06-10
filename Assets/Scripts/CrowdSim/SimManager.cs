@@ -106,26 +106,25 @@ namespace CrowdSim
 
 		public int[] getCell (Vector2 pos)
 		{
-			
-			Cell cell = helper.getCell (pos);
-			int[] leftIndex = helper.getLeft (pos);
-			Cell leftCell = helper.accessGridCell (leftIndex);
-			if (leftCell == null) {
-				return new int[]{ -1, -1 };
-			} else {
-				float deltaX = pos.x - leftCell.position.x;
-				float deltaY = pos.y - leftCell.position.y;
-
-				if (deltaX >= cellWidth / 2) {
-					leftIndex [0]++;
-				}
-
-				if (deltaY >= cellWidth / 2) {
-					leftIndex [1]++;
-				}
-
-				return leftIndex;
-			}
+			return helper.getCellIndex (pos);
+//			Cell cell = helper.getCell (pos);
+//			int[] leftIndex = helper.getLeft (pos);
+//			Cell leftCell = helper.accessGridCell (leftIndex);
+//			if (leftCell == null) {
+//				return new int[]{ -1, -1 };
+//			} else {
+//				float deltaX = pos.x - leftCell.position.x;
+//				float deltaY = pos.y - leftCell.position.y;
+//
+//				if (deltaX >= cellWidth / 2) {
+//					leftIndex [0]++;
+//				}
+//
+//				if (deltaY >= cellWidth / 2) {
+//					leftIndex [1]++;
+//				}
+//				return leftIndex;
+//			}
 
 		}
 

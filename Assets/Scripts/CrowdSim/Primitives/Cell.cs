@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Primitives
 {
-	public class Cell 
+	public class Cell : Utilities.GridCell
 	{
 		public bool exists;
 
@@ -38,6 +38,10 @@ namespace Primitives
 			potential = float.MaxValue;
 			tempPotential = float.MaxValue;
 			//isAccepted = false;
+		}
+
+		public Vector2 getPosition(){
+			return position;
 		}
 
 	}

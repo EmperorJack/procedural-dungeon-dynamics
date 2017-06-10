@@ -110,8 +110,9 @@ namespace CrowdSim
 							if (face != null) {
 								if (face.cell != null && face.cell.exists) {
 									face.potentialGrad = face.cell.potential - cell.potential;
-								} else {
-									face.potentialGrad = 0.0f;
+								} 
+								else {
+									face.potentialGrad = 0;
 								}
 							}
 						}
@@ -138,36 +139,34 @@ namespace CrowdSim
 				}
 			}
 
-			if (trigger) {
-				for (int i = 0; i < dim; i++) {
-					for (int j = 0; j < dim; j++) {
-						Cell cell = grid [i, j];
-						if (cell != null) {
-							float totalXGrad = 0f;
-							float totalYGrad = 0f;
-							Vector2 totalGrad = Vector2.zero;
-							int existFaces = 0;
-							foreach (Face face in cell.faces) {
-								if (face.cell != null && face.cell.potGrad != null) {
-									totalXGrad += face.cell.potGrad.x;
-									totalYGrad += face.cell.potGrad.y;
-									totalGrad += face.cell.potGrad;
-
-									existFaces++;
-								}
-							}
-							Vector2 newGrad = totalGrad/existFaces;//new Vector2 (totalXGrad / existFaces, totalYGrad / existFaces);
-							cell.potGrad = newGrad;
-
-							normaliseGrads (cell);
-							calculateGroupVelocity (cell);
-
-							//cell.groupVelocity = new Vector2 (-cell.potGrad.x * (faces [1].velocity - faces [3].velocity), -cell.potGrad.y * (faces [0].velocity - faces [2].velocity));
-												
-						}
-					}
-				}
-			}
+//			if (trigger) {
+//				for (int i = 0; i < dim; i++) {
+//					for (int j = 0; j < dim; j++) {
+//						Cell cell = grid [i, j];
+//						if (cell != null) {
+//							float totalXGrad = 0f;
+//							float totalYGrad = 0f;
+//							Vector2 totalGrad = Vector2.zero;
+//							int existFaces = 0;
+//
+//							foreach (Face face in cell.faces) {
+//								if (face.cell != null && face.cell.potGrad != null) {
+//									totalXGrad += face.cell.potGrad.x;
+//									totalYGrad += face.cell.potGrad.y;
+//									totalGrad += face.cell.potGrad;
+//
+//									existFaces++;
+//								}
+//							}
+//							Vector2 newGrad = totalGrad/existFaces;
+//							cell.potGrad = newGrad;
+//
+//							calculateGroupVelocity (cell);
+//																			
+//						}
+//					}
+//				}
+//			}
 		}
 
 		private void calculateGroupVelocity(Cell cell){

@@ -7,6 +7,7 @@ using CrowdSim;
 namespace Utilities
 {
 	public class Helper<T>
+		where T : GridCell
 	{
 		private T[,] grid;
 		private float cellWidth;
@@ -55,8 +56,25 @@ namespace Utilities
 			return accessGridCell(getCellIndex(position));
 		}
 
-		public  int[] getCellIndex(Vector2 position){
-			return new int[]{ (int)((position.x + cellWidth/2) / cellWidth), (int)((position.y + cellWidth/2) / cellWidth) };
+		public  int[] getCellIndex(Vector2 pos){
+
+			int[] leftIndex = getLeft (pos);
+			GridCell leftCell = accessGridCell (leftIndex);
+			if (leftCell == null) {
+				return new int[]{ -1, -1 };
+			} else {
+				float deltaX = pos.x - leftCell.getPosition().x;
+				float deltaY = pos.y - leftCell.getPosition().y;
+
+				if (deltaX >= cellWidth / 2) {
+					leftIndex [0]++;
+				}
+
+				if (deltaY >= cellWidth / 2) {
+					leftIndex [1]++;
+				}
+				return leftIndex;
+			}
 		}
 
 		public  T accessGridCell(int[] index){

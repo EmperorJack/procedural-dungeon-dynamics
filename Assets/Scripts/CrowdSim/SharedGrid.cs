@@ -16,14 +16,15 @@ namespace CrowdSim
 		private Helper<Cell> helper;
 
 		// 'constant' values
-		float densityExp = 0.1f; // 0 (spread out) -> 10 (form lines)
+		float densityExp = 0.1f;
+		// 0 (spread out) -> 10 (form lines)
 		public float maxCalcDensity = 0f;
 		public float minDensity = 2.0f;
 		public float maxDensity = 5.0f;
 		public float maxVelocity = 1.0f;
 		public float distanceWeight = 0.5f;
 		public float timeWeight = 0.5f;
-		public float discomfortWeight = 0.0f;
+		public float discomfortWeight = 0.5f;
 
 		private bool customDungeon = false;
 
@@ -45,12 +46,12 @@ namespace CrowdSim
 				customDungeon = false;
 			} else {
 				customDungeon = true;
-				this.dim = dungeon.GetLength(0)* ratio;
+				this.dim = dungeon.GetLength (0) * ratio;
 			}
 
 			Debug.Log ("DIM: " + this.dim);
 
-			grid = new Cell[this.dim,this.dim];
+			grid = new Cell[this.dim, this.dim];
 			helper = new Helper<Cell> (grid, cellWidth, ratio);
 			this.dungeon = dungeon;
 
@@ -58,22 +59,24 @@ namespace CrowdSim
 
 		}
 
-		public void addAgent(SimObject simObject){
+		public void addAgent (SimObject simObject)
+		{
 			simObjects.Add (simObject);
 		}
 
-		private void initGrid(){
+		private void initGrid ()
+		{
 
 			for (int i = 0; i < dim; i++) {
 				for (int j = 0; j < dim; j++) {
-					if (customDungeon == false || (isFloor(dungeon[i/ratio,j/ratio]))) {
+					if (customDungeon == false || (isFloor (dungeon [i / ratio, j / ratio]))) {
 						grid [i, j] = new Cell (new int[]{ i, j });
-						grid [i, j].position = new Vector2 (i * cellWidth - (ratio-1) * cellWidth * 0.5f, j * cellWidth- (ratio-1) * cellWidth * 0.5f);
+						grid [i, j].position = new Vector2 (i * cellWidth - (ratio - 1) * cellWidth * 0.5f, j * cellWidth - (ratio - 1) * cellWidth * 0.5f);
 						grid [i, j].exists = true;
 						realCells++;
-					} else if (customDungeon && isFloor(dungeon[i/ratio,j/ratio]) == false) {
+					} else if (customDungeon && isFloor (dungeon [i / ratio, j / ratio]) == false) {
 						grid [i, j] = new Cell (new int[]{ i, j });
-						grid [i, j].position = new Vector2 (i * cellWidth- (ratio-1) * cellWidth * 0.5f, j * cellWidth - (ratio-1) * cellWidth * 0.5f);
+						grid [i, j].position = new Vector2 (i * cellWidth - (ratio - 1) * cellWidth * 0.5f, j * cellWidth - (ratio - 1) * cellWidth * 0.5f);
 						grid [i, j].exists = false;
 					}
 				}
@@ -86,23 +89,23 @@ namespace CrowdSim
 					Face[] faces = new Face[4];
 
 					faces [0] = new Face (0);
-					if (j + 1 < dim && grid[i, j+1] != null) {
+					if (j + 1 < dim && grid [i, j + 1] != null) {
 						faces [0].cell = grid [i, j + 1];
 					}
 
 					faces [1] = new Face (1);
-					if (i + 1 < dim && grid[i+1, j] != null) {
+					if (i + 1 < dim && grid [i + 1, j] != null) {
 						faces [1].cell = grid [i + 1, j];
 					}
 						
 					faces [2] = new Face (2);
-					if (j > 0 && grid[i, j-1] != null) {
+					if (j > 0 && grid [i, j - 1] != null) {
 						faces [2].cell = grid [i, j - 1];
 					}
 				
 
 					faces [3] = new Face (3);
-					if (i > 0 && grid[i-1, j] != null) {
+					if (i > 0 && grid [i - 1, j] != null) {
 						faces [3].cell = grid [i - 1, j];
 					}
 
@@ -116,11 +119,13 @@ namespace CrowdSim
 			}
 		}
 
-		public bool isFloor(DungeonGeneration.Cell cell){
+		public bool isFloor (DungeonGeneration.Cell cell)
+		{
 			return cell is DungeonGeneration.FloorCell;
 		}
 
-		private void resetGrid(){
+		private void resetGrid ()
+		{
 			for (int i = 0; i < dim; i++) {
 				for (int j = 0; j < dim; j++) {
 					if (grid [i, j] != null) {
@@ -130,15 +135,17 @@ namespace CrowdSim
 			}
 		}
 
-		public void assignAgents(List<SimObject> simObjects, float time){
+		public void assignAgents (List<SimObject> simObjects, float time)
+		{
 
-			foreach(SimObject simObject in simObjects){
-				int[] index = helper.getCellIndex (simObject.getPosition());
-				Cell leftCell = helper.accessGridCell(index);
+			foreach (SimObject simObject in simObjects) {
+				//TODO: THIS isn't right with the new ratio
+				int[] index = helper.getLeft (simObject.getPosition ());
+				Cell leftCell = helper.accessGridCell (index);
 
 				if (leftCell != null) {
-					float deltaX = (simObject.getPosition().x - leftCell.position.x)/cellWidth;
-					float deltaY = (simObject.getPosition().y - leftCell.position.y)/cellWidth;
+					float deltaX = (simObject.getPosition ().x - leftCell.position.x) / cellWidth;
+					float deltaY = (simObject.getPosition ().y - leftCell.position.y) / cellWidth;
 
 					// D --- C
 					// |     |
@@ -146,33 +153,29 @@ namespace CrowdSim
 
 
 					// add density contribution to neighbouring cell
-					float leftDensity = Mathf.Pow (Mathf.Min (1 - deltaX, 1 - deltaY), densityExp)* simObject.densityWeight;
+					float leftDensity = Mathf.Pow (Mathf.Min (1 - deltaX, 1 - deltaY), densityExp) * simObject.densityWeight;
 					// add average velocity contribution
 					leftCell.density += leftDensity;
-					maxCalcDensity = Mathf.Max (leftCell.density, maxCalcDensity);
 					leftCell.avgVelocity += leftDensity * simObject.velocity; // cell A
 
 					Cell bCell = helper.accessGridCell (new int[]{ index [0] + 1, index [1] });
 					if (bCell != null && bCell.exists) {
 						float bDensity = Mathf.Pow (Mathf.Min (deltaX, 1 - deltaY), densityExp) * simObject.densityWeight;
 						bCell.density += bDensity;
-						maxCalcDensity = Mathf.Max (bCell.density, maxCalcDensity);
 						bCell.avgVelocity += bDensity * simObject.velocity;
 					}
 
-					Cell cCell = helper.accessGridCell (new int[]{ index [0] + 1, index [1] +1 });
+					Cell cCell = helper.accessGridCell (new int[]{ index [0] + 1, index [1] + 1 });
 					if (cCell != null && cCell.exists) {
-						float cDensity = Mathf.Pow (Mathf.Min (deltaX,deltaY), densityExp)* simObject.densityWeight;
+						float cDensity = Mathf.Pow (Mathf.Min (deltaX, deltaY), densityExp) * simObject.densityWeight;
 						cCell.density += cDensity;
-						maxCalcDensity = Mathf.Max (cCell.density, maxCalcDensity);
 						cCell.avgVelocity += cDensity * simObject.velocity;
 					}
 
 					Cell dCell = helper.accessGridCell (new int[]{ index [0], index [1] + 1 });
 					if (dCell != null && dCell.exists) {
-						float dDensity = Mathf.Pow (Mathf.Min (1 - deltaX, deltaY), densityExp)* simObject.densityWeight;
+						float dDensity = Mathf.Pow (Mathf.Min (1 - deltaX, deltaY), densityExp) * simObject.densityWeight;
 						dCell.density += dDensity;
-						maxCalcDensity = Mathf.Max (dCell.density, maxCalcDensity);
 						dCell.avgVelocity += dDensity * simObject.velocity;
 					}
 				}
@@ -192,8 +195,54 @@ namespace CrowdSim
 				}
 			}
 		}
+			
+			
+//		public float calculateDensity (SimObject simObject, Vector2 pos)
+//		{
+//			int[] index = helper.getCellIndex (simObject.getPosition ());
+//
+//			Cell leftCell = helper.accessGridCell (index);
+//
+//			if (leftCell != null) {
+//				float deltaX = (pos.x - pos.x) / cellWidth;
+//				float deltaY = (pos.y - pos.y) / cellWidth;
+//
+//				// D --- C
+//				// |     |
+//				// A --- B
+//
+//
+//				// add density contribution to neighbouring cell
+//				float leftDensity = Mathf.Pow (Mathf.Min (1 - deltaX, 1 - deltaY), densityExp) * simObject.densityWeight;
+//				// add average velocity contribution
+//				leftCell.density += leftDensity;
+//				leftCell.avgVelocity += leftDensity * simObject.velocity; // cell A
+//
+//				Cell bCell = helper.accessGridCell (new int[]{ index [0] + 1, index [1] });
+//				if (bCell != null && bCell.exists) {
+//					float bDensity = Mathf.Pow (Mathf.Min (deltaX, 1 - deltaY), densityExp) * simObject.densityWeight;
+//					bCell.density += bDensity;
+//					bCell.avgVelocity += bDensity * simObject.velocity;
+//				}
+//
+//				Cell cCell = helper.accessGridCell (new int[]{ index [0] + 1, index [1] + 1 });
+//				if (cCell != null && cCell.exists) {
+//					float cDensity = Mathf.Pow (Mathf.Min (deltaX, deltaY), densityExp) * simObject.densityWeight;
+//					cCell.density += cDensity;
+//					cCell.avgVelocity += cDensity * simObject.velocity;
+//				}
+//
+//				Cell dCell = helper.accessGridCell (new int[]{ index [0], index [1] + 1 });
+//				if (dCell != null && dCell.exists) {
+//					float dDensity = Mathf.Pow (Mathf.Min (1 - deltaX, deltaY), densityExp) * simObject.densityWeight;
+//					dCell.density += dDensity;
+//					dCell.avgVelocity += dDensity * simObject.velocity;
+//				}
+//			}
+//		}
 
-		private void assignCosts(){
+		private void assignCosts ()
+		{
 			for (int i = 0; i < dim; i++) {
 				for (int j = 0; j < dim; j++) {
 					if (grid [i, j] != null) {
@@ -216,7 +265,8 @@ namespace CrowdSim
 			}
 		}
 
-		private void assignSpeedField(){
+		private void assignSpeedField ()
+		{
 			for (int i = 0; i < dim; i++) {
 				for (int j = 0; j < dim; j++) {
 
@@ -232,24 +282,14 @@ namespace CrowdSim
 
 								if (grid [i, j].density < minDensity) {
 									face.velocity = fT;
-									//face.velocity = flowSpeed (grid[i,j],face, f);
-									if (face.velocity < 0) {
-										Debug.Log ("NEG: 1");
-									}
 								} else if (grid [i, j].density > maxDensity) {
 									face.velocity = fS;
-									//face.velocity = topoSpeed (face);
-									if (face.velocity < 0) {
-										Debug.Log ("NEG: 2");
-									}
 								} else {
 
 									if (face.cell.exists == false) {
 										face.velocity = 0;
 									} else {
 										float deltaP = maxDensity - minDensity;
-										//face.velocity = fS;
-
 										if (deltaP == 0) {
 											face.velocity = fT;
 										} else {
@@ -257,7 +297,6 @@ namespace CrowdSim
 										}
 									}
 								}
-								face.velocity = Mathf.Max (face.velocity, 0.01f);	
 							}
 
 						}
@@ -266,19 +305,22 @@ namespace CrowdSim
 			}
 		}
 
-		private float topoSpeed(Face face){
+		private float topoSpeed (Face face)
+		{
 			return maxVelocity; // is more complicated when considering height variations
 		}
 
-		private float flowSpeed(Cell cell, Face face, int dir){
+		private float flowSpeed (Cell cell, Face face, int dir)
+		{
 			Cell neighbour = face.cell;
 
 			Vector2 offset = neighbour.position - cell.position;
 		
-			return Mathf.Max(Vector2.Dot(neighbour.avgVelocity, offset),0.01f);
+			return Mathf.Max (Vector2.Dot (neighbour.avgVelocity, offset), 0.1f);
 		}
 
-		public virtual void update(float time){
+		public virtual void update (float time)
+		{
 			resetGrid ();
 			assignAgents (simObjects, time);
 			assignSpeedField ();
