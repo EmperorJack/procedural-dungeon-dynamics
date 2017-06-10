@@ -16,9 +16,13 @@ namespace DungeonGeneration
         // Anchor fields
         private List<Anchor> anchors;
 
+        // Object fields
+        private List<GameObject> populatedObjects;
+
         public void Setup(List<Anchor> anchors)
         {
             this.anchors = anchors;
+            this.populatedObjects = new List<GameObject>();
         }
 
         public void Populate(GameObject parent)
@@ -44,8 +48,10 @@ namespace DungeonGeneration
                     instance.transform.SetParent(parent.transform);
                     instance.transform.Translate(anchor.x, 0.0f, anchor.y);
 
-					// Populate any nested objects if they exist
-					if (instance.GetComponent<NestedObject> () != null)
+                    populatedObjects.Add(instance);
+
+                    // Populate any nested objects if they exist
+                    if (instance.GetComponent<NestedObject> () != null)
 					{
 						PopulateNested (instance, parent);
 					}
@@ -81,11 +87,18 @@ namespace DungeonGeneration
 					nestedInstance.transform.SetParent(parent.transform);
 					nestedInstance.transform.Translate(transform.position.x, instance.transform.position.y, transform.position.z);
 					nestedInstance.transform.Rotate(transform.rotation.eulerAngles);
-				}
+
+                    populatedObjects.Add(nestedInstance);
+                }
 
 				// Remove the nested anchor point
 				DestroyImmediate(transform.gameObject);
 			}
 		}
+
+        public List<GameObject> GetPopulatedObjects()
+        {
+            return populatedObjects;
+        }
     }
 }
