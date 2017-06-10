@@ -54,6 +54,15 @@ namespace Visualization
 						}
 					} else {
 						if (cells [i, j] != null) {
+
+//							if (dataGrid [i, j].density <= 1.0f) {
+//								cells [i, j].setColor (Color.green);
+//							} else if (dataGrid [i, j].density >= 2.0f) {
+//								cells [i, j].setColor (Color.red);
+//							} else {
+//								cells [i, j].setColor (Color.yellow);
+//							}
+
 							if (dataGrid [i, j].isGoal) {
 								cells [i, j].setColor (Color.green);
 							} else {

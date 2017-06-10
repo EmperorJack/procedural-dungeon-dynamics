@@ -96,48 +96,6 @@ namespace CrowdSim
 				addNeighbours (candidates, minCandidate);
 				accepted.Add (minCandidate);
 
-				//calculate gradients
-
-//				// only the upwind direction has associated velocity
-//				Face[] upwinds = getUpwinds (minCandidate);
-//				for (int i = 0; i < upwinds.GetLength (0); i++) {
-//					if (upwinds != null) {
-//						upwinds [i] = minCandidate.faces [upwinds [i].index];
-//						if (upwinds [i] != null && upwinds [i].cell != null) {
-//							upwinds [i].potentialGrad = upwinds [i].cell.potential - minCandidate.potential;
-//						} else if (upwinds [i] != null && upwinds [i].cell.exists == false) {
-//							upwinds [i].potentialGrad = float.MaxValue;
-//						}
-//					}
-//				}
-		
-
-//				// normalize gradients and update velocties
-//				Vector2 potGrad = new Vector2 (0, 0);
-//				if (upwinds [0] != null) {
-//					potGrad.x = upwinds [0].potentialGrad;
-//				}
-//
-//				if (upwinds [1] != null) {
-//					potGrad.y = upwinds [1].potentialGrad;
-//				}
-//				potGrad.Normalize ();
-//
-//				if (upwinds [0] != null) {
-//					upwinds [0].potentialGrad = potGrad.x;
-//					upwinds [0].groupVelocity = -upwinds [0].potentialGrad * minCandidate.sharedCell.faces [upwinds [0].index].velocity;
-//				} else if (upwinds [0].cell.exists == false) {
-//					upwinds [0].groupVelocity = 0f;
-//				}
-//
-//				if (upwinds [1] != null) {
-//					upwinds [1].potentialGrad = potGrad.y;
-//					upwinds [1].groupVelocity = -upwinds [1].potentialGrad * minCandidate.sharedCell.faces [upwinds [1].index].velocity;
-//				} else if (upwinds [1].cell.exists == false) {
-//					upwinds [1].groupVelocity = 0f;
-//				}
-//				minCandidate.potGrad = potGrad;
-//				minCandidate.groupVelocity = getCenterVelocity (minCandidate).normalized;
 			}
 		}
 
@@ -158,21 +116,21 @@ namespace CrowdSim
 							}
 						}
 
-						if (faces [1].potentialGrad == 0 && faces [3].potentialGrad > 0) {
-							faces [1].potentialGrad = faces [3].potentialGrad;
-						}
-
-						if (faces [3].potentialGrad == 0 && faces [1].potentialGrad > 0) {
-							faces [3].potentialGrad = faces [1].potentialGrad;
-						}
-
-						if (faces [0].potentialGrad == 0 && faces [2].potentialGrad > 0) {
-							faces [0].potentialGrad = faces [2].potentialGrad;
-						}
-
-						if (faces [2].potentialGrad == 0 && faces [0].potentialGrad > 0) {
-							faces [2].potentialGrad = faces [0].potentialGrad;
-						}
+//						if (faces [1].potentialGrad == 0 && faces [3].potentialGrad > 0) {
+//							faces [1].potentialGrad = -faces [3].potentialGrad;
+//						}
+//
+//						if (faces [3].potentialGrad == 0 && faces [1].potentialGrad > 0) {
+//							faces [3].potentialGrad = -faces [1].potentialGrad;
+//						}
+//
+//						if (faces [0].potentialGrad == 0 && faces [2].potentialGrad > 0) {
+//							faces [0].potentialGrad = -faces [2].potentialGrad;
+//						}
+//
+//						if (faces [2].potentialGrad == 0 && faces [0].potentialGrad > 0) {
+//							faces [2].potentialGrad = -faces [0].potentialGrad;
+//						}
 							
 						normaliseGrads (cell);
 						calculateGroupVelocity (cell);
@@ -212,34 +170,6 @@ namespace CrowdSim
 			}
 		}
 
-//		private void calculateGroupVelocity(Cell cell){
-//			Face[] faces = cell.faces;
-//
-//			float ratioZero = faces [0].potentialGrad / (faces [0].potentialGrad - faces [2].potentialGrad);
-//			float ratioOne = faces [1].potentialGrad / (faces [1].potentialGrad - faces [3].potentialGrad);
-//			float ratioTwo = faces [2].potentialGrad / (faces [0].potentialGrad - faces [2].potentialGrad);
-//			float ratioThree = faces [3].potentialGrad / (faces [1].potentialGrad - faces [3].potentialGrad);
-//
-//			cell.potGrad = new Vector2 (faces [1].potentialGrad - faces [3].potentialGrad, faces [0].potentialGrad - faces [2].potentialGrad);
-//			cell.potGrad = cell.potGrad.normalized;
-//
-//			faces[0].potentialGrad = ratioZero * cell.potGrad.y;
-//			faces[1].potentialGrad = ratioOne * cell.potGrad.x;
-//			faces[2].potentialGrad = ratioTwo * cell.potGrad.y;
-//			faces[3].potentialGrad = ratioThree * cell.potGrad.x;
-//
-//			Face[] sharedFaces = cell.sharedCell.faces;
-//
-//			faces [0].groupVelocity = -faces [0].potentialGrad * sharedFaces [0].velocity;
-//			faces [1].groupVelocity = -faces [1].potentialGrad * sharedFaces [1].velocity;
-//			faces [2].groupVelocity = -faces [2].potentialGrad * sharedFaces [2].velocity;
-//			faces [3].groupVelocity = -faces [3].potentialGrad * sharedFaces [3].velocity;
-//
-//
-//			cell.groupVelocity = -cell.potGrad;//new Vector2 (faces [0].groupVelocity - faces [2].groupVelocity, faces [1].groupVelocity - faces [3].groupVelocity);
-//			//Debug.Log (cell.groupVelocity.x + " " + cell.groupVelocity.y);
-//		}
-
 		private void calculateGroupVelocity(Cell cell){
 			if (cell.potential.Equals (Vector2.zero)) {
 				cell.groupVelocity = Vector2.zero;
@@ -248,10 +178,15 @@ namespace CrowdSim
 				int[] index = cell.index;
 				Face[] sharedFaces = sharedGrid.grid[index[0],index[1]].faces;
 
-				faces [0].groupVelocity = Mathf.Max(-faces [0].potentialGrad * sharedFaces [0].velocity,-faces [0].potentialGrad );
-				faces [1].groupVelocity =  Mathf.Max(-faces [1].potentialGrad * sharedFaces [1].velocity,-faces [1].potentialGrad );
-				faces [2].groupVelocity =  Mathf.Max(-faces [2].potentialGrad * sharedFaces [2].velocity,-faces [2].potentialGrad );
-				faces [3].groupVelocity =  Mathf.Max(-faces [3].potentialGrad * sharedFaces [3].velocity,-faces [3].potentialGrad );
+				//TODO: HMM shouldn't be any negatives
+				if (sharedFaces [0].velocity < 0 || sharedFaces [1].velocity < 0 || sharedFaces [2].velocity < 0 || sharedFaces [3].velocity < 0) {
+					Debug.Log ("NEGATIVE: "+sharedFaces [0].velocity + " " + sharedFaces [1].velocity + " " + sharedFaces [2].velocity + " " + sharedFaces [3].velocity);
+				}
+
+				faces [0].groupVelocity =  -faces [0].potentialGrad * sharedFaces [0].velocity;
+				faces [1].groupVelocity =  -faces [1].potentialGrad * sharedFaces [1].velocity;
+				faces [2].groupVelocity =  -faces [2].potentialGrad * sharedFaces [2].velocity;
+				faces [3].groupVelocity =  -faces [3].potentialGrad * sharedFaces [3].velocity;
 			
 				cell.groupVelocity = new Vector2 (faces [1].groupVelocity - faces [3].groupVelocity, faces [0].groupVelocity - faces [2].groupVelocity);
 			}
@@ -313,11 +248,7 @@ namespace CrowdSim
 				Vector2 cVel = getCenterVelocity (grid [index [0] + 1, index [1] + 1]);
 				Vector2 bVel = getCenterVelocity (grid [index [0] + 1, index [1]]);
 				Vector2 aVel = getCenterVelocity (leftCell);
-
 				Vector2 velocity = new Vector2 (0f, 0f);
-				Vector2 cPos = grid [index [0] + 1, index [1] + 1].position;
-				Vector2 lPos = leftCell.position;
-				Vector2 pos = simObject.getPosition ();
 
 				if (zeroVec (aVel) && zeroVec (dVel)) {
 					aVel = bVel;
@@ -326,7 +257,6 @@ namespace CrowdSim
 					cVel = dVel;
 					aVel = bVel;
 				} 
-
 				else if (zeroVec (aVel) && zeroVec (bVel)) {
 					aVel = dVel;
 					bVel = cVel;
@@ -334,7 +264,6 @@ namespace CrowdSim
 					cVel = bVel;
 					dVel = aVel;
 				} 
-					
 				else if (zeroVec (dVel)) {
 					dVel = bVel;
 				} else if (zeroVec (cVel)) {
@@ -374,30 +303,6 @@ namespace CrowdSim
 			} else {
 				return new Vector2 (0f, 0f);
 			}
-//			if (cell != null) {
-//				Face[] faces = cell.faces;
-//
-//				Vector2 velocity = new Vector2 (0, 0);
-//				if (faces [1] != null) {
-//					velocity.x = faces [1].groupVelocity;
-//				}
-//
-//				if (faces [3] != null) {
-//					velocity.x = velocity.x - faces [3].groupVelocity;
-//				}
-//
-//				if (faces [0] != null) {
-//					velocity.y = faces [0].groupVelocity;
-//				}
-//
-//				if (faces [2] != null) {
-//					velocity.y = velocity.y - faces [2].groupVelocity;
-//				}
-//	
-//				return velocity;
-//			} else {
-//				return new Vector2 (0f, 0f);
-//			}
 		}
 
 		private void removeCell (SortedList<float, List<Cell>> candidates, Cell cell, float oldKey)
@@ -536,8 +441,6 @@ namespace CrowdSim
 					}
 				}
 			}
-				
-			
 
 			return doubleDif;
 		}

@@ -233,7 +233,6 @@ namespace CrowdSim
 
 		public void updateSim (float time)
 		{
-			executeUpdate (time);
 			if (frames >= frameLimit) {
 				updateFields = true;
 				setGroupUpdateField (true);
@@ -243,6 +242,7 @@ namespace CrowdSim
 				setGroupUpdateField (false);
 				frames++;
 			}
+			executeUpdate (time);
 		}
 
 		private void setGroupUpdateField (bool updateField)
@@ -293,7 +293,7 @@ namespace CrowdSim
 			int[] index = simManager.getCell (pos);
 			Primitives.Cell selected = simManager.groupGrid.grid [index [0], index [1]];
 			if (selected != null) {
-
+				leftSelected = selected;
 				Debug.Log (selected.index [0] + ", " + selected.index [1] + ": Potential: " + selected.potential);
 				Debug.Log ("Faces: ");
 				for (int i = 0; i < 4; i++) {

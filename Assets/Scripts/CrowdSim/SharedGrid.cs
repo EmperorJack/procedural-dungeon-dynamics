@@ -18,9 +18,9 @@ namespace CrowdSim
 		// 'constant' values
 		float densityExp = 0.1f; // 0 (spread out) -> 10 (form lines)
 		public float maxCalcDensity = 0f;
-		public float minDensity = 1.0f;
-		public float maxDensity = 2.0f;
-		public float maxVelocity = 0.5f;
+		public float minDensity = 2.0f;
+		public float maxDensity = 5.0f;
+		public float maxVelocity = 1.0f;
 		public float distanceWeight = 0.5f;
 		public float timeWeight = 0.5f;
 		public float discomfortWeight = 0.0f;
@@ -179,14 +179,16 @@ namespace CrowdSim
 
 				Vector2 newPos = simObject.getPosition () + time * simObject.velocity;
 				Cell newCell = helper.getCell (newPos);
-				newCell.discomfort += 0.5f;
+				//newCell.discomfort += 0.5f;
 			}
 			// calculate average velocity
 
 			for (int i = 0; i < dim; i++) {
 				for (int j = 0; j < dim; j++) {
 					Cell cell = grid [i, j];
-					cell.avgVelocity = cell.avgVelocity / cell.density;
+					if (cell.density > 0.0f) {
+						cell.avgVelocity = cell.avgVelocity / cell.density;
+					}
 				}
 			}
 		}
@@ -225,31 +227,37 @@ namespace CrowdSim
 								face.velocity = 0;
 							} else {
 
+								float fS = flowSpeed (grid [i, j], face, f);
+								float fT = topoSpeed (face);
+
 								if (grid [i, j].density < minDensity) {
-									//face.velocity = topoSpeed (face);
-									face.velocity = flowSpeed (grid[i,j],face, f);
-
+									face.velocity = fT;
+									//face.velocity = flowSpeed (grid[i,j],face, f);
+									if (face.velocity < 0) {
+										Debug.Log ("NEG: 1");
+									}
 								} else if (grid [i, j].density > maxDensity) {
-									face.velocity = flowSpeed (grid[i,j],face, f);
+									face.velocity = fS;
 									//face.velocity = topoSpeed (face);
-
+									if (face.velocity < 0) {
+										Debug.Log ("NEG: 2");
+									}
 								} else {
 
 									if (face.cell.exists == false) {
 										face.velocity = 0;
 									} else {
 										float deltaP = maxDensity - minDensity;
-										face.velocity = flowSpeed (grid[i,j],face, f);
+										//face.velocity = fS;
 
-										//face.velocity = topoSpeed (face);
-//										if (deltaP == 0) {
-//											face.velocity = topoSpeed (face);
-//										} else {
-//											face.velocity = topoSpeed (face) + ((face.cell.density - minDensity) / (deltaP));
-//										}
+										if (deltaP == 0) {
+											face.velocity = fT;
+										} else {
+											face.velocity = fT + ((face.cell.density - minDensity) / (deltaP)) * (fT - fS);
+										}
 									}
 								}
-									
+								face.velocity = Mathf.Max (face.velocity, 0.01f);	
 							}
 
 						}
@@ -268,12 +276,6 @@ namespace CrowdSim
 			Vector2 offset = neighbour.position - cell.position;
 		
 			return Mathf.Max(Vector2.Dot(neighbour.avgVelocity, offset),0.01f);
-
-//			if (dir == 0 || dir == 2) {
-//				return Mathf.Max (face.cell.avgVelocity.x, 0.1f);
-//			} else {
-//				return Mathf.Max (face.cell.avgVelocity.y, 0.1f);
-//			}
 		}
 
 		public virtual void update(float time){
