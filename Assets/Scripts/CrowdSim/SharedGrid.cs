@@ -139,47 +139,7 @@ namespace CrowdSim
 		{
 
 			foreach (SimObject simObject in simObjects) {
-				//TODO: THIS isn't right with the new ratio
-				int[] index = helper.getLeft (simObject.getPosition ());
-				Cell leftCell = helper.accessGridCell (index);
-
-				if (leftCell != null) {
-					float deltaX = (simObject.getPosition ().x - leftCell.position.x) / cellWidth;
-					float deltaY = (simObject.getPosition ().y - leftCell.position.y) / cellWidth;
-
-					// D --- C
-					// |     |
-					// A --- B
-
-
-					// add density contribution to neighbouring cell
-					float leftDensity = Mathf.Pow (Mathf.Min (1 - deltaX, 1 - deltaY), densityExp) * simObject.densityWeight;
-					// add average velocity contribution
-					leftCell.density += leftDensity;
-					leftCell.avgVelocity += leftDensity * simObject.velocity; // cell A
-
-					Cell bCell = helper.accessGridCell (new int[]{ index [0] + 1, index [1] });
-					if (bCell != null && bCell.exists) {
-						float bDensity = Mathf.Pow (Mathf.Min (deltaX, 1 - deltaY), densityExp) * simObject.densityWeight;
-						bCell.density += bDensity;
-						bCell.avgVelocity += bDensity * simObject.velocity;
-					}
-
-					Cell cCell = helper.accessGridCell (new int[]{ index [0] + 1, index [1] + 1 });
-					if (cCell != null && cCell.exists) {
-						float cDensity = Mathf.Pow (Mathf.Min (deltaX, deltaY), densityExp) * simObject.densityWeight;
-						cCell.density += cDensity;
-						cCell.avgVelocity += cDensity * simObject.velocity;
-					}
-
-					Cell dCell = helper.accessGridCell (new int[]{ index [0], index [1] + 1 });
-					if (dCell != null && dCell.exists) {
-						float dDensity = Mathf.Pow (Mathf.Min (1 - deltaX, deltaY), densityExp) * simObject.densityWeight;
-						dCell.density += dDensity;
-						dCell.avgVelocity += dDensity * simObject.velocity;
-					}
-				}
-
+				calculateDensity(simObject, simObject.getPosition(), true);
 				Vector2 newPos = simObject.getPosition () + time * simObject.velocity;
 				Cell newCell = helper.getCell (newPos);
 				//newCell.discomfort += 0.5f;
@@ -195,51 +155,76 @@ namespace CrowdSim
 				}
 			}
 		}
+
 			
-			
-//		public float calculateDensity (SimObject simObject, Vector2 pos)
-//		{
-//			int[] index = helper.getCellIndex (simObject.getPosition ());
-//
-//			Cell leftCell = helper.accessGridCell (index);
-//
-//			if (leftCell != null) {
-//				float deltaX = (pos.x - pos.x) / cellWidth;
-//				float deltaY = (pos.y - pos.y) / cellWidth;
-//
-//				// D --- C
-//				// |     |
-//				// A --- B
-//
-//
-//				// add density contribution to neighbouring cell
-//				float leftDensity = Mathf.Pow (Mathf.Min (1 - deltaX, 1 - deltaY), densityExp) * simObject.densityWeight;
-//				// add average velocity contribution
-//				leftCell.density += leftDensity;
-//				leftCell.avgVelocity += leftDensity * simObject.velocity; // cell A
-//
-//				Cell bCell = helper.accessGridCell (new int[]{ index [0] + 1, index [1] });
-//				if (bCell != null && bCell.exists) {
-//					float bDensity = Mathf.Pow (Mathf.Min (deltaX, 1 - deltaY), densityExp) * simObject.densityWeight;
-//					bCell.density += bDensity;
-//					bCell.avgVelocity += bDensity * simObject.velocity;
-//				}
-//
-//				Cell cCell = helper.accessGridCell (new int[]{ index [0] + 1, index [1] + 1 });
-//				if (cCell != null && cCell.exists) {
-//					float cDensity = Mathf.Pow (Mathf.Min (deltaX, deltaY), densityExp) * simObject.densityWeight;
-//					cCell.density += cDensity;
-//					cCell.avgVelocity += cDensity * simObject.velocity;
-//				}
-//
-//				Cell dCell = helper.accessGridCell (new int[]{ index [0], index [1] + 1 });
-//				if (dCell != null && dCell.exists) {
-//					float dDensity = Mathf.Pow (Mathf.Min (1 - deltaX, deltaY), densityExp) * simObject.densityWeight;
-//					dCell.density += dDensity;
-//					dCell.avgVelocity += dDensity * simObject.velocity;
-//				}
-//			}
-//		}
+		public float calculateDensity (SimObject simObject, Vector2 pos, bool assign)
+		{
+			int[] index = helper.getLeft (simObject.getPosition ());
+			Cell leftCell = helper.accessGridCell (index);
+			int[] selectedIndex = helper.getCellIndex (pos);
+
+			if (leftCell != null) {
+				float deltaX = (simObject.getPosition ().x - leftCell.position.x) / cellWidth;
+				float deltaY = (simObject.getPosition ().y - leftCell.position.y) / cellWidth;
+
+				// D --- C
+				// |     |
+				// A --- B
+
+
+				// add density contribution to neighbouring cell
+				float leftDensity = Mathf.Pow (Mathf.Min (1 - deltaX, 1 - deltaY), densityExp) * simObject.densityWeight;
+				// add average velocity contribution
+				if (assign) {
+					leftCell.density += leftDensity;
+					leftCell.avgVelocity += leftDensity * simObject.velocity; // cell A
+				} else {
+					if (selectedIndex [0] == leftCell.index [0] && selectedIndex [1] == leftCell.index [1]) {
+						return leftDensity;
+					}
+				}
+
+				Cell bCell = helper.accessGridCell (new int[]{ index [0] + 1, index [1] });
+				if (bCell != null && bCell.exists) {
+					float bDensity = Mathf.Pow (Mathf.Min (deltaX, 1 - deltaY), densityExp) * simObject.densityWeight;
+					if (assign) {
+						bCell.density += bDensity;
+						bCell.avgVelocity += bDensity * simObject.velocity;
+					} else {
+						if (selectedIndex [0] == bCell.index [0] && selectedIndex [1] == bCell.index [1]) {
+							return bDensity;
+						}
+					}
+				}
+
+				Cell cCell = helper.accessGridCell (new int[]{ index [0] + 1, index [1] + 1 });
+				if (cCell != null && cCell.exists) {
+					float cDensity = Mathf.Pow (Mathf.Min (deltaX, deltaY), densityExp) * simObject.densityWeight;
+					if (assign) {
+						cCell.density += cDensity;
+						cCell.avgVelocity += cDensity * simObject.velocity;
+					} else {
+						if (selectedIndex [0] == cCell.index [0] && selectedIndex [1] == cCell.index [1]) {
+							return cDensity;
+						}
+					}
+				}
+
+				Cell dCell = helper.accessGridCell (new int[]{ index [0], index [1] + 1 });
+				if (dCell != null && dCell.exists) {
+					float dDensity = Mathf.Pow (Mathf.Min (1 - deltaX, deltaY), densityExp) * simObject.densityWeight;
+					if (assign) {
+						dCell.density += dDensity;
+						dCell.avgVelocity += dDensity * simObject.velocity;
+					} else {
+						if (selectedIndex [0] == dCell.index [0] && selectedIndex [1] == dCell.index [1]) {
+							return dDensity;
+						}
+					}
+				}
+			}
+			return 0.0f;
+		}
 
 		private void assignCosts ()
 		{
