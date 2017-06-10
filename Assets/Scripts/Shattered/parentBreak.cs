@@ -28,7 +28,7 @@ public class parentBreak : MonoBehaviour {
 		if (mat != null){
 			foreach (Transform child in brokenGeo.transform) {
 				if (child.gameObject.GetComponent<PhysicMaterial> () == null) {
-					Debug.Log ("Setting piece material");
+					//Debug.Log ("Setting piece material");
 					child.gameObject.GetComponent<Collider> ().material = mat;
 					//child.gameObject.GetComponent<MeshCollider> ().enabled = false;
 					//child.gameObject.GetComponent<MeshCollider> ().enabled = true;

@@ -14,11 +14,12 @@ namespace DungeonGeneration {
 	    public Partition left;
 		public Partition right;
 	    private Room room;
-        private Corridor corridor;
+        private List<Corridor> corridors;
 
         public Partition(DungeonLayoutGenerator generator, int x, int y, int width, int height, int depth) : base(generator.NextPartitionId(), generator, x, y, width, height)
 	    {
             this.depth = depth;
+            this.corridors = new List<Corridor>();
         }
 
 	    public void Print()
@@ -29,14 +30,16 @@ namespace DungeonGeneration {
 			if (right != null) right.Print();
 		}
 
-		public void MakeParition()
+		public int MakeParition()
 		{
+            if (depth >= generator.maxDepth) return depth;
+
 			int minimumSize = generator.minimumRoomSize + generator.roomBuffer * 2;
 
             float widthHeightRatio = width / (float) height;
 
             // Check if this partition is big enough to cut
-            if (width <= minimumSize * 2 && height <= minimumSize * 2) return;
+            if (width <= minimumSize * 2 && height <= minimumSize * 2) return depth;
 
             if (widthHeightRatio > generator.maxRoomWidthHeightRatio)
             {
@@ -53,7 +56,7 @@ namespace DungeonGeneration {
 
 			if (horizontalCut)
 			{
-                if (height <= minimumSize * 2) return;
+                if (height <= minimumSize * 2) return depth;
 
                 int yCut = UnityEngine.Random.Range(generator.minimumRoomSize + generator.roomBuffer * 2, height - generator.minimumRoomSize - generator.roomBuffer * 2 + 1);
 				partitionA = new Partition(generator, x, y, width, yCut, depth + 1);
@@ -61,7 +64,7 @@ namespace DungeonGeneration {
 			}
 			else // Vertical cut
 			{
-                if (width <= minimumSize * 2) return;
+                if (width <= minimumSize * 2) return depth;
 
                 int xCut = UnityEngine.Random.Range(generator.minimumRoomSize + generator.roomBuffer * 2, width - generator.minimumRoomSize - generator.roomBuffer * 2 + 1);
 				partitionA = new Partition(generator, x, y, xCut, height, depth + 1);
@@ -71,8 +74,10 @@ namespace DungeonGeneration {
 			this.left = partitionA; // Also top
 			this.right = partitionB; // Also bottom
 
-			left.MakeParition();
-			right.MakeParition();
+			int leftTreeDepth = left.MakeParition();
+			int rightTreeDepth = right.MakeParition();
+
+            return Mathf.Max(leftTreeDepth, rightTreeDepth);
 		}
 
 		public void MakeRoom(List<Room> rooms)
@@ -90,7 +95,7 @@ namespace DungeonGeneration {
 			}
 		}
 
-		public void MakeCorridors(List<Corridor> corridors)
+		public void MakeCorridors(List<Corridor> allCorridors)
 		{
 			// Intermediate node
 			if (left != null && right != null)
@@ -98,9 +103,19 @@ namespace DungeonGeneration {
 				left.MakeCorridors(corridors);
 				right.MakeCorridors(corridors);
 
-				// Connect left and right partitions by corridor
-				corridor = CorridorBuilder.CreateCorridor(generator, left, right, horizontalCut);
-                corridors.Add(corridor);
+                // Connect left and right partitions by corridor
+                Corridor corridor = CorridorBuilder.CreateCorridor(generator, left, right, horizontalCut, corridors); 
+                if (corridor != null) corridors.Add(corridor);
+
+                if (depth > generator.GetTreeDepth() - generator.addLoopsToLevel - 1 &&
+                    depth <= generator.GetTreeDepth() - generator.addLoopsFromLevel - 1 &&
+                    generator.loopSpawnChance > UnityEngine.Random.value)
+                {
+                    corridor = CorridorBuilder.CreateCorridor(generator, left, right, horizontalCut, corridors);
+                    if (corridor != null) corridors.Add(corridor);
+                }
+
+                allCorridors.AddRange(corridors);
 			}
 			else // Leaf node
 			{
@@ -135,7 +150,11 @@ namespace DungeonGeneration {
                 return;
             }
 
-            areas.Add(corridor);
+            foreach (ConnectableGridArea corridor in corridors)
+            {
+                areas.Add(corridor);
+            }
+
         }
 
         public new void Display(GameObject dungeonParent)
