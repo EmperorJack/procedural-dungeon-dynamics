@@ -10,8 +10,8 @@ namespace DungeonGeneration
     {
 
         // User set fields
-        public GameObject cornerObjectPrefab;
-        public GameObject centerObjectPrefab;
+        public List<GameObject> cornerObjectPrefabs;
+        public List<GameObject> centerObjectPrefabs;
 
         // Anchor fields
         private List<Anchor> anchors;
@@ -33,13 +33,13 @@ namespace DungeonGeneration
             {
                 GameObject selectedPrefab = null;
 
-                if (anchor.type == AnchorType.CENTER && centerObjectPrefab != null)
+                if (anchor.type == AnchorType.CENTER && centerObjectPrefabs.Count > 0)
                 {
-                    selectedPrefab = centerObjectPrefab;
+                    selectedPrefab = centerObjectPrefabs[UnityEngine.Random.Range(0, centerObjectPrefabs.Count)];
                 }
-                else if (anchor.type == AnchorType.CORNER && centerObjectPrefab != null)
+                else if (anchor.type == AnchorType.CORNER && centerObjectPrefabs.Count > 0)
                 {
-                    selectedPrefab = cornerObjectPrefab;
+                    selectedPrefab = cornerObjectPrefabs[UnityEngine.Random.Range(0, cornerObjectPrefabs.Count)];
                 }
 
                 if (selectedPrefab != null)
