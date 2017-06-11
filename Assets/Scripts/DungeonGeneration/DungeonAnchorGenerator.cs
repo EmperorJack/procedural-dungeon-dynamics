@@ -113,11 +113,17 @@ namespace DungeonGeneration
 
         private void GenerateCenterAnchors(Room room, float gridSpacing)
         {
+            int xRange = room.width - edgeBuffer * 2;
+            int yRange = room.height - edgeBuffer * 2;
+
+            float xOffset = ((xRange - 1) % centerSpacing) / 2.0f;
+            float yOffset = ((yRange - 1) % centerSpacing) / 2.0f;
+
             for (int i = edgeBuffer; i < room.width - edgeBuffer; i += centerSpacing)
             {
                 for (int j = edgeBuffer; j < room.height - edgeBuffer; j += centerSpacing)
                 {
-                    Vector2 pos = new Vector2(room.x + i, room.y + j) * gridSpacing;
+                    Vector2 pos = new Vector2(room.x + i + xOffset, room.y + j + yOffset) * gridSpacing;
                     MakeAnchor(pos, 0, AnchorType.CENTER);
                 }
             }
