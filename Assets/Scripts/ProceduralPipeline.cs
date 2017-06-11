@@ -6,8 +6,6 @@ using CrowdSim;
 public class ProceduralPipeline : MonoBehaviour
 {
 
-
-
 	// Dungeon components
 	public DungeonGeneration.DungeonLayoutGenerator dungeonLayoutGenerator;
 	public DungeonGeneration.DungeonAssetPopulator dungeonAssetPopulator;
@@ -17,9 +15,10 @@ public class ProceduralPipeline : MonoBehaviour
 	// Component reuslts
 	private DungeonGeneration.Cell[,] simpleLayout;
 	private List<DungeonGeneration.Anchor> anchors;
+    private List<GameObject> populatedObjects;
 
-	// Parent transform objects
-	private GameObject simpleLayoutParent;
+    // Parent transform objects
+    private GameObject simpleLayoutParent;
 	private GameObject complexLayoutParent;
 	private GameObject anchorsParent;
 	private GameObject objectsParent;
@@ -55,31 +54,32 @@ public class ProceduralPipeline : MonoBehaviour
 
 	public void Perform ()
 	{
-		Reset ();
+		Reset();
 
-		dungeonLayoutGenerator.Generate ();
+		dungeonLayoutGenerator.Generate();
+		simpleLayout = dungeonLayoutGenerator.GetSimpleLayout();
 
-		simpleLayout = dungeonLayoutGenerator.GetSimpleLayout ();
-
-		dungeonAssetPopulator.Setup (
-			dungeonLayoutGenerator.GetRooms (),
-			dungeonLayoutGenerator.GetCorridors (),
-			dungeonLayoutGenerator.GetGridSpacing ()
+		dungeonAssetPopulator.Setup(
+			dungeonLayoutGenerator.GetRooms(),
+			dungeonLayoutGenerator.GetCorridors(),
+			dungeonLayoutGenerator.GetGridSpacing()
 		);
 
-		dungeonAnchorGenerator.Generate (
-			dungeonLayoutGenerator.GetRooms (),
-			dungeonLayoutGenerator.GetGridSpacing ()
+		dungeonAnchorGenerator.Generate(
+			dungeonLayoutGenerator.GetRooms(),
+			dungeonLayoutGenerator.GetGridSpacing()
 		);
 
-		anchors = dungeonAnchorGenerator.GetAnchors ();
+		anchors = dungeonAnchorGenerator.GetAnchors();
 
-		dungeonObjectPlacer.Setup (anchors);
+		dungeonObjectPlacer.Setup(anchors);
 
-		DisplayComplexLayout ();
+		DisplayComplexLayout();
 
-		DisplayObjects ();
-		createSim ();
+		DisplayObjects();
+        populatedObjects = dungeonObjectPlacer.GetPopulatedObjects();
+
+        createSim();
 	}
 
 	public void swapGroups(){
@@ -159,8 +159,6 @@ public class ProceduralPipeline : MonoBehaviour
 	{
 		simAccess.trigger ();
 	}
-
-
 
 	public void DisplayComplexLayout ()
 	{
