@@ -6,7 +6,7 @@ public class NestedObject : MonoBehaviour {
 
 	public string name = "";
 	public GameObject prefab;
-	public float spawnChance = 0.5f;
+    [Range(0.0f, 1.0f)] public float spawnChance = 0.5f;
 	public Vector3 translationOffset = new Vector3(0.0f, 0.0f, 0.0f);
 	public Vector3 rotationOffset = new Vector3(0.0f, 0.0f, 0.0f);
 
