@@ -13,6 +13,7 @@ namespace DungeonGeneration
         public GameObject anchorPrefab;
         [Range(1, 10)] public int centerSpacing = 1;
         [Range(1, 10)] public int edgeSpacing = 1;
+        [Range(1, 10)] public int edgeBuffer = 0;
 
         // Anchor fields
         private int nextAnchorId;
@@ -25,71 +26,100 @@ namespace DungeonGeneration
 
             foreach (Room room in rooms)
             {
-                GenerateEdgeObjects(room, gridSpacing);
-                GenerateCenterObjects(room, gridSpacing);
+                GenerateCornerAnchors(room, gridSpacing);
+                GenerateEdgeAnchors(room, gridSpacing);
+                GenerateCenterAnchors(room, gridSpacing);
             }
         }
 
-        private void GenerateEdgeObjects(Room room, float gridSpacing)
+        private void GenerateCornerAnchors(Room room, float gridSpacing)
         {
-            // Compute the edge positions of the room
-            List<Vector2> edgePositions = new List<Vector2>();
+            Vector2 pos;
 
+            // Bottom left
+            pos = new Vector2(room.x, room.y) * gridSpacing;
+            if (!IsDoorPosition(room, pos))
+            {
+                MakeAnchor(pos, 45, AnchorType.CORNER);
+            }
+
+            // Bottom right
+            pos = new Vector2(room.x + room.width - 1, room.y) * gridSpacing;
+            if (!IsDoorPosition(room, pos))
+            {
+                MakeAnchor(pos, 315, AnchorType.CORNER);
+            }
+
+            // Top right
+            pos = new Vector2(room.x + room.width - 1, room.y + room.height - 1) * gridSpacing;
+            if (!IsDoorPosition(room, pos))
+            {
+                MakeAnchor(pos, 210, AnchorType.CORNER);
+            }
+
+            // Top left
+            pos = new Vector2(room.x, room.y + room.height - 1) * gridSpacing;
+            if (!IsDoorPosition(room, pos))
+            {
+                MakeAnchor(pos, 135, AnchorType.CORNER);
+            }
+        }
+
+        private void GenerateEdgeAnchors(Room room, float gridSpacing)
+        {
             // Ensure the torch spacing is not 0
             int spacing = Mathf.Max(edgeSpacing, 1);
 
             // Bottom
-            for (int i = room.width - 1; i >= 0; i -= spacing)
+            for (int i = room.width - 2; i > 0; i -= spacing)
             {
-                Vector2 pos = new Vector2(room.x + i, room.y);
-                if (!edgePositions.Contains(pos) && !IsDoorPosition(room, pos))
+                Vector2 pos = new Vector2(room.x + i, room.y) * gridSpacing;
+                if (!IsDoorPosition(room, pos))
                 {
-                    edgePositions.Add(pos);
-                    MakeEdgeAnchor(room, pos, 0);
+                    MakeAnchor(pos, 0, AnchorType.EDGE);
                 }
             }
 
             // Top
-            for (int i = 0; i < room.width - 1; i += spacing)
+            for (int i = 1; i < room.width - 1; i += spacing)
             {
-                Vector2 pos = new Vector2(room.x + i, room.y + room.height - 1);
-                if (!edgePositions.Contains(pos) && !IsDoorPosition(room, pos))
+                Vector2 pos = new Vector2(room.x + i, room.y + room.height - 1) * gridSpacing;
+                if (!IsDoorPosition(room, pos))
                 {
-                    MakeEdgeAnchor(room, pos, 180);
-                    edgePositions.Add(pos);
+                    MakeAnchor(pos, 180, AnchorType.EDGE);
                 }
             }
 
             // Left
-            for (int j = room.height - 1; j >= 1; j -= spacing)
+            for (int j = room.height - 2; j > 0; j -= spacing)
             {
-                Vector2 pos = new Vector2(room.x, room.y + j);
-                if (!edgePositions.Contains(pos) && !IsDoorPosition(room, pos))
+                Vector2 pos = new Vector2(room.x, room.y + j) * gridSpacing;
+                if (!IsDoorPosition(room, pos))
                 {
-                    MakeEdgeAnchor(room, pos, 90);
-                    edgePositions.Add(pos);
+                    MakeAnchor(pos, 90, AnchorType.EDGE);
                 }
             }
 
             // Right
-            for (int j = 1; j < room.height; j += spacing)
+            for (int j = 1; j < room.height - 1; j += spacing)
             {
-                Vector2 pos = new Vector2(room.x + room.width - 1, room.y + j);
-                if (!edgePositions.Contains(pos) && !IsDoorPosition(room, pos))
+                Vector2 pos = new Vector2(room.x + room.width - 1, room.y + j) * gridSpacing;
+                if (!IsDoorPosition(room, pos))
                 {
-                    MakeEdgeAnchor(room, pos, 270);
-                    edgePositions.Add(pos);
+                    MakeAnchor(pos, 270, AnchorType.EDGE);
                 }
             }
         }
 
-        private void GenerateCenterObjects(Room room, float gridSpacing)
+        private void GenerateCenterAnchors(Room room, float gridSpacing)
         {
-            if (room.width > 3 && room.height > 3)
+            for (int i = edgeBuffer; i < room.width - edgeBuffer; i += centerSpacing)
             {
-                float x = (room.x + (room.width / 2.0f) - 0.5f) * gridSpacing;
-                float y = (room.y + (room.height / 2.0f) - 0.5f) * gridSpacing;
-                anchors.Add(new Anchor(nextAnchorId++, x, y, 0.0f, AnchorType.CENTER));
+                for (int j = edgeBuffer; j < room.height - edgeBuffer; j += centerSpacing)
+                {
+                    Vector2 pos = new Vector2(room.x + i, room.y + j) * gridSpacing;
+                    MakeAnchor(pos, 0, AnchorType.CENTER);
+                }
             }
         }
 
@@ -106,9 +136,9 @@ namespace DungeonGeneration
                    (pos.x == room.x + room.width - 1 && pos.y == room.y + room.height - 1);
         }
 
-        private void MakeEdgeAnchor(Room room, Vector2 pos, float rotation)
+        private void MakeAnchor(Vector2 pos, float rotation, AnchorType type)
         {
-            anchors.Add(new Anchor(nextAnchorId++, pos.x, pos.y, rotation, IsCorner(room, pos) ? AnchorType.CORNER : AnchorType.EDGE));
+            anchors.Add(new Anchor(nextAnchorId++, pos.x, pos.y, rotation, type));
         }
 
         public List<Anchor> GetAnchors()

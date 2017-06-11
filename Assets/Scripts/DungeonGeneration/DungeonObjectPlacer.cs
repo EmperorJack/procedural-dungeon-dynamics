@@ -13,14 +13,17 @@ namespace DungeonGeneration
         public List<GameObject> edgeObjectPrefabs;
         public Vector3 edgeTranslationOffset = new Vector3(0.0f, 0.0f, 0.0f);
         public Vector3 edgeRotationOffset = new Vector3(0.0f, 0.0f, 0.0f);
+        [Range(0.0f, 1.0f)] public float edgeSpawnChance = 0.6f;
 
         public List<GameObject> cornerObjectPrefabs;
         public Vector3 cornerTranslationOffset = new Vector3(0.0f, 0.0f, 0.0f);
         public Vector3 cornerRotationOffset = new Vector3(0.0f, 0.0f, 0.0f);
+        [Range(0.0f, 1.0f)] public float cornerSpawnChance = 1.0f;
 
         public List<GameObject> centerObjectPrefabs;
         public Vector3 centerTranslationOffset = new Vector3(0.0f, 0.0f, 0.0f);
         public Vector3 centerRotationOffset = new Vector3(0.0f, 0.0f, 0.0f);
+        [Range(0.0f, 1.0f)] public float centerSpawnChance = 0.4f;
 
         // Anchor fields
         private List<Anchor> anchors;
@@ -55,7 +58,7 @@ namespace DungeonGeneration
                     selectedPrefab = cornerObjectPrefabs[UnityEngine.Random.Range(0, cornerObjectPrefabs.Count)];
                 }
 
-                if (selectedPrefab != null)
+                if (selectedPrefab != null && GetSpawnChance(anchor) > UnityEngine.Random.value)
                 {
                     GameObject instance = MonoBehaviour.Instantiate(selectedPrefab);
                     instance.transform.SetParent(parent.transform);
@@ -111,6 +114,24 @@ namespace DungeonGeneration
             }
 
             return Vector3.zero;
+        }
+
+        private float GetSpawnChance(Anchor anchor)
+        {
+            if (anchor.type == AnchorType.CENTER)
+            {
+                return centerSpawnChance;
+            }
+            else if (anchor.type == AnchorType.EDGE)
+            {
+                return edgeSpawnChance;
+            }
+            else if (anchor.type == AnchorType.CORNER)
+            {
+                return cornerSpawnChance;
+            }
+
+            return 1.0f;
         }
 
         private void PopulateNested(GameObject instance, GameObject parent)
