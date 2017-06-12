@@ -101,6 +101,7 @@ namespace CrowdSim
 				} else {
 					cell.isGoal = true;
 				}
+				groupGrid.addGoal (cell);
 			} 
 			return index;
 		}

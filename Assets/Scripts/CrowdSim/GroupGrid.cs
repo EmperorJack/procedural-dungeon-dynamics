@@ -15,6 +15,7 @@ namespace CrowdSim
 		private Helper<Cell> helper;
 
 		public List<SimObject> simObjects;
+		private List<Cell> goals;
 
 		public bool trigger = false;
 		public bool paused = false;
@@ -25,8 +26,10 @@ namespace CrowdSim
 		int counter = 0;
 
 
+
 		public GroupGrid (float cellWidth, int dim, SharedGrid sharedGrid, DungeonGeneration.Cell[,] dungeon, int gridRatio) : base (cellWidth, dim, dungeon, gridRatio)
 		{
+			goals = new List<Cell> ();
 			dim = sharedGrid.grid.GetLength (0);
 			Debug.Log ("HI: " + dim + " " + grid.GetLength (0) + " ");
 			this.sharedGrid = sharedGrid;
@@ -45,35 +48,50 @@ namespace CrowdSim
 
 		}
 
+		public void addGoal(Cell cell){
+			if (!goals.Contains(cell)) {
+				goals.Add (cell);
+			}
+		}
+
 		private void assignPotentials ()
 		{
+			if (goals.Count == 0) {
+				return; 
+			}
 			max = float.MinValue;
 			SortedList<float, List<Cell>> candidates = new SortedList<float, List<Cell>> ();
 			List<Cell> accepted = new List<Cell> ();
-			for (int i = 0; i < dim; i++) {
-				for (int j = 0; j < dim; j++) {
-					if (grid [i, j] != null) {
-						grid [i, j].reset ();
-						if (grid [i, j].isGoal) {
-							grid [i, j].potential = 0;
-							grid [i, j].isAccepted = true;
-							accepted.Add (grid [i, j]);
-							addNeighbours (candidates, grid [i, j]);
-						} else {
-							grid [i, j].potential = float.MaxValue;
-							grid [i, j].isAccepted = false;
-						}
-					}
-				}
+//			for (int i = 0; i < dim; i++) {
+//				for (int j = 0; j < dim; j++) {
+//					if (grid [i, j] != null) {
+//						grid [i, j].reset ();
+//						if (grid [i, j].isGoal) {
+//							grid [i, j].potential = 0;
+//							grid [i, j].isAccepted = true;
+//							accepted.Add (grid [i, j]);
+//							addNeighbours (candidates, grid [i, j]);
+//						} else {
+//							grid [i, j].potential = float.MaxValue;
+//							grid [i, j].isAccepted = false;
+//						}
+//					}
+//				}
+//			}
+
+			foreach (Cell goal in goals) {
+				goal.isAccepted = true;
+				accepted.Add (goal);
+				addNeighbours (candidates, goal);
 			}
 
 			foreach (Cell cell in accepted) {
 				addNeighbours (candidates, cell);
 			}
 
-			if (accepted.Count == 0) {
-				return; // no goals
-			}
+//			if (accepted.Count == 0) {
+//				return; // no goals
+//			}
 
 			while (accepted.Count < realCells) { // total number of cells that are connected
 
