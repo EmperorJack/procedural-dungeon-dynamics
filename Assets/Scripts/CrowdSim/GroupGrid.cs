@@ -117,21 +117,21 @@ namespace CrowdSim
 							}
 						}
 
-//						if (faces [1].potentialGrad == 0 && faces [3].potentialGrad > 0) {
-//							faces [1].potentialGrad = -faces [3].potentialGrad;
-//						}
-//
-//						if (faces [3].potentialGrad == 0 && faces [1].potentialGrad > 0) {
-//							faces [3].potentialGrad = -faces [1].potentialGrad;
-//						}
-//
-//						if (faces [0].potentialGrad == 0 && faces [2].potentialGrad > 0) {
-//							faces [0].potentialGrad = -faces [2].potentialGrad;
-//						}
-//
-//						if (faces [2].potentialGrad == 0 && faces [0].potentialGrad > 0) {
-//							faces [2].potentialGrad = -faces [0].potentialGrad;
-//						}
+						if (faces [1].potentialGrad == 0 && faces [3].potentialGrad > 0) {
+							faces [1].potentialGrad = -faces [3].potentialGrad;
+						}
+
+						if (faces [3].potentialGrad == 0 && faces [1].potentialGrad > 0) {
+							faces [3].potentialGrad = -faces [1].potentialGrad;
+						}
+
+						if (faces [0].potentialGrad == 0 && faces [2].potentialGrad > 0) {
+							faces [0].potentialGrad = -faces [2].potentialGrad;
+						}
+
+						if (faces [2].potentialGrad == 0 && faces [0].potentialGrad > 0) {
+							faces [2].potentialGrad = -faces [0].potentialGrad;
+						}
 							
 						normaliseGrads (cell);
 						calculateGroupVelocity (cell);
@@ -139,34 +139,34 @@ namespace CrowdSim
 				}
 			}
 
-//			if (trigger) {
-//				for (int i = 0; i < dim; i++) {
-//					for (int j = 0; j < dim; j++) {
-//						Cell cell = grid [i, j];
-//						if (cell != null) {
-//							float totalXGrad = 0f;
-//							float totalYGrad = 0f;
-//							Vector2 totalGrad = Vector2.zero;
-//							int existFaces = 0;
-//
-//							foreach (Face face in cell.faces) {
-//								if (face.cell != null && face.cell.potGrad != null) {
-//									totalXGrad += face.cell.potGrad.x;
-//									totalYGrad += face.cell.potGrad.y;
-//									totalGrad += face.cell.potGrad;
-//
-//									existFaces++;
-//								}
-//							}
-//							Vector2 newGrad = totalGrad/existFaces;
-//							cell.potGrad = newGrad;
-//
-//							calculateGroupVelocity (cell);
-//																			
-//						}
-//					}
-//				}
-//			}
+			if (trigger) {
+				for (int i = 0; i < dim; i++) {
+					for (int j = 0; j < dim; j++) {
+						Cell cell = grid [i, j];
+						if (cell != null) {
+							float totalXGrad = 0f;
+							float totalYGrad = 0f;
+							Vector2 totalVel = Vector2.zero;
+							Vector2 totalGrad = Vector2.zero;
+							int existFaces = 0;
+
+							foreach (Face face in cell.faces) {
+								if (face.cell != null && face.cell.potGrad != null) {
+									totalGrad += face.cell.potGrad;
+									totalVel += face.cell.groupVelocity;
+
+									existFaces++;
+								}
+							}
+							Vector2 newVel = totalVel/existFaces;
+							Vector2 newGrad = totalGrad / existFaces;
+							cell.potGrad = newGrad;
+							cell.groupVelocity = totalVel;
+																			
+						}
+					}
+				}
+			}
 		}
 
 		private void calculateGroupVelocity(Cell cell){
@@ -249,44 +249,64 @@ namespace CrowdSim
 				Vector2 aVel = getCenterVelocity (leftCell);
 				Vector2 velocity = new Vector2 (0f, 0f);
 
+				float u = deltaX / cellWidth;
+				Vector2 interp2V1 = Vector2.zero;
+				Vector2 interp2V2 = Vector2.zero;
+
 				if (zeroVec (aVel) && zeroVec (dVel)) {
-					aVel = bVel;
-					dVel = cVel;
+					interp2V1 = bVel;
+					interp2V2 = cVel;
+					u = deltaY / cellWidth;
+
 				} else if (zeroVec (cVel) && zeroVec (bVel)) {
-					cVel = dVel;
-					aVel = bVel;
+					interp2V1 = aVel;
+					interp2V2 = dVel;
+					u = deltaY / cellWidth;
 				} 
 				else if (zeroVec (aVel) && zeroVec (bVel)) {
-					aVel = dVel;
-					bVel = cVel;
+					interp2V1 = dVel;
+					interp2V1 = cVel;
+					u = deltaX / cellWidth;
 				} else if (zeroVec (cVel) && zeroVec (dVel)) {
 					cVel = bVel;
 					dVel = aVel;
-				} 
-				else if (zeroVec (dVel)) {
-					dVel = bVel;
-				} else if (zeroVec (cVel)) {
-					cVel = aVel;
-				} else if (zeroVec (aVel)) {
-					aVel = cVel;
-				} else if (zeroVec (dVel)) {
-					dVel = bVel;
-				} 
 
-				Vector2 dcx = Vector2.Lerp (dVel, cVel, deltaX / cellWidth);
-				Vector2 abx = Vector2.Lerp (aVel, bVel, deltaX / cellWidth);
-				Vector2 interp = Vector2.Lerp (dcx, abx, deltaY / cellWidth);
+					interp2V1 = aVel;
+					interp2V2 = bVel;
+					u = deltaX / cellWidth;
+				} 
+//				else if (zeroVec (dVel)) {
+//					dVel = bVel;
+//				} else if (zeroVec (cVel)) {
+//					cVel = aVel;
+//				} else if (zeroVec (aVel)) {
+//					aVel = cVel;
+//				} else if (zeroVec (dVel)) {
+//					dVel = bVel;
+//				} 
 
-				//simObject.setVelocity (3.0f * interp);
-				simObject.velocity = 1.0f * interp;
-//			
+				if (interp2V1 != Vector2.zero && interp2V2 != Vector2.zero) {
+					simObject.velocity = interp2 (interp2V1, interp2V2, u);
+				
+				} else  {
+					Vector2 dcx = Vector2.Lerp (dVel, cVel, deltaX / cellWidth);
+					Vector2 abx = Vector2.Lerp (aVel, bVel, deltaX / cellWidth);
+					Vector2 interp = Vector2.Lerp (dcx, abx, deltaY / cellWidth);
+
+					//simObject.setVelocity (3.0f * interp);
+					interp.x = Mathf.Min (interp.x, 1.0f);
+					interp.y = Mathf.Min (interp.y, 1.0f); // 1.0f should be whatever Max vel is
+					interp.x = Mathf.Max (interp.x, -1.0f);
+					interp.y = Mathf.Max (interp.y, -1.0f);
+					simObject.velocity = 1.0f * interp;
+				}
+
 				simObject.applyVelocity (simObject.velocity);
 			}
 		}
 
-		private Vector2 interp2 (float x, float x1, float x2, Vector2 v1, Vector2 v2)
-		{
-			Vector2 interp = v1 * ((x2 - x) / (x2 - x1)) + v2 * ((x - x1) / (x2 - x1));
+		public Vector2 interp2(Vector2 v1, Vector2 v2, float u){
+			Vector2 interp = Vector2.Lerp(v1, v2, u);
 			return interp;
 		}
 

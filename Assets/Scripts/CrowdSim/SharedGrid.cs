@@ -24,7 +24,7 @@ namespace CrowdSim
 		public float maxVelocity = 1.0f;
 		public float distanceWeight = 0.5f;
 		public float timeWeight = 0.5f;
-		public float discomfortWeight = 0.5f;
+		public float discomfortWeight = 0.0f;
 
 		private bool customDungeon = false;
 
@@ -143,6 +143,20 @@ namespace CrowdSim
 				Vector2 newPos = simObject.getPosition () + time * simObject.velocity;
 				Cell newCell = helper.getCell (newPos);
 				//newCell.discomfort += 0.5f;
+				float[] densityCont = calculateDensity(simObject, newPos, false);
+				int[] leftIndex = helper.getLeft (newPos);
+				int[] newIndex = helper.getCellIndex (newPos);
+
+//				if (newIndex [0] == leftIndex [0] && newIndex [1] == leftIndex [1]) {
+//					newCell.discomfort += densityCont [0];
+//				} else if (newIndex [0] == leftIndex [0] + 1 && newIndex [1] == leftIndex [1]) {
+//					newCell.discomfort += densityCont [1];
+//				} else if (newIndex [0] == leftIndex [0] + 1 && newIndex [1] == leftIndex [1] + 1) {
+//					newCell.discomfort += densityCont [2];
+//				} else if (newIndex [0] == leftIndex [0] && newIndex [1] == leftIndex [1] + 1) {
+//					newCell.discomfort += densityCont [3];
+//				}
+
 			}
 			// calculate average velocity
 
@@ -157,15 +171,17 @@ namespace CrowdSim
 		}
 
 			
-		public float calculateDensity (SimObject simObject, Vector2 pos, bool assign)
+		public float[] calculateDensity (SimObject simObject, Vector2 pos, bool assign)
 		{
 			int[] index = helper.getLeft (simObject.getPosition ());
 			Cell leftCell = helper.accessGridCell (index);
 			int[] selectedIndex = helper.getCellIndex (pos);
 
+			float[] densityCont = new float[4];
+
 			if (leftCell != null) {
-				float deltaX = (simObject.getPosition ().x - leftCell.position.x) / cellWidth;
-				float deltaY = (simObject.getPosition ().y - leftCell.position.y) / cellWidth;
+				float deltaX = (pos.x - leftCell.position.x) / cellWidth;
+				float deltaY = (pos.y - leftCell.position.y) / cellWidth;
 
 				// D --- C
 				// |     |
@@ -179,9 +195,7 @@ namespace CrowdSim
 					leftCell.density += leftDensity;
 					leftCell.avgVelocity += leftDensity * simObject.velocity; // cell A
 				} else {
-					if (selectedIndex [0] == leftCell.index [0] && selectedIndex [1] == leftCell.index [1]) {
-						return leftDensity;
-					}
+					densityCont [0] = leftDensity;
 				}
 
 				Cell bCell = helper.accessGridCell (new int[]{ index [0] + 1, index [1] });
@@ -191,9 +205,7 @@ namespace CrowdSim
 						bCell.density += bDensity;
 						bCell.avgVelocity += bDensity * simObject.velocity;
 					} else {
-						if (selectedIndex [0] == bCell.index [0] && selectedIndex [1] == bCell.index [1]) {
-							return bDensity;
-						}
+						densityCont [1] = bDensity;
 					}
 				}
 
@@ -204,9 +216,7 @@ namespace CrowdSim
 						cCell.density += cDensity;
 						cCell.avgVelocity += cDensity * simObject.velocity;
 					} else {
-						if (selectedIndex [0] == cCell.index [0] && selectedIndex [1] == cCell.index [1]) {
-							return cDensity;
-						}
+						densityCont [2] = cDensity;
 					}
 				}
 
@@ -217,13 +227,13 @@ namespace CrowdSim
 						dCell.density += dDensity;
 						dCell.avgVelocity += dDensity * simObject.velocity;
 					} else {
-						if (selectedIndex [0] == dCell.index [0] && selectedIndex [1] == dCell.index [1]) {
-							return dDensity;
-						}
+						densityCont [3] = dDensity;
 					}
 				}
+
 			}
-			return 0.0f;
+			return densityCont;
+
 		}
 
 		private void assignCosts ()
