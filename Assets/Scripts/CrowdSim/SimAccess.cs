@@ -146,7 +146,7 @@ namespace CrowdSim
 						if (grid [i, j].exists) {
 							Vector2 norm = new Vector2 (0f, 0f);
 							if (displayField == 1) {
-								norm = 0.25f * grid [i, j].potGrad.normalized;
+								norm = 0.25f * grid [i, j].avgVelocity.normalized;
 							} else if (displayField == 2) {
 								norm = 0.25f * grid [i, j].groupVelocity.normalized;
 							}
