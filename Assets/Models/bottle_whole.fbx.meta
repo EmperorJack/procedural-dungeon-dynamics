@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 898a1ff807a0c2f4d8c173bfc33364d0
-timeCreated: 1496639385
+guid: 844ef58da0eeded429b34a13f2fa4a53
+timeCreated: 1497140706
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
@@ -9,7 +9,7 @@ ModelImporter:
     400000: //RootNode
     2300000: //RootNode
     3300000: //RootNode
-    4300000: plate
+    4300000: bottle
     5400000: //RootNode
     6500000: //RootNode
     8200000: //RootNode
