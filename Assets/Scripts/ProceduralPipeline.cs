@@ -53,6 +53,20 @@ public class ProceduralPipeline : MonoBehaviour
 		}
 	}
 
+	public void Update()
+	{
+		if (Input.GetKeyDown (KeyCode.Space))
+			Perform();
+		if (Input.GetKeyDown (KeyCode.U))
+			setAddAgent();
+		if (Input.GetKeyDown (KeyCode.I))
+			setAddGoal();
+		if (Input.GetKeyDown (KeyCode.O))
+			addGroup();
+		if (Input.GetKeyDown (KeyCode.P))
+			swapGroups();
+	}
+
 	public void Perform ()
 	{
 		Reset();

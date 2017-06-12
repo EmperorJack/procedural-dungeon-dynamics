@@ -29,5 +29,14 @@ public class CameraController : MonoBehaviour {
         {
             transform.Rotate(0.0f, scaledTurnSpeed, 0.0f);
         }
+
+		if (Input.GetKey(KeyCode.E))
+		{
+			transform.Translate(0.0f, -scaledMoveSpeed, 0.0f);
+		}
+		else if (Input.GetKey(KeyCode.Q))
+		{
+			transform.Translate(0.0f, scaledMoveSpeed, 0.0f);
+		}
     }
 }

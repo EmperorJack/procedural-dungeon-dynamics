@@ -184,7 +184,8 @@ namespace CrowdSim
 
 		void Update ()
 		{
-			
+			if (simManager == null) return;
+
 			updateSim (Time.deltaTime);
 			Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
 			RaycastHit hit;
