@@ -64,6 +64,10 @@ namespace CrowdSim
 			simObjects.Add (simObject);
 		}
 
+		public void removeAgent(SimObject simObject){
+			simObjects.Remove (simObject);
+		}
+
 		private void initGrid ()
 		{
 

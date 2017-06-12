@@ -11,7 +11,7 @@ namespace CrowdSim
 	public class SimManager
 	{
 		SharedGrid sharedGrid;
-		public int groupId =-1;
+		public int groupId = -1;
 		public GroupGrid groupGrid;
 		public List<GroupGrid> groups;
 
@@ -34,13 +34,14 @@ namespace CrowdSim
 				Object.Destroy (simObject.sceneObject);
 			}
 
-			groups = new List<GroupGrid>();
+			groups = new List<GroupGrid> ();
 			groupId = 0;
 
 
 		}
 
-		public void togglePause(){
+		public void togglePause ()
+		{
 			foreach (GroupGrid group in groups) {
 				group.paused = !group.paused;
 				foreach (SimObject simObject in group.simObjects) {
@@ -66,7 +67,7 @@ namespace CrowdSim
 			groups = new List<GroupGrid> ();
 
 			//groupGrid = new GroupGrid (cellWidth, dim, sharedGrid, dungeon,gridRatio);
-			Debug.Log("Default: "+defaultSetup);
+			Debug.Log ("Default: " + defaultSetup);
 			if (defaultSetup) {
 				defaultInit ();
 			} else {
@@ -90,10 +91,36 @@ namespace CrowdSim
 
 		}
 
-		public int[] selectCell (Vector2 pos, bool justAdd)
+		public void removeAgent (GameObject toRemove, int groupId)
+		{
+			Rigidbody rb = toRemove.GetComponent<Rigidbody> ();
+			Vector2 pos = new Vector2 (rb.position.x, rb.position.z);
+
+			foreach (SimObject simObject in groups[groupId].simObjects) {
+				if (simObject.getPosition () == pos) {
+					groups [groupId].simObjects.Remove (simObject);
+					sharedGrid.removeAgent (simObject);
+					simObjects.Remove (simObject);
+
+					Object.Destroy (simObject.sceneObject);
+					return;
+				}
+			}
+	
+		}
+
+		public int[] addGoal (Vector2 pos, bool justAdd, GameObject goalObject)
 		{
 			Cell cell = helper.getCell (pos);
 			int[] index = helper.getCellIndex (pos);
+
+			goalObject.transform.parent = simObjectsParent.transform;
+			goalObject.transform.name = "GroupGoal" + groupId;
+
+			goalObject.transform.position = new Vector3 (cell.position.x, 0.001f, cell.position.y);
+			colliderScript goalScript = goalObject.GetComponent<colliderScript> ();
+			goalScript.setManager (this);
+			goalScript.setGroupId (groupId);
 
 			if (cell != null) {
 				if (cell.isGoal && justAdd == false) {
@@ -130,8 +157,9 @@ namespace CrowdSim
 
 		}
 
-		public void addDungeonObjects(List<GameObject> objects){
-			foreach(GameObject gameObject in objects){
+		public void addDungeonObjects (List<GameObject> objects)
+		{
+			foreach (GameObject gameObject in objects) {
 				
 				//Debug.Log (gameObject.name);
 				Transform parentTransform = gameObject.GetComponent<Transform> ();
@@ -152,7 +180,8 @@ namespace CrowdSim
 			}
 		}
 
-		private Vector2 getObjectPos(GameObject gameObject){
+		private Vector2 getObjectPos (GameObject gameObject)
+		{
 			Transform t = gameObject.GetComponent<Transform> ();
 			return new Vector2 (t.position.x, t.position.z);
 		}
@@ -184,10 +213,12 @@ namespace CrowdSim
 					initGameObject (pos, sceneObject);
 				}
 
-				simObject = new SimObject (pos, new Vector2 (0, 0), sceneObject,moveable);
+				simObject = new SimObject (pos, new Vector2 (0, 0), sceneObject, moveable);
 			}
 			simObjects.Add (simObject);
-			groupGrid.simObjects.Add (simObject);
+			if (moveable) {
+				groupGrid.addAgent (simObject);
+			}
 			sharedGrid.addAgent (simObject);
 
 			return simObjects.Count;
@@ -196,7 +227,7 @@ namespace CrowdSim
 		private void initGameObject (Vector2 pos, GameObject customObject)
 		{
 			Transform t = customObject.transform;
-			t.parent = simObjectsParent.transform;
+			//t.parent = simObjectsParent.transform;
 			t.localScale = new Vector3 (0.5f, 0.5f, 0.5f);
 			t.position = new Vector3 (pos.x, 0, pos.y);
 		}
@@ -247,19 +278,24 @@ namespace CrowdSim
 			if (colorId >= colors.GetLength (0)) {
 				colorId = 0;
 			}
+			groupId++;
+
+			GameObject groupTransform = new GameObject ();
+			groupTransform.transform.parent = simObjectsParent.transform;
+			groupTransform.transform.name = "GroupNum" + groupId;
 
 			Color color = colors [colorId];
-			GroupGrid newGroup = new GroupGrid (cellWidth, dim, sharedGrid, dungeon, gridRatio);
+			GroupGrid newGroup = new GroupGrid (groupTransform, cellWidth, dim, sharedGrid, dungeon, gridRatio);
 			groupColors.Add (color);
 			groups.Add (newGroup);
 			groupGrid = newGroup;
-			groupId++;
 			helper = new Helper<Cell> (groups [groupId].grid, cellWidth, gridRatio);
 
 			Debug.Log ("Now editing group: " + groupId);
 		}
 
-		public void defaultInit(){
+		public void defaultInit ()
+		{
 
 			addGroup ();
 
@@ -271,7 +307,7 @@ namespace CrowdSim
 			addGroup ();
 
 			for (int i = 0; i < groupGrid.grid.GetLength (0); i++) {
-				groupGrid.grid [groupGrid.grid.GetLength(0)-1, i].isGoal = true;
+				groupGrid.grid [groupGrid.grid.GetLength (0) - 1, i].isGoal = true;
 			}
 		}
 
@@ -288,13 +324,15 @@ namespace CrowdSim
 			Debug.Log ("Now editing group: " + groupId);
 		}
 
-		public void setUpdateField(bool updateField){
+		public void setUpdateField (bool updateField)
+		{
 			foreach (GroupGrid groupGrid in groups) {
 				groupGrid.updateField = updateField;
 			}
 		}
 
-		public void resetGrids(){
+		public void resetGrids ()
+		{
 			for (int i = 0; i < dim; i++) {
 				for (int j = 0; j < dim; j++) {
 					sharedGrid.grid [i, j].reset ();

@@ -25,9 +25,9 @@ namespace CrowdSim
 
 		int counter = 0;
 
+		private GameObject groupParent;
 
-
-		public GroupGrid (float cellWidth, int dim, SharedGrid sharedGrid, DungeonGeneration.Cell[,] dungeon, int gridRatio) : base (cellWidth, dim, dungeon, gridRatio)
+		public GroupGrid (GameObject groupParent, float cellWidth, int dim, SharedGrid sharedGrid, DungeonGeneration.Cell[,] dungeon, int gridRatio) : base (cellWidth, dim, dungeon, gridRatio)
 		{
 			goals = new List<Cell> ();
 			dim = sharedGrid.grid.GetLength (0);
@@ -40,6 +40,7 @@ namespace CrowdSim
 					}
 				}
 			}
+			this.groupParent = groupParent;
 
 			this.cellWidth = cellWidth;
 			simObjects = new List<SimObject> ();
@@ -64,6 +65,11 @@ namespace CrowdSim
 				}
 			}
 
+		}
+
+		public new void  addAgent(SimObject simObject){
+			simObjects.Add (simObject);
+			simObject.sceneObject.transform.parent = groupParent.transform;
 		}
 
 		private void addNeighbours (SortedList<float, List<Cell>> candidates, Cell cell)
@@ -101,6 +107,7 @@ namespace CrowdSim
 
 			foreach (Cell goal in goals) {
 				goal.isAccepted = true;
+				goal.potential = 0.0f;
 				addNeighbours (candidates, goal);
 				accepted++;
 			}
@@ -303,15 +310,15 @@ namespace CrowdSim
 					interp2V2 = bVel;
 					u = deltaX / cellWidth;
 				} 
-//				else if (zeroVec (dVel)) {
-//					dVel = bVel;
-//				} else if (zeroVec (cVel)) {
-//					cVel = aVel;
-//				} else if (zeroVec (aVel)) {
-//					aVel = cVel;
-//				} else if (zeroVec (dVel)) {
-//					dVel = bVel;
-//				} 
+				else if (zeroVec (dVel)) {
+					dVel = bVel;
+				} else if (zeroVec (cVel)) {
+					cVel = aVel;
+				} else if (zeroVec (aVel)) {
+					aVel = cVel;
+				} else if (zeroVec (dVel)) {
+					dVel = bVel;
+				} 
 
 				if (interp2V1 != Vector2.zero && interp2V2 != Vector2.zero) {
 					simObject.velocity = interp2 (interp2V1, interp2V2, u);
