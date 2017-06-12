@@ -91,6 +91,7 @@ ModelImporter:
     6500018: plate7
     6500020: plate8
     6500022: plate9
+    8200000: //RootNode
     9500000: //RootNode
   materials:
     importMaterials: 1

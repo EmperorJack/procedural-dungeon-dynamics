@@ -91,6 +91,7 @@ ModelImporter:
     6500018: Ancient_Vase7
     6500020: Ancient_Vase8
     6500022: Ancient_Vase9
+    8200000: //RootNode
     9500000: //RootNode
   materials:
     importMaterials: 1

@@ -8,7 +8,6 @@ namespace DungeonGeneration {
 
 	    // User set fields
 	    public int gridSize = 10;
-
         [Range(1, 20)] public int minimumRoomSize = 4;
         [Range(1, 10)] public int roomBuffer = 1;
         public float minRoomWidthHeightRatio = 1.0f;
@@ -17,9 +16,7 @@ namespace DungeonGeneration {
         public int maxDepth = 5;
         public int addLoopsFromLevel = 0;
         public int addLoopsToLevel = 0;
-
         [Range(0.0f, 1.0f)] public float loopSpawnChance = 0.5f;
-
         public bool allowLoopsBetweenTwoRooms = false;
 
         // Internal fields
