@@ -16,6 +16,7 @@ public class WholeObject : BreakableObject {
 		if (!initialized) {
 			initialize ();
 		}
+		brokenGeo.SetActive (false);
 	}
 	
 	// Update is called once per frame
@@ -27,7 +28,6 @@ public class WholeObject : BreakableObject {
 		setVolume ();
 		if (brokenGeo != null) {
 			setupAudio ();
-			brokenGeo.SetActive (false);
 			setupMaterials();
 		}
 		if (shatterSound != null && GetComponent<AudioSource> () != null) {
@@ -75,6 +75,7 @@ public class WholeObject : BreakableObject {
 	void breakGeo(){
 		brokenGeo.SetActive (true);
 		brokenGeo.transform.position = gameObject.transform.position;
+		brokenGeo.transform.rotation = gameObject.transform.rotation;
 		gameObject.SetActive (false);
 
 		Rigidbody rigidbody = gameObject.GetComponent<Rigidbody> ();
