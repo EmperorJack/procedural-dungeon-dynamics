@@ -1,0 +1,214 @@
+fileFormatVersion: 2
+guid: 0955652b0cbae1742be08b33f7882709
+timeCreated: 1497140716
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: bottle1
+    100002: bottle10
+    100004: bottle11
+    100006: bottle12
+    100008: bottle13
+    100010: bottle14
+    100012: bottle15
+    100014: bottle16
+    100016: bottle17
+    100018: bottle18
+    100020: bottle19
+    100022: bottle2
+    100024: bottle20
+    100026: bottle3
+    100028: bottle5
+    100030: bottle6
+    100032: bottle7
+    100034: bottle8
+    100036: bottle9
+    100038: //RootNode
+    400000: bottle1
+    400002: bottle10
+    400004: bottle11
+    400006: bottle12
+    400008: bottle13
+    400010: bottle14
+    400012: bottle15
+    400014: bottle16
+    400016: bottle17
+    400018: bottle18
+    400020: bottle19
+    400022: bottle2
+    400024: bottle20
+    400026: bottle3
+    400028: bottle5
+    400030: bottle6
+    400032: bottle7
+    400034: bottle8
+    400036: bottle9
+    400038: //RootNode
+    2300000: bottle1
+    2300002: bottle10
+    2300004: bottle11
+    2300006: bottle12
+    2300008: bottle13
+    2300010: bottle14
+    2300012: bottle15
+    2300014: bottle16
+    2300016: bottle17
+    2300018: bottle18
+    2300020: bottle19
+    2300022: bottle2
+    2300024: bottle20
+    2300026: bottle3
+    2300028: bottle5
+    2300030: bottle6
+    2300032: bottle7
+    2300034: bottle8
+    2300036: bottle9
+    3300000: bottle1
+    3300002: bottle10
+    3300004: bottle11
+    3300006: bottle12
+    3300008: bottle13
+    3300010: bottle14
+    3300012: bottle15
+    3300014: bottle16
+    3300016: bottle17
+    3300018: bottle18
+    3300020: bottle19
+    3300022: bottle2
+    3300024: bottle20
+    3300026: bottle3
+    3300028: bottle5
+    3300030: bottle6
+    3300032: bottle7
+    3300034: bottle8
+    3300036: bottle9
+    4300000: bottle17
+    4300002: bottle18
+    4300004: bottle19
+    4300006: bottle20
+    4300008: bottle1
+    4300010: bottle2
+    4300012: bottle3
+    4300014: bottle5
+    4300016: bottle6
+    4300018: bottle7
+    4300020: bottle8
+    4300022: bottle9
+    4300024: bottle10
+    4300026: bottle11
+    4300028: bottle12
+    4300030: bottle13
+    4300032: bottle14
+    4300034: bottle15
+    4300036: bottle16
+    5400000: bottle1
+    5400002: bottle10
+    5400004: bottle11
+    5400006: bottle12
+    5400008: bottle13
+    5400010: bottle14
+    5400012: bottle15
+    5400014: bottle16
+    5400016: bottle17
+    5400018: bottle18
+    5400020: bottle19
+    5400022: bottle2
+    5400024: bottle20
+    5400026: bottle3
+    5400028: bottle5
+    5400030: bottle6
+    5400032: bottle7
+    5400034: bottle8
+    5400036: bottle9
+    6500000: bottle1
+    6500002: bottle10
+    6500004: bottle11
+    6500006: bottle12
+    6500008: bottle13
+    6500010: bottle14
+    6500012: bottle15
+    6500014: bottle16
+    6500016: bottle17
+    6500018: bottle18
+    6500020: bottle19
+    6500022: bottle2
+    6500024: bottle20
+    6500026: bottle3
+    6500028: bottle5
+    6500030: bottle6
+    6500032: bottle7
+    6500034: bottle8
+    6500036: bottle9
+    8200000: //RootNode
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
