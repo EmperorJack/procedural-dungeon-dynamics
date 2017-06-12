@@ -1,0 +1,186 @@
+fileFormatVersion: 2
+guid: 4127f13ecef27bd4e968ad1320e77cf3
+timeCreated: 1497247744
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: Cat_OBJ10
+    100004: Cat_OBJ11
+    100006: Cat_OBJ12
+    100008: Cat_OBJ2
+    100010: Cat_OBJ3
+    100012: Cat_OBJ4
+    100014: Cat_OBJ5
+    100016: Cat_OBJ8
+    100018: Cat_OBJ9
+    100020: polySurface1
+    100022: polySurface2
+    100024: polySurface3
+    100026: polySurface4
+    100028: polySurface5
+    100030: polySurface6
+    400000: //RootNode
+    400002: Cat_OBJ10
+    400004: Cat_OBJ11
+    400006: Cat_OBJ12
+    400008: Cat_OBJ2
+    400010: Cat_OBJ3
+    400012: Cat_OBJ4
+    400014: Cat_OBJ5
+    400016: Cat_OBJ8
+    400018: Cat_OBJ9
+    400020: polySurface1
+    400022: polySurface2
+    400024: polySurface3
+    400026: polySurface4
+    400028: polySurface5
+    400030: polySurface6
+    2300000: Cat_OBJ10
+    2300002: Cat_OBJ11
+    2300004: Cat_OBJ12
+    2300006: Cat_OBJ2
+    2300008: Cat_OBJ3
+    2300010: Cat_OBJ4
+    2300012: Cat_OBJ5
+    2300014: Cat_OBJ8
+    2300016: Cat_OBJ9
+    2300018: polySurface1
+    2300020: polySurface2
+    2300022: polySurface3
+    2300024: polySurface4
+    2300026: polySurface5
+    2300028: polySurface6
+    3300000: Cat_OBJ10
+    3300002: Cat_OBJ11
+    3300004: Cat_OBJ12
+    3300006: Cat_OBJ2
+    3300008: Cat_OBJ3
+    3300010: Cat_OBJ4
+    3300012: Cat_OBJ5
+    3300014: Cat_OBJ8
+    3300016: Cat_OBJ9
+    3300018: polySurface1
+    3300020: polySurface2
+    3300022: polySurface3
+    3300024: polySurface4
+    3300026: polySurface5
+    3300028: polySurface6
+    4300000: Cat_OBJ2
+    4300002: Cat_OBJ3
+    4300004: Cat_OBJ4
+    4300006: Cat_OBJ5
+    4300008: Cat_OBJ8
+    4300010: Cat_OBJ9
+    4300012: Cat_OBJ10
+    4300014: Cat_OBJ11
+    4300016: Cat_OBJ12
+    4300018: polySurface5
+    4300020: polySurface6
+    4300022: polySurface3
+    4300024: polySurface4
+    4300026: polySurface1
+    4300028: polySurface2
+    5400000: Cat_OBJ10
+    5400002: Cat_OBJ11
+    5400004: Cat_OBJ12
+    5400006: Cat_OBJ2
+    5400008: Cat_OBJ3
+    5400010: Cat_OBJ4
+    5400012: Cat_OBJ5
+    5400014: Cat_OBJ8
+    5400016: Cat_OBJ9
+    5400018: polySurface1
+    5400020: polySurface2
+    5400022: polySurface3
+    5400024: polySurface4
+    5400026: polySurface5
+    5400028: polySurface6
+    6500000: Cat_OBJ10
+    6500002: Cat_OBJ11
+    6500004: Cat_OBJ12
+    6500006: Cat_OBJ2
+    6500008: Cat_OBJ3
+    6500010: Cat_OBJ4
+    6500012: Cat_OBJ5
+    6500014: Cat_OBJ8
+    6500016: Cat_OBJ9
+    6500018: polySurface1
+    6500020: polySurface2
+    6500022: polySurface3
+    6500024: polySurface4
+    6500026: polySurface5
+    6500028: polySurface6
+    8200000: //RootNode
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
