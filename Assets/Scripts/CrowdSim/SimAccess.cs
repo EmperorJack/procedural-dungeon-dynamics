@@ -74,6 +74,12 @@ namespace CrowdSim
 //			}
 		}
 
+		public void addDungeonObjects(List<GameObject> gameObjects){
+			if (simManager != null) {
+				simManager.addDungeonObjects (gameObjects);
+			}
+		}
+
 		public void swapGroups ()
 		{
 			if (simManager != null) {
@@ -308,7 +314,7 @@ namespace CrowdSim
 
 		public void addAgent (Vector2 pos)
 		{
-			Debug.Log ("Total agents: " + simManager.addAgent (pos, simObject));
+			Debug.Log ("Total agents: " + simManager.addAgent (pos, simObject, true));
 			executeUpdate (0);
 		}
 

@@ -144,8 +144,7 @@ namespace CrowdSim
 					for (int j = 0; j < dim; j++) {
 						Cell cell = grid [i, j];
 						if (cell != null) {
-							float totalXGrad = 0f;
-							float totalYGrad = 0f;
+
 							Vector2 totalVel = Vector2.zero;
 							Vector2 totalGrad = Vector2.zero;
 							int existFaces = 0;

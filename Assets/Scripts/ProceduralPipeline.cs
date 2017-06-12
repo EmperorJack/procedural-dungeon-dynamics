@@ -49,6 +49,7 @@ public class ProceduralPipeline : MonoBehaviour
 		} else {
 			Debug.Log ("Initializing Simulation");
 			simAccess.init (simpleLayout);
+			simAccess.addDungeonObjects (populatedObjects);
 		}
 	}
 

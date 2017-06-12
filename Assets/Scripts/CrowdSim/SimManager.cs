@@ -128,32 +128,62 @@ namespace CrowdSim
 
 		}
 
+		public void addDungeonObjects(List<GameObject> objects){
+			foreach(GameObject gameObject in objects){
+				
+				//Debug.Log (gameObject.name);
+				Transform parentTransform = gameObject.GetComponent<Transform> ();
+				Vector2 parentPos = new Vector2 (parentTransform.position.x, parentTransform.position.z);
+
+				if (gameObject.name.Contains ("table")) {
+					addAgent (getObjectPos (gameObject), gameObject, false);
+				} else {
+					foreach (Transform childT in gameObject.transform) {
+						GameObject child = childT.gameObject;
+						if (child.name.Contains ("whole")) {
+							addAgent (getObjectPos (child), child, false);
+						} else {
+							//table 
+						}
+					}
+				}
+			}
+		}
+
+		private Vector2 getObjectPos(GameObject gameObject){
+			Transform t = gameObject.GetComponent<Transform> ();
+			Debug.Log (t.position.x + " " + t.position.z);
+			return new Vector2 (t.position.x, t.position.z);
+		}
+
 		public Cell[,] getGrid ()
 		{
 			return groupGrid.grid;
 		}
 
-		public int addAgent (Vector2 pos, GameObject sceneObject)
+		public int addAgent (Vector2 pos, GameObject sceneObject, bool moveable)
 		{
 			SimObject simObject = null;
 			int[] index = helper.getLeft (pos);
 
 			if (sceneObject == null) {
 				sceneObject = createDummyAgent (pos);
-				simObject = new SimObject (pos, new Vector2 (0, 0), sceneObject);
+				simObject = new SimObject (pos, new Vector2 (0, 0), sceneObject, moveable);
 			} else {
 				//Debug.Log ("Adding slime agent at :" + pos.x + ", " + pos.y);
 				//Debug.Log ("Grid index: [" + index [0] + ", " + index [1] + "]");
-				sceneObject = GameObject.Instantiate (sceneObject);
-				if (groupId > 0) {
-					Material mat = new Material (Shader.Find ("Diffuse"));
-					Renderer rend = sceneObject.GetComponent<Renderer> ();
-					mat.color =  groupColors [groupId];
-					rend.material = mat;
+				if (moveable) {
+					sceneObject = GameObject.Instantiate (sceneObject);
+					if (groupId > 0) {
+						Material mat = new Material (Shader.Find ("Diffuse"));
+						Renderer rend = sceneObject.GetComponent<Renderer> ();
+						mat.color = groupColors [groupId];
+						rend.material = mat;
+					}
+					initGameObject (pos, sceneObject);
 				}
-				initGameObject (pos, sceneObject);
 
-				simObject = new SimObject (pos, new Vector2 (0, 0), sceneObject);
+				simObject = new SimObject (pos, new Vector2 (0, 0), sceneObject,moveable);
 			}
 			simObjects.Add (simObject);
 			groupGrid.simObjects.Add (simObject);

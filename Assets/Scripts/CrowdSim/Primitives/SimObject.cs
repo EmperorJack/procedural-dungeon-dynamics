@@ -14,10 +14,19 @@ namespace Primitives
 
 		private Rigidbody rb;
 
-		public SimObject(Vector2 position, Vector2 velocity, GameObject sceneObject){
+		public bool moveable = false;
+
+		public SimObject (Vector2 position, Vector2 velocity, GameObject sceneObject, bool moveable)
+		{
 			this.position = position;
 			this.velocity = velocity;
 			this.sceneObject = sceneObject;
+			this.moveable = moveable;
+
+			if (moveable == false) {
+				densityWeight = 3.0f;
+			}
+
 			if (sceneObject.GetComponent<Rigidbody> () == null) {
 				rb = sceneObject.AddComponent<Rigidbody> ();
 				rb.position = new Vector3 (position.x, 0.2f, position.y);
@@ -30,32 +39,52 @@ namespace Primitives
 			if (sceneObject.GetComponent<Collider> () == null) {
 				BoxCollider bC = sceneObject.AddComponent<BoxCollider> ();
 			}
-			rb.isKinematic = false;
+				
+			if (moveable) {
+				rb.isKinematic = false;
+			}
+
 		}
 
-		public void destroy(){
+		public void destroy ()
+		{
 			Object.Destroy (sceneObject);
 		}
-			
-		public void toggleKinematic(){
-			rb.isKinematic = !rb.isKinematic;
+
+		public void toggleKinematic ()
+		{
+			if (moveable) {
+				rb.isKinematic = !rb.isKinematic;
+			}
 		}
 
-		public void setVelocity(Vector2 vel){
-			sceneObject.GetComponent<Rigidbody>().velocity -= new Vector3(velocity.x, 0, velocity.y);
-			this.velocity = vel;
-			sceneObject.GetComponent<Rigidbody>().velocity += new Vector3(vel.x, 0, vel.y);
+		public void setVelocity (Vector2 vel)
+		{
+			if (moveable) {
+				sceneObject.GetComponent<Rigidbody> ().velocity -= new Vector3 (velocity.x, 0, velocity.y);
+				this.velocity = vel;
+				sceneObject.GetComponent<Rigidbody> ().velocity += new Vector3 (vel.x, 0, vel.y);
+			}
 		}
 
-		public void applyVelocity(Vector2 vel){
-			//Debug.Log (vel.x + " " + vel.y);
-			sceneObject.GetComponent<Rigidbody>().velocity = new Vector3(vel.x, 0, vel.y);
-			//sceneObject.transform.position = new Vector3 (position.x + velocity.x, 0, position.y + velocity.y);
+		public void applyVelocity (Vector2 vel)
+		{
+			if (moveable) {
+				sceneObject.GetComponent<Rigidbody> ().velocity = new Vector3 (vel.x, 0, vel.y);
+			}
+
 		}
 
-		public Vector2 getPosition(){
+		public Rigidbody getBody(){
+			return rb;
+		}
+
+		public Vector2 getPosition ()
+		{
 			return new Vector2 (rb.position.x, rb.position.z);
 		}
+
+
 	}
 }
 
