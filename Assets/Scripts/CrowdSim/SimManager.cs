@@ -152,7 +152,6 @@ namespace CrowdSim
 
 		private Vector2 getObjectPos(GameObject gameObject){
 			Transform t = gameObject.GetComponent<Transform> ();
-			Debug.Log (t.position.x + " " + t.position.z);
 			return new Vector2 (t.position.x, t.position.z);
 		}
 

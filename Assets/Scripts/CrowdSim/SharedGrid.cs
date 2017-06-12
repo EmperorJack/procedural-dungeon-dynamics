@@ -346,7 +346,7 @@ namespace CrowdSim
 
 			Vector2 offset = neighbour.position - cell.position;
 		
-			return Mathf.Max (Vector2.Dot (neighbour.avgVelocity, offset), 0.1f);
+			return Mathf.Max (Vector2.Dot (neighbour.avgVelocity, offset), 0.01f);
 		}
 
 		public virtual void update (float time)
