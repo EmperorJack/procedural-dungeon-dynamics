@@ -14,6 +14,14 @@ ModelImporter:
     100012: anchor_plate06
     100014: anchor_plate07
     100016: anchor_plate08
+    100018: anchor_bottle01
+    100020: anchor_bottle02
+    100022: anchor_chair01
+    100024: anchor_chair02
+    100026: anchor_chair03
+    100028: anchor_chair04
+    100030: anchor_chair05
+    100032: anchor_chair06
     400000: //RootNode
     400002: anchor_plate01
     400004: anchor_plate02
@@ -23,6 +31,14 @@ ModelImporter:
     400012: anchor_plate06
     400014: anchor_plate07
     400016: anchor_plate08
+    400018: anchor_bottle01
+    400020: anchor_bottle02
+    400022: anchor_chair01
+    400024: anchor_chair02
+    400026: anchor_chair03
+    400028: anchor_chair04
+    400030: anchor_chair05
+    400032: anchor_chair06
     2300000: //RootNode
     2300002: anchor_plate01
     2300004: anchor_plate02
@@ -32,6 +48,14 @@ ModelImporter:
     2300012: anchor_plate06
     2300014: anchor_plate07
     2300016: anchor_plate08
+    2300018: anchor_bottle01
+    2300020: anchor_bottle02
+    2300022: anchor_chair01
+    2300024: anchor_chair02
+    2300026: anchor_chair03
+    2300028: anchor_chair04
+    2300030: anchor_chair05
+    2300032: anchor_chair06
     3300000: //RootNode
     3300002: anchor_plate01
     3300004: anchor_plate02
@@ -41,6 +65,14 @@ ModelImporter:
     3300012: anchor_plate06
     3300014: anchor_plate07
     3300016: anchor_plate08
+    3300018: anchor_bottle01
+    3300020: anchor_bottle02
+    3300022: anchor_chair01
+    3300024: anchor_chair02
+    3300026: anchor_chair03
+    3300028: anchor_chair04
+    3300030: anchor_chair05
+    3300032: anchor_chair06
     4300000: table
     4300002: anchor_plate01
     4300004: anchor_plate02
@@ -50,6 +82,14 @@ ModelImporter:
     4300012: anchor_plate06
     4300014: anchor_plate07
     4300016: anchor_plate08
+    4300018: anchor_bottle01
+    4300020: anchor_bottle02
+    4300022: anchor_chair01
+    4300024: anchor_chair02
+    4300026: anchor_chair03
+    4300028: anchor_chair04
+    4300030: anchor_chair05
+    4300032: anchor_chair06
     9500000: //RootNode
   materials:
     importMaterials: 1
