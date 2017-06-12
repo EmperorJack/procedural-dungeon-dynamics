@@ -74,7 +74,7 @@ namespace DungeonGeneration
                     // Populate any nested objects if they exist
                     if (instance.GetComponent<NestedObject> () != null)
 					{
-						PopulateNested (instance, parent);
+						PopulateNested (instance, parent, selectedPrefab);
 					}
                 }
             }
@@ -134,37 +134,50 @@ namespace DungeonGeneration
             return 1.0f;
         }
 
-        private void PopulateNested(GameObject instance, GameObject parent)
+		private void PopulateNested(GameObject instance, GameObject parent, GameObject originalPrefab)
 		{
 			// Get all the types of nested objects this instance has
 			List<NestedObject> nestedObjects = new List<NestedObject>(instance.GetComponents<NestedObject>());
 
+			Debug.Log (nestedObjects.Count);
+
 			// Get the nested anchor points
 			List<Transform> anchors = new List<Transform>();
+
+			// Check the prefab does not have another layer before we hit the nested anchor objects
+			if (instance.transform.childCount == 1 && instance.transform.FindChild(originalPrefab.name) != null)
+			{
+				instance = instance.transform.FindChild(originalPrefab.name).gameObject;
+			}
 
 			foreach (Transform transform in instance.transform)
 			{
 				if (transform.name.Contains("anchor")) anchors.Add(transform);
 			}
+
+			Debug.Log ("NUM ANCHORS: " + anchors.Count);
 				
 			// Instantiate the correct nested object at each anchor point
 			foreach (Transform transform in anchors)
 			{
 				NestedObject nestedObject = nestedObjects.Find(n => transform.name.Contains(n.name));
 
-				// Apply random offset and rotation to the anchor point
-				transform.Translate(nestedObject.translationOffset * UnityEngine.Random.Range(-1.0f, 1.0f));
-				transform.Rotate(nestedObject.rotationOffset * UnityEngine.Random.Range(-1.0f, 1.0f));
-
-				if (nestedObject.spawnChance > UnityEngine.Random.value)
+				if (nestedObject != null)
 				{
-					GameObject nestedInstance = MonoBehaviour.Instantiate(nestedObject.prefab);
-					nestedInstance.transform.SetParent(parent.transform);
-					nestedInstance.transform.Translate(transform.position.x, instance.transform.position.y, transform.position.z);
-					nestedInstance.transform.Rotate(transform.rotation.eulerAngles);
+					// Apply random offset and rotation to the anchor point
+					transform.Translate (nestedObject.translationOffset * UnityEngine.Random.Range (-1.0f, 1.0f));
+					transform.Rotate (nestedObject.rotationOffset * UnityEngine.Random.Range (-1.0f, 1.0f));
 
-                    populatedObjects.Add(nestedInstance);
-                }
+					if (nestedObject.spawnChance > UnityEngine.Random.value) {
+						GameObject nestedInstance = MonoBehaviour.Instantiate (nestedObject.prefab);
+						nestedInstance.transform.SetParent (parent.transform);
+						nestedInstance.transform.Translate (transform.position.x, instance.transform.position.y, transform.position.z);
+						nestedInstance.transform.Rotate (transform.rotation.eulerAngles);
+						//nestedInstance.transform.RotateAround(transform.position, Vector3.up, transform.rotation.eulerAngles.y);
+
+						populatedObjects.Add (nestedInstance);
+					}
+				}
 
 				// Remove the nested anchor point
 				DestroyImmediate(transform.gameObject);
