@@ -7,6 +7,7 @@ using CrowdSim;
 namespace Utilities
 {
 	public class Helper<T>
+		where T : GridCell
 	{
 		private T[,] grid;
 		private float cellWidth;
@@ -31,25 +32,22 @@ namespace Utilities
 		/// <param name="cellWidth">Cell width.</param>
 		/// <param name="grid">Grid.</param>
 		public  int[] getLeft(Vector2 position){
-			position = position * ratio;
-			position = position + new Vector2 ((cellWidth * (ratio-1)) / 2, (cellWidth * (ratio-1)) / 2);
-			cellWidth = cellWidth * ratio;
+			//position = position * ratio;
 
-			int cellRow = (int)Mathf.Floor (position.x);
-			int cellCol = (int)Mathf.Floor (position.y);
+			Vector2 newPos = position;//+ new Vector2 ((cellWidth * (ratio-1)) / 2, (cellWidth * (ratio-1)) / 2);
+				
 
-			cellWidth /= ratio;
-			position = position - new Vector2 ((cellWidth * (ratio-1)) / 2, (cellWidth * (ratio-1)) / 2);
-			position = position / ratio;
+			float x = newPos.x + (cellWidth * (ratio - 1)) / 2;
+			float y = newPos.y + (cellWidth * (ratio - 1)) / 2;
 
-			cellRow = Mathf.Max (cellRow, 0);
-			cellCol = Mathf.Max (cellCol, 0);
+			x *= ratio;
+			y *= ratio;
 
-//			float cellX = position.x - position.x % (cellWidth / 2);
-//			float cellY = position.y - position.y % (cellWidth / 2);
-//
-//			int cellRow = (int)(cellX / cellWidth);//- ratio - 1;
-//			int cellCol = (int)(cellY / cellWidth);// - ratio - 1;
+			int i = (int)Mathf.Floor (x);
+			int j = (int)Mathf.Floor (y);
+
+			int cellRow = Mathf.Max (i, 0);
+			int cellCol = Mathf.Max (j, 0);
 
 			return new int[]{ cellRow, cellCol };
 		}
@@ -58,13 +56,30 @@ namespace Utilities
 			return accessGridCell(getCellIndex(position));
 		}
 
-		public  int[] getCellIndex(Vector2 position){
-			return new int[]{ (int)((position.x + cellWidth/2) / cellWidth), (int)((position.y + cellWidth/2) / cellWidth) };
+		public  int[] getCellIndex(Vector2 pos){
+
+			int[] leftIndex = getLeft (pos);
+			GridCell leftCell = accessGridCell (leftIndex);
+			if (leftCell == null) {
+				return new int[]{ -1, -1 };
+			} else {
+				float deltaX = pos.x - leftCell.getPosition().x;
+				float deltaY = pos.y - leftCell.getPosition().y;
+
+				if (deltaX >= cellWidth / 2) {
+					leftIndex [0]++;
+				}
+
+				if (deltaY >= cellWidth / 2) {
+					leftIndex [1]++;
+				}
+				return leftIndex;
+			}
 		}
 
 		public  T accessGridCell(int[] index){
 
-			if (index [0] < 0 || index [1] < 0 || index [0] >= grid.Length || index [1] >= grid.Length) {
+			if (index [0] < 0 || index [1] < 0 || index [0] >= grid.GetLength(0) || index [1] >= grid.GetLength(0)) {
 				return default(T);
 			}
 			return grid [index [0], index [1]];

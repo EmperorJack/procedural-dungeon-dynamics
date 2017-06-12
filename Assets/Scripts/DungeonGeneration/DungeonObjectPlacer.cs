@@ -145,9 +145,9 @@ namespace DungeonGeneration
 			List<Transform> anchors = new List<Transform>();
 
 			// Check the prefab does not have another layer before we hit the nested anchor objects
-			if (instance.transform.childCount == 1 && instance.transform.FindChild(originalPrefab.name) != null)
+			if (instance.transform.childCount == 1 && instance.transform.Find(originalPrefab.name) != null)
 			{
-				instance = instance.transform.FindChild(originalPrefab.name).gameObject;
+				instance = instance.transform.Find(originalPrefab.name).gameObject;
 			}
 
 			foreach (Transform transform in instance.transform)

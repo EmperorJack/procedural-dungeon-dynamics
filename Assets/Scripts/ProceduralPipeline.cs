@@ -49,7 +49,22 @@ public class ProceduralPipeline : MonoBehaviour
 		} else {
 			Debug.Log ("Initializing Simulation");
 			simAccess.init (simpleLayout);
+			simAccess.addDungeonObjects (populatedObjects);
 		}
+	}
+
+	public void Update()
+	{
+		if (Input.GetKeyDown (KeyCode.Space))
+			Perform();
+		if (Input.GetKeyDown (KeyCode.U))
+			setAddAgent();
+		if (Input.GetKeyDown (KeyCode.I))
+			setAddGoal();
+		if (Input.GetKeyDown (KeyCode.O))
+			addGroup();
+		if (Input.GetKeyDown (KeyCode.P))
+			swapGroups();
 	}
 
 	public void Perform ()
@@ -94,6 +109,12 @@ public class ProceduralPipeline : MonoBehaviour
 		}
 	}
 
+	public void togglePause(){
+		if (simAccess != null) {
+			simAccess.togglePause ();
+		}
+	}
+
 	public void Reset ()
 	{
 		simpleLayout = null;
@@ -108,7 +129,7 @@ public class ProceduralPipeline : MonoBehaviour
 			simAccess.reset ();
 		}
 	}
-
+		
 	public void displaySim ()
 	{
 		Debug.Log ("Displaying Sim");

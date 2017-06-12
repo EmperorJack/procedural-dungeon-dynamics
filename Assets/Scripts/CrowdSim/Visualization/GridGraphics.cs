@@ -19,6 +19,8 @@ namespace Visualization
 
 		private bool active = false;
 
+		public bool solid = false;
+
 		GameObject objectParent;
 
 		public void reset(){
@@ -44,10 +46,29 @@ namespace Visualization
 		public void updatePotentialColors(float max){
 			for (int i = 0; i < dim; i++) {
 				for (int j = 0; j < dim; j++) {
-					if (cells[i,j] != null && dataGrid[i,j] != null && dataGrid [i, j].isGoal == false) {
-						float ratio = dataGrid [i, j].potential / max;
-						Color col = new Color (ratio, 1-ratio, 0);
-						cells [i, j].setColor (col);
+					if (solid == false) {
+						if (cells [i, j] != null && dataGrid [i, j] != null && dataGrid [i, j].isGoal == false) {
+							float ratio = dataGrid [i, j].potential / max;
+							Color col = new Color (ratio, 1 - ratio, 0);
+							cells [i, j].setColor (col);
+						}
+					} else {
+						if (cells [i, j] != null) {
+
+//							if (dataGrid [i, j].density <= 1.0f) {
+//								cells [i, j].setColor (Color.green);
+//							} else if (dataGrid [i, j].density >= 2.0f) {
+//								cells [i, j].setColor (Color.red);
+//							} else {
+//								cells [i, j].setColor (Color.yellow);
+//							}
+
+							if (dataGrid [i, j].isGoal) {
+								cells [i, j].setColor (Color.green);
+							} else {
+								cells [i, j].setColor (Color.red);
+							}
+						}
 					}
 				}
 			}

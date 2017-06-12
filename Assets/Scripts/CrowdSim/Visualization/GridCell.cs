@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Visualization
 {
-	public class GridCell 
+	public class GridCell:Utilities.GridCell 
 	{
 		private float size;
 		private Color color;
@@ -76,6 +76,9 @@ namespace Visualization
 		
 		}
 
+		public Vector2 getPosition(){
+			return position;
+		}
 	}
 }
 

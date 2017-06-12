@@ -11,6 +11,7 @@ public class ProceduralPipelineWindow : EditorWindow {
     private string displaySimpleLayoutButton = "Display Simple Layout";
 
 	private string createSim = "Initialize Crowd Simulator";
+	private string togglePause = "Toggle Sim Paused";
 	private string addGroup = "Add Group";
 	private string swapGroup = "Swap Group";
 	private string addAgent = "Add Agent";
@@ -73,6 +74,9 @@ public class ProceduralPipelineWindow : EditorWindow {
 
 		if (GUILayout.Button (swapGroup))
 			GetPipeline ().swapGroups ();
+
+		if (GUILayout.Button (togglePause))
+			GetPipeline ().togglePause ();
     }
 
     private ProceduralPipeline GetPipeline()
