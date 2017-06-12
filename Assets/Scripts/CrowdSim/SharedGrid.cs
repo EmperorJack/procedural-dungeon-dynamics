@@ -64,6 +64,10 @@ namespace CrowdSim
 			simObjects.Add (simObject);
 		}
 
+		public void removeAgent(SimObject simObject){
+			simObjects.Remove (simObject);
+		}
+
 		private void initGrid ()
 		{
 
@@ -141,13 +145,13 @@ namespace CrowdSim
 			foreach (SimObject simObject in simObjects) {
 				
 				calculateDensity(simObject, simObject.getPosition(), true);
-				Vector2 newPos = simObject.getPosition () + time * simObject.velocity;
-				Cell newCell = helper.getCell (newPos);
-				//newCell.discomfort += 0.5f;
-				float[] densityCont = calculateDensity(simObject, newPos, false);
-				int[] leftIndex = helper.getLeft (newPos);
-				int[] newIndex = helper.getCellIndex (newPos);
 
+//				Vector2 newPos = simObject.getPosition () + time * simObject.velocity;
+//				Cell newCell = helper.getCell (newPos);
+//				newCell.discomfort += 0.5f;
+//				float[] densityCont = calculateDensity(simObject, newPos, false);
+//				int[] leftIndex = helper.getLeft (newPos);
+//				int[] newIndex = helper.getCellIndex (newPos);
 //				if (newIndex [0] == leftIndex [0] && newIndex [1] == leftIndex [1]) {
 //					newCell.discomfort += densityCont [0];
 //				} else if (newIndex [0] == leftIndex [0] + 1 && newIndex [1] == leftIndex [1]) {
@@ -351,7 +355,7 @@ namespace CrowdSim
 
 		public virtual void update (float time)
 		{
-			resetGrid ();
+			//resetGrid ();
 			assignAgents (simObjects, time);
 			assignSpeedField ();
 			assignCosts ();

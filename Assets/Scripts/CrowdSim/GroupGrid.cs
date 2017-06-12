@@ -15,6 +15,7 @@ namespace CrowdSim
 		private Helper<Cell> helper;
 
 		public List<SimObject> simObjects;
+		private List<Cell> goals;
 
 		public bool trigger = false;
 		public bool paused = false;
@@ -24,9 +25,11 @@ namespace CrowdSim
 
 		int counter = 0;
 
+		private GameObject groupParent;
 
-		public GroupGrid (float cellWidth, int dim, SharedGrid sharedGrid, DungeonGeneration.Cell[,] dungeon, int gridRatio) : base (cellWidth, dim, dungeon, gridRatio)
+		public GroupGrid (GameObject groupParent, float cellWidth, int dim, SharedGrid sharedGrid, DungeonGeneration.Cell[,] dungeon, int gridRatio) : base (cellWidth, dim, dungeon, gridRatio)
 		{
+			goals = new List<Cell> ();
 			dim = sharedGrid.grid.GetLength (0);
 			Debug.Log ("HI: " + dim + " " + grid.GetLength (0) + " ");
 			this.sharedGrid = sharedGrid;
@@ -37,6 +40,7 @@ namespace CrowdSim
 					}
 				}
 			}
+			this.groupParent = groupParent;
 
 			this.cellWidth = cellWidth;
 			simObjects = new List<SimObject> ();
@@ -45,37 +49,70 @@ namespace CrowdSim
 
 		}
 
-		private void assignPotentials ()
+		public void addGoal(Cell cell){
+			if (!goals.Contains(cell)) {
+				goals.Add (cell);
+			}
+		}
+
+		private void removeCell (SortedList<float, List<Cell>> candidates, Cell cell, float oldKey)
 		{
-			max = float.MinValue;
-			SortedList<float, List<Cell>> candidates = new SortedList<float, List<Cell>> ();
-			List<Cell> accepted = new List<Cell> ();
-			for (int i = 0; i < dim; i++) {
-				for (int j = 0; j < dim; j++) {
-					if (grid [i, j] != null) {
-						grid [i, j].reset ();
-						if (grid [i, j].isGoal) {
-							grid [i, j].potential = 0;
-							grid [i, j].isAccepted = true;
-							accepted.Add (grid [i, j]);
-							addNeighbours (candidates, grid [i, j]);
-						} else {
-							grid [i, j].potential = float.MaxValue;
-							grid [i, j].isAccepted = false;
-						}
-					}
+			if (candidates.ContainsKey (oldKey)) {
+				List<Cell> bucket = candidates [oldKey];
+				bucket.Remove (cell);
+				if (bucket.Count == 0) {
+					candidates.Remove (oldKey);
 				}
 			}
 
-			foreach (Cell cell in accepted) {
-				addNeighbours (candidates, cell);
-			}
+		}
 
-			if (accepted.Count == 0) {
-				return; // no goals
-			}
+		public new void  addAgent(SimObject simObject){
+			simObjects.Add (simObject);
+			simObject.sceneObject.transform.parent = groupParent.transform;
+		}
 
-			while (accepted.Count < realCells) { // total number of cells that are connected
+		private void addNeighbours (SortedList<float, List<Cell>> candidates, Cell cell)
+		{
+			foreach (Face face in cell.faces) {
+				Cell neighbour = face.cell;
+				if (neighbour != null && neighbour.isAccepted == false && neighbour.exists) {
+					float tempPotential = calculatePotential (neighbour);
+
+					if (tempPotential < neighbour.potential) {
+
+						removeCell (candidates, neighbour, neighbour.potential);
+
+						if (candidates.ContainsKey (tempPotential)) {
+							candidates [tempPotential].Add (neighbour);
+						} else {
+							List<Cell> bucket = new List<Cell> ();
+							bucket.Add (neighbour);
+							candidates.Add (tempPotential, bucket);
+						}
+						neighbour.potential = tempPotential;
+					}
+				}
+			}
+		}
+
+		private void assignPotentials ()
+		{
+			if (goals.Count == 0) {
+				return; 
+			}
+			max = float.MinValue;
+			SortedList<float, List<Cell>> candidates = new SortedList<float, List<Cell>> ();
+			int accepted = 0;
+
+			foreach (Cell goal in goals) {
+				goal.isAccepted = true;
+				goal.potential = 0.0f;
+				addNeighbours (candidates, goal);
+				accepted++;
+			}
+				
+			while (accepted < realCells) { // total number of cells that are connected
 
 				Cell minCandidate = null;
 
@@ -94,8 +131,7 @@ namespace CrowdSim
 				max = Mathf.Max (max, minCandidate.potential);
 
 				addNeighbours (candidates, minCandidate);
-				accepted.Add (minCandidate);
-
+				accepted++;
 			}
 		}
 
@@ -323,44 +359,7 @@ namespace CrowdSim
 				return new Vector2 (0f, 0f);
 			}
 		}
-
-		private void removeCell (SortedList<float, List<Cell>> candidates, Cell cell, float oldKey)
-		{
-			if (candidates.ContainsKey (oldKey)) {
-				List<Cell> bucket = candidates [oldKey];
-				bucket.Remove (cell);
-				if (bucket.Count == 0) {
-					candidates.Remove (oldKey);
-				}
-			}
-
-		}
-
-		private void addNeighbours (SortedList<float, List<Cell>> candidates, Cell cell)
-		{
-			foreach (Face face in cell.faces) {
-				Cell neighbour = face.cell;
-				if (neighbour != null && neighbour.isAccepted == false && neighbour.exists) {
-					float tempPotential = calculatePotential (neighbour);
-
-					if (tempPotential < neighbour.potential) {
-
-						removeCell (candidates, neighbour, neighbour.potential);
-
-						if (candidates.ContainsKey (tempPotential)) {
-							candidates [tempPotential].Add (neighbour);
-						} else {
-							List<Cell> bucket = new List<Cell> ();
-							bucket.Add (neighbour);
-							candidates.Add (tempPotential, bucket);
-						}
-						neighbour.potential = tempPotential;
-					}
-				}
-			}
-		}
-
-
+			
 		private float calculatePotential (Cell cell)
 		{
 			Cell sharedCell = cell.sharedCell;

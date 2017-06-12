@@ -18,6 +18,7 @@ namespace CrowdSim
 		GameObject gridParent;
 		GameObject crowdSim;
 		public GameObject simObject;
+		public GameObject goalPrefab;
 		GameObject simObjects;
 
 		// Grid fields
@@ -59,6 +60,7 @@ namespace CrowdSim
 
 		void Start ()
 		{
+
 			Collider c = GetComponent<Collider> ();
 			c.transform.position = pos;
 			c.transform.localScale = new Vector3 (cellWidth * dim * gridRatio, 0, cellWidth * dim * gridRatio);
@@ -280,7 +282,8 @@ namespace CrowdSim
 
 		public int[] addGoal (Vector2 pos, bool justAdd)
 		{
-			int[] index = simManager.selectCell (pos, justAdd);
+			GameObject goalObject = Instantiate (goalPrefab);
+			int[] index = simManager.addGoal (pos, justAdd, goalObject);
 			if (groupGraphics [simManager.groupId] != null) {
 				GridCell graphicCell = groupGraphics [simManager.groupId].getDispCell (index);
 

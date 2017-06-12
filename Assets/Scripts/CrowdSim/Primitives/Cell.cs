@@ -37,7 +37,7 @@ namespace Primitives
 			discomfort = 0;
 			potential = float.MaxValue;
 			tempPotential = float.MaxValue;
-			//isAccepted = false;
+			isAccepted = false;
 		}
 
 		public Vector2 getPosition(){
