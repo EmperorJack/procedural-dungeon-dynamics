@@ -351,7 +351,7 @@ namespace CrowdSim
 
 		public virtual void update (float time)
 		{
-			resetGrid ();
+			//resetGrid ();
 			assignAgents (simObjects, time);
 			assignSpeedField ();
 			assignCosts ();

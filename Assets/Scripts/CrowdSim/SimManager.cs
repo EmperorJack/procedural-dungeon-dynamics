@@ -77,6 +77,7 @@ namespace CrowdSim
 
 		public void update (float time)
 		{
+			resetGrids ();
 
 			if (simObjects.Count > 0) {
 				//sharedGrid.assignAgents (simObjects);
@@ -289,6 +290,19 @@ namespace CrowdSim
 		public void setUpdateField(bool updateField){
 			foreach (GroupGrid groupGrid in groups) {
 				groupGrid.updateField = updateField;
+			}
+		}
+
+		public void resetGrids(){
+			for (int i = 0; i < dim; i++) {
+				for (int j = 0; j < dim; j++) {
+					sharedGrid.grid [i, j].reset ();
+					foreach (GroupGrid groupGrid in groups) {
+						if (groupGrid.updateField) {
+							groupGrid.grid [i, j].reset ();
+						}
+					}
+				}
 			}
 		}
 	}
