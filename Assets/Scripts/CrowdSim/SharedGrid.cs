@@ -16,7 +16,7 @@ namespace CrowdSim
 		private Helper<Cell> helper;
 
 		// 'constant' values
-		float densityExp = 0.1f;
+		float densityExp = 0.5f;
 		// 0 (spread out) -> 10 (form lines)
 		public float maxCalcDensity = 0f;
 		public float minDensity = 2.0f;
@@ -314,9 +314,9 @@ namespace CrowdSim
 								float fS = flowSpeed (grid [i, j], face, f);
 								float fT = topoSpeed (face);
 
-								if (grid [i, j].density < minDensity) {
+								if (face.cell.density < minDensity) {
 									face.velocity = fT;
-								} else if (grid [i, j].density > maxDensity) {
+								} else if (face.cell.density > maxDensity) {
 									face.velocity = fS;
 								} else {
 
