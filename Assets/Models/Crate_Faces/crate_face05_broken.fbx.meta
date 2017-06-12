@@ -1,0 +1,158 @@
+fileFormatVersion: 2
+guid: 6e27ad446f95aba46af8dc695347862f
+timeCreated: 1497305861
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: crateFace055
+    100004: crateFace056
+    100006: crateFace057
+    100008: crateFace059
+    100010: crateFace060
+    100012: crateFace061
+    100014: crateFace062
+    100016: crateFace063
+    100018: crateFace064
+    100020: crateFace065
+    100022: crateFace066
+    400000: //RootNode
+    400002: crateFace055
+    400004: crateFace056
+    400006: crateFace057
+    400008: crateFace059
+    400010: crateFace060
+    400012: crateFace061
+    400014: crateFace062
+    400016: crateFace063
+    400018: crateFace064
+    400020: crateFace065
+    400022: crateFace066
+    2300000: crateFace055
+    2300002: crateFace056
+    2300004: crateFace057
+    2300006: crateFace059
+    2300008: crateFace060
+    2300010: crateFace061
+    2300012: crateFace062
+    2300014: crateFace063
+    2300016: crateFace064
+    2300018: crateFace065
+    2300020: crateFace066
+    3300000: crateFace055
+    3300002: crateFace056
+    3300004: crateFace057
+    3300006: crateFace059
+    3300008: crateFace060
+    3300010: crateFace061
+    3300012: crateFace062
+    3300014: crateFace063
+    3300016: crateFace064
+    3300018: crateFace065
+    3300020: crateFace066
+    4300000: crateFace055
+    4300002: crateFace056
+    4300004: crateFace057
+    4300006: crateFace059
+    4300008: crateFace060
+    4300010: crateFace061
+    4300012: crateFace062
+    4300014: crateFace063
+    4300016: crateFace064
+    4300018: crateFace065
+    4300020: crateFace066
+    5400000: crateFace055
+    5400002: crateFace056
+    5400004: crateFace057
+    5400006: crateFace059
+    5400008: crateFace060
+    5400010: crateFace061
+    5400012: crateFace062
+    5400014: crateFace063
+    5400016: crateFace064
+    5400018: crateFace065
+    5400020: crateFace066
+    6500000: crateFace055
+    6500002: crateFace056
+    6500004: crateFace057
+    6500006: crateFace059
+    6500008: crateFace060
+    6500010: crateFace061
+    6500012: crateFace062
+    6500014: crateFace063
+    6500016: crateFace064
+    6500018: crateFace065
+    6500020: crateFace066
+    8200000: //RootNode
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
