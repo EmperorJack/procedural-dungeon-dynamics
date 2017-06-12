@@ -154,9 +154,7 @@ namespace DungeonGeneration
 			{
 				if (transform.name.Contains("anchor")) anchors.Add(transform);
 			}
-
-			Debug.Log ("NUM ANCHORS: " + anchors.Count);
-				
+								
 			// Instantiate the correct nested object at each anchor point
 			foreach (Transform transform in anchors)
 			{
