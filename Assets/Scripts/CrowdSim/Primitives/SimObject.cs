@@ -24,7 +24,7 @@ namespace Primitives
 			this.moveable = moveable;
 
 			if (moveable == false) {
-				densityWeight = 3.0f;
+				densityWeight = 1.0f;
 			}
 
 			if (sceneObject.GetComponent<Rigidbody> () == null) {

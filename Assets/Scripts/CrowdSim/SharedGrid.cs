@@ -24,7 +24,7 @@ namespace CrowdSim
 		public float maxVelocity = 1.0f;
 		public float distanceWeight = 0.5f;
 		public float timeWeight = 0.5f;
-		public float discomfortWeight = 1.0f;
+		public float discomfortWeight = 0.5f;
 
 		private bool customDungeon = false;
 
