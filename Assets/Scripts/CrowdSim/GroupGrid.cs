@@ -310,15 +310,15 @@ namespace CrowdSim
 					interp2V2 = bVel;
 					u = deltaX / cellWidth;
 				} 
-				else if (zeroVec (dVel)) {
-					dVel = bVel;
-				} else if (zeroVec (cVel)) {
-					cVel = aVel;
-				} else if (zeroVec (aVel)) {
-					aVel = cVel;
-				} else if (zeroVec (dVel)) {
-					dVel = bVel;
-				} 
+//				else if (zeroVec (dVel)) {
+//					dVel = bVel;
+//				} else if (zeroVec (cVel)) {
+//					cVel = aVel;
+//				} else if (zeroVec (aVel)) {
+//					aVel = cVel;
+//				} else if (zeroVec (dVel)) {
+//					dVel = bVel;
+//				} 
 
 				if (interp2V1 != Vector2.zero && interp2V2 != Vector2.zero) {
 					simObject.velocity = interp2 (interp2V1, interp2V2, u);
