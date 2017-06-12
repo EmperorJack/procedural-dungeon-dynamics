@@ -13,7 +13,7 @@ namespace DungeonGeneration
         public GameObject anchorPrefab;
         [Range(1, 10)] public int centerSpacing = 1;
         [Range(1, 10)] public int edgeSpacing = 1;
-        [Range(1, 10)] public int edgeBuffer = 0;
+        [Range(1, 10)] public int edgeBuffer = 1;
 
         // Anchor fields
         private int nextAnchorId;
