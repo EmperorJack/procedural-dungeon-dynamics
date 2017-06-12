@@ -11,6 +11,7 @@ public class ModelPostProcessor : AssetPostprocessor {
 		string modelName = Path.GetFileNameWithoutExtension (assetPath);
 		if (modelName.EndsWith("_broken") || modelName.EndsWith("_whole")){
 			physicsSetup (g);
+			audioSetup (g);
 		}
 	}
 		
@@ -29,8 +30,6 @@ public class ModelPostProcessor : AssetPostprocessor {
 			// If no collider exists, make one from the mesh
 			if (g.GetComponent<Collider> () == null) {
 				Debug.Log ("\t - Adding MeshCollider");
-				//g.AddComponent<MeshCollider> ();
-				//g.GetComponent<MeshCollider> ().convex = true;
 				g.AddComponent<BoxCollider>();
 			}
 		} else {
@@ -40,4 +39,15 @@ public class ModelPostProcessor : AssetPostprocessor {
 			physicsSetup (child.gameObject);
 		}
 	}
+
+	void audioSetup(GameObject g){
+		Debug.Log ("Setting audio for " + g.name);
+		AudioSource objectAudio = g.GetComponent<AudioSource> ();
+		if (objectAudio == null) {
+			g.AddComponent<AudioSource> ();
+			objectAudio = g.GetComponent<AudioSource> ();
+		}
+		objectAudio.playOnAwake = false;
+	}
+
 }

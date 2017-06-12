@@ -15,6 +15,7 @@ namespace DungeonGeneration
         public GameObject doorPrefab;
 		public GameObject torchPrefab;
         [Range(1, 10)] public int torchSpacing;
+		public GameObject torchAudio;
 
         // Dungeon fields
         private List<Room> rooms;
@@ -47,6 +48,7 @@ namespace DungeonGeneration
                 PopulateFloor(room, roomParent);
                 PopulateWalls(room, roomParent);
 				PopulateTorches(room, roomParent);
+				PopulateSounds(room, roomParent);
             }
         }
 
@@ -166,6 +168,14 @@ namespace DungeonGeneration
                 SpawnTorch(parent, new Vector3((area.x + area.width - 1) * gridSpacing, 0, (area.y + j) * gridSpacing), 270);
             }
         }
+
+		private void PopulateSounds(Room room, GameObject parent)
+		{
+			if (torchAudio == null) return;
+
+			Vector3 pos = new Vector3(room.x + (room.width - 1) / 2.0f, 0, room.y + (room.height - 1) / 2.0f) * gridSpacing;
+			SpawnAsset (parent, pos, 0, torchAudio);
+		}
 
 		private void SpawnFloor(GameObject parent, Vector3 position, int rotation)
 		{

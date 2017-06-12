@@ -383,6 +383,7 @@ ModelImporter:
     6500088: Box0047
     6500090: Box0048
     6500092: Box0049
+    8200000: //RootNode
     9500000: //RootNode
   materials:
     importMaterials: 1
