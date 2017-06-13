@@ -31,7 +31,7 @@ namespace CrowdSim
 		public void reset ()
 		{
 			foreach (SimObject simObject in simObjects) {
-				Object.Destroy (simObject.sceneObject);
+				Object.DestroyImmediate (simObject.sceneObject);
 			}
 
 			groups = new List<GroupGrid> ();
