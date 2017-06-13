@@ -47,6 +47,21 @@ public class ProceduralPipeline : MonoBehaviour
 	{
 		simAccess.setAction ("select");
 	}
+		
+	public void increaseAvoidance(){
+		if (simAccess == null) {
+			return;
+		}
+		simAccess.increaseAvoidance ();
+	}
+
+	public void decreaseAvoidance(){
+		if (simAccess == null) {
+			return;
+		}
+
+		simAccess.decreaseAvoidance ();
+	}
 
 	public void createSim ()
 	{
@@ -71,6 +86,10 @@ public class ProceduralPipeline : MonoBehaviour
 			addGroup();
 		if (Input.GetKeyDown (KeyCode.P))
 			swapGroups();
+		if (Input.GetKeyDown (KeyCode.M))
+			increaseAvoidance ();
+		if (Input.GetKeyDown (KeyCode.N))
+			decreaseAvoidance ();
 		if (Input.GetKeyDown (KeyCode.Escape))
 			Application.Quit();
 	}

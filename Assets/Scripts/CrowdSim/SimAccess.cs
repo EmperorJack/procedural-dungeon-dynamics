@@ -57,6 +57,49 @@ namespace CrowdSim
 			DestroyImmediate (GameObject.Find ("Components"));
 
 		}
+			
+		public void setAvoidance(float avoidance){
+			if (simManager == null || simManager.sharedGrid == null) {
+				return;
+			}
+
+			simManager.sharedGrid.setAvoidance (avoidance);
+		}
+
+		public void setTimeWeight(float timeWeight){
+			if (simManager == null || simManager.sharedGrid == null) {
+				return;
+			}
+
+			simManager.sharedGrid.setTimeWeight (timeWeight);		}
+
+		public void setDistanceWeight(float distanceWeight){
+			if (simManager == null || simManager.sharedGrid == null) {
+				return;
+			}
+
+			simManager.sharedGrid.setDistanceWeight (distanceWeight);		}
+
+		public void setMaxDensity(float maxDensity){
+			if (simManager == null || simManager.sharedGrid == null) {
+				return;
+			}
+
+			simManager.sharedGrid.setMaxDensity (maxDensity);		}
+
+		public void setMinDensity(float minDensity){
+			if (simManager == null || simManager.sharedGrid == null) {
+				return;
+			}
+
+			simManager.sharedGrid.setMinDensity (minDensity);		}
+
+		public void setMaxVelocity(float maxVelocity){
+			if (simManager == null || simManager.sharedGrid == null) {
+				return;
+			}
+
+			simManager.sharedGrid.setMaxVelocity (maxVelocity);		}
 
 		void Start ()
 		{
@@ -305,12 +348,16 @@ namespace CrowdSim
 			Primitives.Cell selected = simManager.groupGrid.grid [index [0], index [1]];
 			if (selected != null) {
 				leftSelected = selected;
-				Debug.Log (selected.index [0] + ", " + selected.index [1] + ": Potential: " + selected.potential);
+				Primitives.Cell sharedCell = leftSelected.sharedCell;
+				Debug.Log (selected.index [0] + ", " + selected.index [1] + ": Potential: " + selected.potential+" vel: [" + selected.groupVelocity.x + ", " + selected.groupVelocity.y + "]");
+
 				Debug.Log ("Faces: ");
+
 				for (int i = 0; i < 4; i++) {
 					Primitives.Face face = selected.faces [i];
+					Primitives.Face sharedFace = sharedCell.faces[i];
 					if (face != null) {
-						Debug.Log (i + " Cost: " + face.cost + " grad: " + face.potentialGrad + " vel: [" + selected.groupVelocity.x + ", " + selected.groupVelocity.y + "]");
+						Debug.Log (i + " Cost: " + face.cost + " grad: " + face.potentialGrad + "vel: "+face.velocity+" groupVel: "+face.groupVelocity);
 					}
 				}
 				Debug.Log ("-------------");
@@ -320,6 +367,11 @@ namespace CrowdSim
 		public void addAgent (Vector2 pos)
 		{
 			simManager.addAgent (pos, simObject, true);
+			executeUpdate (0);
+		}
+
+		public void addAgent(Vector2 pos, int id){
+			simManager.addAgent (pos, simObject, true, id);
 			executeUpdate (0);
 		}
 
@@ -367,6 +419,20 @@ namespace CrowdSim
 		public void trigger ()
 		{
 			simManager.trigger ();
+		}
+
+		public void increaseAvoidance(){
+			if (simManager == null) {
+				return;
+			}
+			simManager.increaseAvoidance ();
+		}
+
+		public void decreaseAvoidance(){
+			if (simManager == null) {
+				return;
+			}
+			simManager.decreaseAvoidance ();
 		}
 			
 	}

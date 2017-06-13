@@ -10,7 +10,7 @@ namespace CrowdSim
 {
 	public class SimManager
 	{
-		SharedGrid sharedGrid;
+		public SharedGrid sharedGrid;
 		public int groupId = -1;
 		public GroupGrid groupGrid;
 		public List<GroupGrid> groups;
@@ -26,6 +26,8 @@ namespace CrowdSim
 
 		DungeonGeneration.Cell[,] dungeon;
 		int gridRatio;
+
+		float avoidance = 0.0f;
 
 
 		public void reset ()
@@ -74,6 +76,8 @@ namespace CrowdSim
 				addGroup ();
 			}
 			helper = new Helper<Cell> (groups [0].grid, cellWidth, gridRatio);
+
+			sharedGrid.setAvoidance (avoidance);
 		}
 
 		public void update (float time)
@@ -226,6 +230,11 @@ namespace CrowdSim
 			return simObjects.Count;
 		}
 
+		public int addAgent(Vector2 pos, GameObject sceneObject, bool moveable, int id){
+			setGroup (id);
+			return addAgent (pos, sceneObject, moveable);
+		}
+
 		private void initGameObject (Vector2 pos, GameObject customObject)
 		{
 			Transform t = customObject.transform;
@@ -313,6 +322,17 @@ namespace CrowdSim
 			}
 		}
 
+		public void setGroup(int id){
+			if (id < 0 || id >= groups.Count) {
+				return;
+			}
+			helper = new Helper<Cell> (groups [groupId].grid, cellWidth, gridRatio);
+
+			groupGrid = groups [id];
+			Debug.Log ("Now editing group: " + groupId);
+
+		}
+
 		public void swapGroup ()
 		{
 			groupId++;
@@ -331,6 +351,27 @@ namespace CrowdSim
 			foreach (GroupGrid groupGrid in groups) {
 				groupGrid.updateField = updateField;
 			}
+		}
+
+		public void increaseAvoidance(){
+			avoidance += 0.2f;
+			if (avoidance > 1.0f) {
+				avoidance = 1.0f;
+			}
+
+
+			sharedGrid.setAvoidance (avoidance);
+			Debug.Log ("Avoidance set: " + avoidance);
+		}
+
+		public void decreaseAvoidance(){
+			avoidance -= 0.2f;
+			if (avoidance < 0f) {
+				avoidance = 0f;
+			}
+				
+			sharedGrid.setAvoidance (avoidance);
+			Debug.Log ("Avoidance set: " + avoidance);
 		}
 
 		public void resetGrids ()

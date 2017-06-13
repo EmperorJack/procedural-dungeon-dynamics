@@ -220,16 +220,14 @@ namespace CrowdSim
 				int[] index = cell.index;
 				Face[] sharedFaces = sharedGrid.grid [index [0], index [1]].faces;
 
-				//TODO: HMM shouldn't be any negatives
-				if (sharedFaces [0].velocity < 0 || sharedFaces [1].velocity < 0 || sharedFaces [2].velocity < 0 || sharedFaces [3].velocity < 0) {
-					Debug.Log ("NEGATIVE: " + sharedFaces [0].velocity + " " + sharedFaces [1].velocity + " " + sharedFaces [2].velocity + " " + sharedFaces [3].velocity);
-				}
 
-				faces [0].groupVelocity = -faces [0].potentialGrad * sharedFaces [0].velocity;
-				faces [1].groupVelocity = -faces [1].potentialGrad * sharedFaces [1].velocity;
-				faces [2].groupVelocity = -faces [2].potentialGrad * sharedFaces [2].velocity;
-				faces [3].groupVelocity = -faces [3].potentialGrad * sharedFaces [3].velocity;
+				if (cell.isGoal == false) {
+					faces [0].groupVelocity = -faces [0].potentialGrad * sharedFaces [0].velocity;
+					faces [1].groupVelocity = -faces [1].potentialGrad * sharedFaces [1].velocity;
+					faces [2].groupVelocity = -faces [2].potentialGrad * sharedFaces [2].velocity;
+					faces [3].groupVelocity = -faces [3].potentialGrad * sharedFaces [3].velocity;
 			
+				}
 				cell.groupVelocity = new Vector2 (faces [1].groupVelocity - faces [3].groupVelocity, faces [0].groupVelocity - faces [2].groupVelocity);
 			}
 		}
@@ -294,41 +292,56 @@ namespace CrowdSim
 				Vector2 velocity = new Vector2 (0f, 0f);
 
 				float u = deltaX / cellWidth;
+				float v = deltaY / cellWidth;
+
 				Vector2 interp2V1 = Vector2.zero;
 				Vector2 interp2V2 = Vector2.zero;
+				bool doInterp2 = false;
+
+				Vector2 total = Vector2.zero;
 
 				if (zeroVec (aVel) && zeroVec (dVel)) {
 					interp2V1 = bVel;
 					interp2V2 = cVel;
 					u = deltaY / cellWidth;
-
+					doInterp2 = true;
 				} else if (zeroVec (cVel) && zeroVec (bVel)) {
 					interp2V1 = aVel;
 					interp2V2 = dVel;
 					u = deltaY / cellWidth;
+					doInterp2 = true;
 				} else if (zeroVec (aVel) && zeroVec (bVel)) {
 					interp2V1 = dVel;
 					interp2V1 = cVel;
 					u = deltaX / cellWidth;
+					doInterp2 = true;
 				} else if (zeroVec (cVel) && zeroVec (dVel)) {
-					cVel = bVel;
-					dVel = aVel;
 
 					interp2V1 = aVel;
 					interp2V2 = bVel;
 					u = deltaX / cellWidth;
-				} 
-//				else if (zeroVec (dVel)) {
-//					dVel = bVel;
-//				} else if (zeroVec (cVel)) {
-//					cVel = aVel;
-//				} else if (zeroVec (aVel)) {
-//					aVel = cVel;
-//				} else if (zeroVec (dVel)) {
-//					dVel = bVel;
-//				} 
+					doInterp2 = true;
+				}
 
-				if (interp2V1 != Vector2.zero && interp2V2 != Vector2.zero) {
+//				else if (zeroVec (cVel)) {
+//					Vector2 interpX = interp2 (aVel, bVel, u); 
+//					 total = interp2 (interpX, dVel, v);
+//				} else if (zeroVec (dVel)) {
+//					Vector2 interpX = interp2 (aVel, bVel, u);
+//					 total = interp2 (interpX, cVel, v);
+//				} else if (zeroVec (aVel)) {
+//					Vector2 interpX = interp2 (cVel, dVel, u);
+//					 total = interp2 (interpX, bVel, v);
+//				} else if (zeroVec (bVel)) {
+//					Vector2 interpX = interp2 (cVel, dVel, u);
+//					 total = interp2 (interpX, aVel, v);
+//				}
+//
+//				if (total != Vector2.zero) {
+//					simObject.velocity = total;
+//				} else 
+
+				if (doInterp2) {
 					simObject.velocity = interp2 (interp2V1, interp2V2, u);
 				
 				} else {
@@ -337,10 +350,10 @@ namespace CrowdSim
 					Vector2 interp = Vector2.Lerp (dcx, abx, deltaY / cellWidth);
 
 					//simObject.setVelocity (3.0f * interp);
-					interp.x = Mathf.Min (interp.x, 1.0f);
-					interp.y = Mathf.Min (interp.y, 1.0f); // 1.0f should be whatever Max vel is
-					interp.x = Mathf.Max (interp.x, -1.0f);
-					interp.y = Mathf.Max (interp.y, -1.0f);
+//					interp.x = Mathf.Min (interp.x, 1.0f);
+//					interp.y = Mathf.Min (interp.y, 1.0f); // 1.0f should be whatever Max vel is
+//					interp.x = Mathf.Max (interp.x, -1.0f);
+//					interp.y = Mathf.Max (interp.y, -1.0f);
 					simObject.velocity = 1.0f * interp;
 				}
 
