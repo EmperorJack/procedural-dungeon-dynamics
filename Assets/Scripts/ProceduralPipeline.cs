@@ -92,6 +92,10 @@ public class ProceduralPipeline : MonoBehaviour
 			decreaseAvoidance ();
 		if (Input.GetKeyDown (KeyCode.Escape))
 			Application.Quit();
+
+		if (simAccess != null && Time.time > 18.5f && Time.frameCount % 4 == 0 && Time.time < 40.0f) {
+			simAccess.addAgent (new Vector2 (2.0f + Random.value * 0.5f, 4.0f + Random.value * 0.5f));
+		}
 	}
 
 	public void Perform ()
@@ -131,6 +135,8 @@ public class ProceduralPipeline : MonoBehaviour
 		if (seed == 6792) {
 			wallInstance = MonoBehaviour.Instantiate (breakableWall);
 			wallInstance.transform.Translate (2.0f, 0.0f, 6.5f);
+
+			simAccess.addGoal (new Vector2 (25.0f, 25.0f), false);
 		}
 	}
 

@@ -237,10 +237,6 @@ namespace CrowdSim
 		{
 			if (simManager == null) return;
 
-			if (Time.time > 5.0f && Time.frameCount % 4 == 0 && Time.time < 8.0f) {
-				addAgent (new Vector2 (2.0f + Random.value * 0.5f, 4.0f + Random.value * 0.5f));
-			}
-
 			Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
 			RaycastHit hit;
 
