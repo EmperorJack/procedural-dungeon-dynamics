@@ -321,7 +321,7 @@ namespace CrowdSim
 					u = deltaX / cellWidth;
 					doInterp2 = true;
 				}
-
+//
 				else if (zeroVec (cVel)) {
 					Vector2 interpX = interp2 (aVel, bVel, u); 
 					total = interpX;//interp2 (interpX, dVel, v);
@@ -335,24 +335,20 @@ namespace CrowdSim
 					Vector2 interpX = interp2 (cVel, dVel, u);
 					total = interpX;//interp2 (interpX, aVel, v);
 				}
-//
-//				if (total != Vector2.zero) {
-//					simObject.velocity = total;
-//				} else 
+
+				if (total != Vector2.zero) {
+					simObject.velocity = total;
+				} else 
 
 				if (doInterp2) {
 					simObject.velocity = interp2 (interp2V1, interp2V2, u);
 				
 				} else {
+					// 4 point interpolation
 					Vector2 dcx = Vector2.Lerp (dVel, cVel, deltaX / cellWidth);
 					Vector2 abx = Vector2.Lerp (aVel, bVel, deltaX / cellWidth);
 					Vector2 interp = Vector2.Lerp (dcx, abx, deltaY / cellWidth);
 
-					//simObject.setVelocity (3.0f * interp);
-//					interp.x = Mathf.Min (interp.x, 1.0f);
-//					interp.y = Mathf.Min (interp.y, 1.0f); // 1.0f should be whatever Max vel is
-//					interp.x = Mathf.Max (interp.x, -1.0f);
-//					interp.y = Mathf.Max (interp.y, -1.0f);
 					simObject.velocity = 1.0f * interp;
 				}
 

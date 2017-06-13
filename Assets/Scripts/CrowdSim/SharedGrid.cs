@@ -22,7 +22,7 @@ namespace CrowdSim
 		public float minDensity = 5.0f;
 		public float maxDensity = 15.0f; // 15 max
 		public float maxVelocity = 1.0f;
-		public float distanceWeight = 1.0f;
+		public float distanceWeight = 0.2f;
 		public float timeWeight = 1.0f;
 		public float discomfortWeight = 1.0f;
 
@@ -176,7 +176,7 @@ namespace CrowdSim
 		{
 
 			foreach (SimObject simObject in simObjects) {
-				
+
 				calculateDensity (simObject, simObject.getPosition (), true);
 
 //				Vector2 newPos = simObject.getPosition () + time * simObject.velocity;
@@ -245,6 +245,9 @@ namespace CrowdSim
 				// get surronding grid cells
 				// add dWeight * (1 - sqrDistance(center)/(cellCenter - boxCenter));
 			} else {
+				
+
+
 				float deltaX = (pos.x - leftCell.position.x) / cellWidth;
 				float deltaY = (pos.y - leftCell.position.y) / cellWidth;
 				if (leftCell != null && leftCell.exists) {
@@ -261,9 +264,9 @@ namespace CrowdSim
 						if (simObject.moveable) {
 							leftCell.avgVelocity += leftDensity * simObject.velocity; // cell A
 						}
-					} else {
+					} 
 						densityCont [0] = leftDensity;
-					}
+					
 				}
 
 				Cell bCell = helper.accessGridCell (new int[]{ index [0] + 1, index [1] });
@@ -274,9 +277,9 @@ namespace CrowdSim
 						if (simObject.moveable) {
 							bCell.avgVelocity += bDensity * simObject.velocity;
 						}
-					} else {
+					} 
 						densityCont [1] = bDensity;
-					}
+					
 				}
 
 				Cell cCell = helper.accessGridCell (new int[]{ index [0] + 1, index [1] + 1 });
@@ -287,9 +290,9 @@ namespace CrowdSim
 						if (simObject.moveable) {
 							cCell.avgVelocity += cDensity * simObject.velocity;
 						}
-					} else {
+					} 
 						densityCont [2] = cDensity;
-					}
+					
 				}
 
 				Cell dCell = helper.accessGridCell (new int[]{ index [0], index [1] + 1 });
@@ -300,11 +303,10 @@ namespace CrowdSim
 						if (simObject.moveable) {
 							dCell.avgVelocity += dDensity * simObject.velocity;
 						}
-					} else {
+					} 
 						densityCont [3] = dDensity;
-					}
+				
 				}
-						
 			}
 			return densityCont;
 
@@ -354,7 +356,7 @@ namespace CrowdSim
 								} else if (face.cell.density > maxDensity) {
 									face.velocity = fS;
 								} else {
-									if (cell.exists == false) {
+									if (face.cell.exists == false) {
 										face.velocity = 0;
 									} else {
 										float deltaP = maxDensity - minDensity;
@@ -366,7 +368,7 @@ namespace CrowdSim
 									}
 								}
 
-								face.velocity = Mathf.Max (face.velocity, 0.5f);
+								//face.velocity = Mathf.Max (face.velocity, 0.5f);
 							}
 
 						}
@@ -384,9 +386,11 @@ namespace CrowdSim
 		{
 			Cell neighbour = face.cell;
 
-			Vector2 offset = (neighbour.position - cell.position)/cellWidth;
+			Vector2 offset = (neighbour.position - cell.position);
 		
 			return Mathf.Max (Vector2.Dot (neighbour.avgVelocity, offset), 0.1f);
+
+			//return Vector2.Dot (neighbour.avgVelocity, offset);
 		}
 
 		public virtual void update (float time)
