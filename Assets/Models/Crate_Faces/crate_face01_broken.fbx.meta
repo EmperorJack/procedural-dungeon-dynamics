@@ -1,0 +1,165 @@
+fileFormatVersion: 2
+guid: cfb6d020a2ff49b49a5536c74a6bd1cd
+timeCreated: 1497305862
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: crateFace010
+    100004: crateFace011
+    100006: crateFace012
+    100008: crateFace013
+    100010: crateFace014
+    100012: crateFace015
+    100014: crateFace016
+    100016: crateFace017
+    100018: crateFace018
+    100020: crateFace07
+    100022: crateFace08
+    100024: crateFace09
+    400000: //RootNode
+    400002: crateFace010
+    400004: crateFace011
+    400006: crateFace012
+    400008: crateFace013
+    400010: crateFace014
+    400012: crateFace015
+    400014: crateFace016
+    400016: crateFace017
+    400018: crateFace018
+    400020: crateFace07
+    400022: crateFace08
+    400024: crateFace09
+    2300000: crateFace010
+    2300002: crateFace011
+    2300004: crateFace012
+    2300006: crateFace013
+    2300008: crateFace014
+    2300010: crateFace015
+    2300012: crateFace016
+    2300014: crateFace017
+    2300016: crateFace018
+    2300018: crateFace07
+    2300020: crateFace08
+    2300022: crateFace09
+    3300000: crateFace010
+    3300002: crateFace011
+    3300004: crateFace012
+    3300006: crateFace013
+    3300008: crateFace014
+    3300010: crateFace015
+    3300012: crateFace016
+    3300014: crateFace017
+    3300016: crateFace018
+    3300018: crateFace07
+    3300020: crateFace08
+    3300022: crateFace09
+    4300000: crateFace07
+    4300002: crateFace08
+    4300004: crateFace09
+    4300006: crateFace010
+    4300008: crateFace011
+    4300010: crateFace012
+    4300012: crateFace013
+    4300014: crateFace014
+    4300016: crateFace015
+    4300018: crateFace016
+    4300020: crateFace017
+    4300022: crateFace018
+    5400000: crateFace010
+    5400002: crateFace011
+    5400004: crateFace012
+    5400006: crateFace013
+    5400008: crateFace014
+    5400010: crateFace015
+    5400012: crateFace016
+    5400014: crateFace017
+    5400016: crateFace018
+    5400018: crateFace07
+    5400020: crateFace08
+    5400022: crateFace09
+    6500000: crateFace010
+    6500002: crateFace011
+    6500004: crateFace012
+    6500006: crateFace013
+    6500008: crateFace014
+    6500010: crateFace015
+    6500012: crateFace016
+    6500014: crateFace017
+    6500016: crateFace018
+    6500018: crateFace07
+    6500020: crateFace08
+    6500022: crateFace09
+    8200000: //RootNode
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

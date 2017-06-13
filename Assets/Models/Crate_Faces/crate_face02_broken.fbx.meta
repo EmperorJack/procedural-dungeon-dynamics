@@ -1,0 +1,165 @@
+fileFormatVersion: 2
+guid: bdbf439145e9fbe4687ac88ee35e3442
+timeCreated: 1497305861
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: crateFace019
+    100004: crateFace020
+    100006: crateFace021
+    100008: crateFace022
+    100010: crateFace023
+    100012: crateFace024
+    100014: crateFace025
+    100016: crateFace026
+    100018: crateFace027
+    100020: crateFace028
+    100022: crateFace029
+    100024: crateFace030
+    400000: //RootNode
+    400002: crateFace019
+    400004: crateFace020
+    400006: crateFace021
+    400008: crateFace022
+    400010: crateFace023
+    400012: crateFace024
+    400014: crateFace025
+    400016: crateFace026
+    400018: crateFace027
+    400020: crateFace028
+    400022: crateFace029
+    400024: crateFace030
+    2300000: crateFace019
+    2300002: crateFace020
+    2300004: crateFace021
+    2300006: crateFace022
+    2300008: crateFace023
+    2300010: crateFace024
+    2300012: crateFace025
+    2300014: crateFace026
+    2300016: crateFace027
+    2300018: crateFace028
+    2300020: crateFace029
+    2300022: crateFace030
+    3300000: crateFace019
+    3300002: crateFace020
+    3300004: crateFace021
+    3300006: crateFace022
+    3300008: crateFace023
+    3300010: crateFace024
+    3300012: crateFace025
+    3300014: crateFace026
+    3300016: crateFace027
+    3300018: crateFace028
+    3300020: crateFace029
+    3300022: crateFace030
+    4300000: crateFace019
+    4300002: crateFace020
+    4300004: crateFace021
+    4300006: crateFace022
+    4300008: crateFace023
+    4300010: crateFace024
+    4300012: crateFace025
+    4300014: crateFace026
+    4300016: crateFace027
+    4300018: crateFace028
+    4300020: crateFace029
+    4300022: crateFace030
+    5400000: crateFace019
+    5400002: crateFace020
+    5400004: crateFace021
+    5400006: crateFace022
+    5400008: crateFace023
+    5400010: crateFace024
+    5400012: crateFace025
+    5400014: crateFace026
+    5400016: crateFace027
+    5400018: crateFace028
+    5400020: crateFace029
+    5400022: crateFace030
+    6500000: crateFace019
+    6500002: crateFace020
+    6500004: crateFace021
+    6500006: crateFace022
+    6500008: crateFace023
+    6500010: crateFace024
+    6500012: crateFace025
+    6500014: crateFace026
+    6500016: crateFace027
+    6500018: crateFace028
+    6500020: crateFace029
+    6500022: crateFace030
+    8200000: //RootNode
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

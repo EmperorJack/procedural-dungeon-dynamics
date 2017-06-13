@@ -1,52 +1,19 @@
 fileFormatVersion: 2
-<<<<<<< HEAD
-guid: 1439da0c697896546820d800a44d26d4
-timeCreated: 1497251770
-=======
-guid: 9d943e2c3345b4116ae76b9c3d5d0744
-timeCreated: 1497257225
->>>>>>> master
+guid: 6949d47eb0ac62e4db080e2f47d455dd
+timeCreated: 1497305586
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
     100000: //RootNode
-    100002: crateFace01
-    100004: crateFace02
-    100006: crateFace03
-    100008: crateFace04
-    100010: crateFace05
-    100012: crateFace06
-    100014: crateWhole
     400000: //RootNode
-    400002: crateFace01
-    400004: crateFace02
-    400006: crateFace03
-    400008: crateFace04
-    400010: crateFace05
-    400012: crateFace06
-    400014: crateWhole
-    2300000: crateFace01
-    2300002: crateFace02
-    2300004: crateFace03
-    2300006: crateFace04
-    2300008: crateFace05
-    2300010: crateFace06
-    2300012: crateWhole
-    3300000: crateFace01
-    3300002: crateFace02
-    3300004: crateFace03
-    3300006: crateFace04
-    3300008: crateFace05
-    3300010: crateFace06
-    3300012: crateWhole
-    4300000: crateWhole
-    4300002: crateFace01
-    4300004: crateFace02
-    4300006: crateFace03
-    4300008: crateFace04
-    4300010: crateFace05
-    4300012: crateFace06
+    2300000: //RootNode
+    3300000: //RootNode
+    4300000: crateFace05
+    5400000: //RootNode
+    6500000: //RootNode
+    8200000: //RootNode
+    9500000: //RootNode
   materials:
     importMaterials: 1
     materialName: 0
@@ -111,7 +78,7 @@ ModelImporter:
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 0
+  animationType: 2
   humanoidOversampling: 1
   additionalBone: 0
   userData: 
