@@ -355,7 +355,7 @@ namespace CrowdSim
 
 		public void increaseAvoidance(){
 			avoidance += 0.2f;
-			if (avoidance > 1.0f) {
+			if (avoidance > 2.0f) {
 				avoidance = 1.0f;
 			}
 
