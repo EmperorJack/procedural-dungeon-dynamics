@@ -309,12 +309,16 @@ namespace CrowdSim
 			Primitives.Cell selected = simManager.groupGrid.grid [index [0], index [1]];
 			if (selected != null) {
 				leftSelected = selected;
-				Debug.Log (selected.index [0] + ", " + selected.index [1] + ": Potential: " + selected.potential);
+				Primitives.Cell sharedCell = leftSelected.sharedCell;
+				Debug.Log (selected.index [0] + ", " + selected.index [1] + ": Potential: " + selected.potential+" vel: [" + selected.groupVelocity.x + ", " + selected.groupVelocity.y + "]");
+
 				Debug.Log ("Faces: ");
+
 				for (int i = 0; i < 4; i++) {
 					Primitives.Face face = selected.faces [i];
+					Primitives.Face sharedFace = sharedCell.faces[i];
 					if (face != null) {
-						Debug.Log (i + " Cost: " + face.cost + " grad: " + face.potentialGrad + " vel: [" + selected.groupVelocity.x + ", " + selected.groupVelocity.y + "]");
+						Debug.Log (i + " Cost: " + face.cost + " grad: " + face.potentialGrad + "vel: "+face.velocity+" groupVel: "+face.groupVelocity);
 					}
 				}
 				Debug.Log ("-------------");

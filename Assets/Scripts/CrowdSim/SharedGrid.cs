@@ -310,6 +310,7 @@ namespace CrowdSim
 					if (grid [i, j] != null) {
 						for (int f = 0; f < grid [i, j].faces.Length; f++) {
 							Face face = grid [i, j].faces [f];
+							Cell cell = grid [i, j];
 							if (face.cell == null || face.cell.exists == false) {
 								face.velocity = 0;
 							} else {
@@ -323,7 +324,7 @@ namespace CrowdSim
 									face.velocity = fS;
 								} else {
 
-									if (face.cell.exists == false) {
+									if (cell.exists == false) {
 										face.velocity = 0;
 									} else {
 										float deltaP = maxDensity - minDensity;
@@ -334,6 +335,8 @@ namespace CrowdSim
 										}
 									}
 								}
+
+								face.velocity = Mathf.Max (face.velocity, 0.1f);
 							}
 
 						}
