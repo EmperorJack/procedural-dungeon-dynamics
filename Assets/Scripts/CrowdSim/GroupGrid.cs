@@ -27,8 +27,11 @@ namespace CrowdSim
 
 		private GameObject groupParent;
 
-		public GroupGrid (GameObject groupParent, float cellWidth, int dim, SharedGrid sharedGrid, DungeonGeneration.Cell[,] dungeon, int gridRatio) : base (cellWidth, dim, dungeon, gridRatio)
+		public Color color;
+
+		public GroupGrid (GameObject groupParent, Color color, float cellWidth, int dim, SharedGrid sharedGrid, DungeonGeneration.Cell[,] dungeon, int gridRatio) : base (cellWidth, dim, dungeon, gridRatio)
 		{
+			this.color = color;
 			goals = new List<Cell> ();
 			dim = sharedGrid.grid.GetLength (0);
 			Debug.Log ("HI: " + dim + " " + grid.GetLength (0) + " ");
@@ -108,8 +111,12 @@ namespace CrowdSim
 			foreach (Cell goal in goals) {
 				goal.isAccepted = true;
 				goal.potential = 0.0f;
-				addNeighbours (candidates, goal);
+				//addNeighbours (candidates, goal);
 				accepted++;
+			}
+
+			foreach (Cell goal in goals) {
+				addNeighbours (candidates, goal);
 			}
 				
 			while (accepted < realCells) { // total number of cells that are connected

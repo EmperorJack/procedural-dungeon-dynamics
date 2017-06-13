@@ -47,7 +47,7 @@ public class WholeObject : BreakableObject {
 			}
 			if (pMat != null){
 				if (child.gameObject.GetComponent<PhysicMaterial> () == null) {
-					Debug.Log ("Setting piece material");
+					//Debug.Log ("Setting piece material");
 					child.gameObject.GetComponent<Collider> ().material = pMat;
 
 				}

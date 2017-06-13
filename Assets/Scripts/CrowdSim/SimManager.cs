@@ -117,6 +117,9 @@ namespace CrowdSim
 			goalObject.transform.parent = simObjectsParent.transform;
 			goalObject.transform.name = "GroupGoal" + groupId;
 
+			Light goalLight = goalObject.GetComponentInChildren<Light> ();
+			goalLight.color = groupGrid.color / 2.0f;
+
 			goalObject.transform.position = new Vector3 (cell.position.x, 0.001f, cell.position.y);
 			colliderScript goalScript = goalObject.GetComponent<colliderScript> ();
 			goalScript.setManager (this);
@@ -204,10 +207,10 @@ namespace CrowdSim
 				if (moveable) {
 					sceneObject = GameObject.Instantiate (sceneObject);
 					if (groupId > 0) {
-						Material mat = new Material (Shader.Find ("Diffuse"));
-						Renderer rend = sceneObject.GetComponent<Renderer> ();
+						Material mat = sceneObject.GetComponent<Renderer> ().material;
+
 						mat.color = groupColors [groupId];
-						rend.material = mat;
+						//rend.material = mat;
 					}
 					initGameObject (pos, sceneObject);
 				}
@@ -268,8 +271,8 @@ namespace CrowdSim
 			Debug.Log ("Trigger: " + groupGrid.trigger);
 		}
 
-		Color[] colors = new Color[]{ Color.white, Color.blue, Color.green, Color.yellow, Color.red };
-		int colorId = 0;
+		Color[] colors = new Color[]{ Color.green, Color.blue, Color.yellow, Color.red };
+		int colorId = -1;
 
 		public void addGroup ()
 		{
@@ -284,7 +287,7 @@ namespace CrowdSim
 			groupTransform.transform.name = "GroupNum" + groupId;
 
 			Color color = colors [colorId];
-			GroupGrid newGroup = new GroupGrid (groupTransform, cellWidth, dim, sharedGrid, dungeon, gridRatio);
+			GroupGrid newGroup = new GroupGrid (groupTransform,color, cellWidth, dim, sharedGrid, dungeon, gridRatio);
 			groupColors.Add (color);
 			groups.Add (newGroup);
 			groupGrid = newGroup;
