@@ -19,10 +19,10 @@ namespace CrowdSim
 		float densityExp = 0.1f;
 		// 0 (spread out) -> 10 (form lines)
 		public float maxCalcDensity = 0f;
-		public float minDensity = 1.0f;
-		public float maxDensity = 10.0f;
+		public float minDensity = 5.0f;
+		public float maxDensity = 15.0f; // 15 max
 		public float maxVelocity = 1.0f;
-		public float distanceWeight = 0.2f;
+		public float distanceWeight = 1.0f;
 		public float timeWeight = 1.0f;
 		public float discomfortWeight = 1.0f;
 
@@ -384,7 +384,7 @@ namespace CrowdSim
 		{
 			Cell neighbour = face.cell;
 
-			Vector2 offset = (neighbour.position - cell.position);
+			Vector2 offset = (neighbour.position - cell.position)/cellWidth;
 		
 			return Mathf.Max (Vector2.Dot (neighbour.avgVelocity, offset), 0.1f);
 		}

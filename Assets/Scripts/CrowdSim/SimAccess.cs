@@ -345,7 +345,7 @@ namespace CrowdSim
 			if (selected != null) {
 				leftSelected = selected;
 				Primitives.Cell sharedCell = leftSelected.sharedCell;
-				Debug.Log (selected.index [0] + ", " + selected.index [1] + ": Potential: " + selected.potential+" vel: [" + selected.groupVelocity.x + ", " + selected.groupVelocity.y + "]");
+				Debug.Log (selected.index [0] + ", " + selected.index [1] + ": Potential: " + selected.potential+" vel: [" + selected.groupVelocity.x + ", " + selected.groupVelocity.y + "] Density: "+ sharedCell.density);
 
 				Debug.Log ("Faces: ");
 
