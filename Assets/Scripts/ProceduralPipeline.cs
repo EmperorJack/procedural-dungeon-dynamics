@@ -9,6 +9,9 @@ public class ProceduralPipeline : MonoBehaviour
 	public bool specifySeed = false;
 	public int seed = 0;
 
+	public GameObject breakableWall = null;
+	private GameObject wallInstance;
+
 	// Dungeon components
 	public DungeonGeneration.DungeonLayoutGenerator dungeonLayoutGenerator;
 	public DungeonGeneration.DungeonAssetPopulator dungeonAssetPopulator;
@@ -105,6 +108,11 @@ public class ProceduralPipeline : MonoBehaviour
         populatedObjects = dungeonObjectPlacer.GetPopulatedObjects();
 
         createSim();
+
+		if (seed == 6792) {
+			wallInstance = MonoBehaviour.Instantiate (breakableWall);
+			wallInstance.transform.Translate (2.0f, 0.0f, 6.5f);
+		}
 	}
 
 	public void swapGroups(){
@@ -137,6 +145,10 @@ public class ProceduralPipeline : MonoBehaviour
 
 		if (simAccess != null) {
 			simAccess.reset ();
+		}
+
+		if (wallInstance != null) {
+			DestroyImmediate (wallInstance);
 		}
 	}
 		
