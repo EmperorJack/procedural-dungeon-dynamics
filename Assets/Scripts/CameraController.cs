@@ -7,7 +7,7 @@ public class CameraController : MonoBehaviour {
     public float moveSpeed = 1.0f;
     public float turnSpeed = 10.0f;
 
-	private bool animateCamera = false;
+	public bool animateCamera = false;
 
 	public GameObject positionsParent;
 	private List<Transform> positions;
@@ -22,8 +22,7 @@ public class CameraController : MonoBehaviour {
 			}
 		}
 
-		if (positions.Count > 0 && keyFrames.Count > 0) {
-			animateCamera = true;
+		if (animateCamera && positions.Count > 0 && keyFrames.Count > 0) {
 			transform.position = Vector3.zero;
 			transform.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
 		}

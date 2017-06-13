@@ -57,6 +57,10 @@ namespace CrowdSim
 			DestroyImmediate (GameObject.Find ("Components"));
 
 		}
+
+		public void setGroup(int groupID) {
+			simManager.setGroup (groupID);
+		}
 			
 		public void setAvoidance(float avoidance){
 			if (simManager == null || simManager.sharedGrid == null) {

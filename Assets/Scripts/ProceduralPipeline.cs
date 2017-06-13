@@ -93,8 +93,9 @@ public class ProceduralPipeline : MonoBehaviour
 		if (Input.GetKeyDown (KeyCode.Escape))
 			Application.Quit();
 
-		if (simAccess != null && Time.time > 18.5f && Time.frameCount % 4 == 0 && Time.time < 40.0f) {
-			simAccess.addAgent (new Vector2 (2.0f + Random.value * 0.5f, 4.0f + Random.value * 0.5f));
+		if (seed == 8115 && simAccess != null && Time.time > 5.0f && Time.frameCount % 4 == 0 && Time.time < 15.0f) {
+			simAccess.addAgent (new Vector2 (10.0f + Random.value * 0.5f, 26.0f + Random.value * 0.5f), 1);
+			simAccess.addAgent (new Vector2 (6.0f + Random.value * 0.5f, 9.0f + Random.value * 0.5f), 2);
 		}
 	}
 
@@ -132,11 +133,17 @@ public class ProceduralPipeline : MonoBehaviour
 
         createSim();
 
-		if (seed == 6792) {
+		simAccess.addGroup ();
+
+		if (seed == 8115) {
 			wallInstance = MonoBehaviour.Instantiate (breakableWall);
 			wallInstance.transform.Translate (2.0f, 0.0f, 6.5f);
 
-			simAccess.addGoal (new Vector2 (25.0f, 25.0f), false);
+			//simAccess.addGroup ();
+			simAccess.addGoal (new Vector2 (20.0f, 9.0f), false);
+
+			simAccess.addGroup ();
+			simAccess.addGoal (new Vector2 (24.0f, 19.0f), false);
 		}
 	}
 

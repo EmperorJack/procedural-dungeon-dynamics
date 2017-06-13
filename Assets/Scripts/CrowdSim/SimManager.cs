@@ -70,6 +70,7 @@ namespace CrowdSim
 
 			//groupGrid = new GroupGrid (cellWidth, dim, sharedGrid, dungeon,gridRatio);
 			Debug.Log ("Default: " + defaultSetup);
+
 			if (defaultSetup) {
 				defaultInit ();
 			} else {
@@ -327,7 +328,7 @@ namespace CrowdSim
 				return;
 			}
 			helper = new Helper<Cell> (groups [groupId].grid, cellWidth, gridRatio);
-
+			groupId = id;
 			groupGrid = groups [id];
 			Debug.Log ("Now editing group: " + groupId);
 
