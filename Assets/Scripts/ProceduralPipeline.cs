@@ -67,6 +67,8 @@ public class ProceduralPipeline : MonoBehaviour
 			addGroup();
 		if (Input.GetKeyDown (KeyCode.P))
 			swapGroups();
+		if (Input.GetKeyDown (KeyCode.Escape))
+			Application.Quit();
 	}
 
 	public void Perform ()
