@@ -22,7 +22,7 @@ namespace CrowdSim
 		public float maxCalcDensity = 0f;
 		public float minDensity = 5.0f;
 		public float maxDensity = 15.0f; // 15 max
-		public float maxVelocity = 1.0f;
+		public float maxVelocity = 1.5f;
 		public float distanceWeight = 0.2f;
 		public float timeWeight = 1.0f;
 		public float discomfortWeight = 1.0f;
@@ -203,7 +203,7 @@ namespace CrowdSim
 		}
 
 		public void assignDiscomfort(SimObject simObject){
-			float maxStep = 10.0f;
+			float maxStep = 15.0f;
 			for (float step = 4.0f; step <= maxStep; step=step+1.0f) {
 				float deltaTime = step* (System.DateTime.Now.Millisecond - prevTime) * 0.001f;
 				Vector2 newPos = simObject.getPosition () + deltaTime * simObject.velocity;
