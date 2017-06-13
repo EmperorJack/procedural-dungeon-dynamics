@@ -29,6 +29,7 @@ namespace CrowdSim
 
 		float avoidance = 0.0f;
 
+		bool pause = true;
 
 		public void reset ()
 		{
@@ -44,13 +45,7 @@ namespace CrowdSim
 
 		public void togglePause ()
 		{
-			foreach (GroupGrid group in groups) {
-				group.paused = !group.paused;
-				foreach (SimObject simObject in group.simObjects) {
-					simObject.applyVelocity (Vector2.zero);
-					simObject.toggleKinematic ();
-				}
-			}
+			pause = !pause;
 		}
 
 		public SimManager (float cellWidth, int dim, GameObject simObjectsParent, DungeonGeneration.Cell[,] dungeon, int gridRatio, bool defaultSetup)
@@ -82,17 +77,18 @@ namespace CrowdSim
 
 		public void update (float time)
 		{
-			resetGrids ();
+			if (!pause) {
+				resetGrids ();
 
-			if (simObjects.Count > 0) {
-				//sharedGrid.assignAgents (simObjects);
-				sharedGrid.update (time);
+				if (simObjects.Count > 0) {
+					//sharedGrid.assignAgents (simObjects);
+					sharedGrid.update (time);
 
-				foreach (GroupGrid group in groups) {
-					group.update (time);
+					foreach (GroupGrid group in groups) {
+						group.update (time);
+					}
 				}
 			}
-
 		}
 
 		public void removeAgent (GameObject toRemove, int groupId)
@@ -118,25 +114,30 @@ namespace CrowdSim
 			Cell cell = helper.getCell (pos);
 			int[] index = helper.getCellIndex (pos);
 
-			goalObject.transform.parent = simObjectsParent.transform;
-			goalObject.transform.name = "GroupGoal" + groupId;
+			if (cell.isGoal == false) {
 
-			Light goalLight = goalObject.GetComponentInChildren<Light> ();
-			goalLight.color = groupGrid.color / 2.0f;
+				goalObject.transform.parent = simObjectsParent.transform;
+				goalObject.transform.name = "GroupGoal" + groupId;
 
-			goalObject.transform.position = new Vector3 (cell.position.x, 0.001f, cell.position.y);
-			colliderScript goalScript = goalObject.GetComponent<colliderScript> ();
-			goalScript.setManager (this);
-			goalScript.setGroupId (groupId);
+				Light goalLight = goalObject.GetComponentInChildren<Light> ();
+				goalLight.color = groupGrid.color / 2.0f;
 
-			if (cell != null) {
-				if (cell.isGoal && justAdd == false) {
-					cell.isGoal = false;
-				} else {
-					cell.isGoal = true;
-				}
+				goalObject.transform.position = new Vector3 (cell.position.x, 0.001f, cell.position.y);
+				colliderScript goalScript = goalObject.GetComponent<colliderScript> ();
+				goalScript.setManager (this);
+				goalScript.setGroupId (groupId);
+				cell.isGoal = true;
 				groupGrid.addGoal (cell);
-			} 
+			}
+
+//			if (cell != null) {
+//				if (cell.isGoal && justAdd == false) {
+//					cell.isGoal = false;
+//				} else {
+//					cell.isGoal = true;
+//				}
+//				groupGrid.addGoal (cell);
+//			} 
 			return index;
 		}
 
@@ -224,6 +225,7 @@ namespace CrowdSim
 			simObjects.Add (simObject);
 			if (moveable) {
 				groupGrid.addAgent (simObject);
+				simObject.groupId = groupId;
 			}
 			sharedGrid.addAgent (simObject);
 
@@ -299,7 +301,9 @@ namespace CrowdSim
 			GroupGrid newGroup = new GroupGrid (groupTransform,color, cellWidth, dim, sharedGrid, dungeon, gridRatio);
 			groupColors.Add (color);
 			groups.Add (newGroup);
+			sharedGrid.groups.Add (newGroup);
 			groupGrid = newGroup;
+			groupGrid.groupId = groupId;
 			helper = new Helper<Cell> (groups [groupId].grid, cellWidth, gridRatio);
 
 			Debug.Log ("Now editing group: " + groupId);
