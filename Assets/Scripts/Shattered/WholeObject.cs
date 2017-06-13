@@ -7,13 +7,14 @@ public class WholeObject : BreakableObject {
 	public GameObject brokenGeo;
 	public float collisionThreshold = 2;
 	public AudioClip shatterSound;
+	public bool initializeOnStart = true;
 	private float soundPitch = 1.0f;
 	private bool initialized = false;
 
 
 	// Use this for initialization
 	void Start () {
-		if (!initialized) {
+		if (!initialized && initializeOnStart) {
 			initialize ();
 		}
 		brokenGeo.SetActive (false);
