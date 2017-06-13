@@ -16,7 +16,7 @@ namespace CrowdSim
 		private Helper<Cell> helper;
 
 		// 'constant' values
-		float densityExp = 0.5f;
+		float densityExp = 0.1f;
 		// 0 (spread out) -> 10 (form lines)
 		public float maxCalcDensity = 0f;
 		public float minDensity = 2.0f;
@@ -146,24 +146,24 @@ namespace CrowdSim
 				
 				calculateDensity(simObject, simObject.getPosition(), true);
 
-				Vector2 newPos = simObject.getPosition () + time * simObject.velocity;
-				Cell newCell = helper.getCell (newPos);
-				float[] densityCont = calculateDensity(simObject, newPos, false);
-				int[] leftIndex = helper.getLeft (newPos);
-				int[] newIndex = helper.getCellIndex (newPos);
-
-				float agentWeight = 0.0f;
-
-
-				if (newIndex [0] == leftIndex [0] && newIndex [1] == leftIndex [1]) {
-					newCell.discomfort += densityCont [0] * agentWeight;
-				} else if (newIndex [0] == leftIndex [0] + 1 && newIndex [1] == leftIndex [1]) {
-					newCell.discomfort += densityCont [1]* agentWeight;
-				} else if (newIndex [0] == leftIndex [0] + 1 && newIndex [1] == leftIndex [1] + 1) {
-					newCell.discomfort += densityCont [2]* agentWeight;
-				} else if (newIndex [0] == leftIndex [0] && newIndex [1] == leftIndex [1] + 1) {
-					newCell.discomfort += densityCont [3]* agentWeight;
-				}
+//				Vector2 newPos = simObject.getPosition () + time * simObject.velocity;
+//				Cell newCell = helper.getCell (newPos);
+//				float[] densityCont = calculateDensity(simObject, newPos, false);
+//				int[] leftIndex = helper.getLeft (newPos);
+//				int[] newIndex = helper.getCellIndex (newPos);
+//
+//				float agentWeight = 0.0f;
+//
+//
+//				if (newIndex [0] == leftIndex [0] && newIndex [1] == leftIndex [1]) {
+//					newCell.discomfort += densityCont [0] * agentWeight;
+//				} else if (newIndex [0] == leftIndex [0] + 1 && newIndex [1] == leftIndex [1]) {
+//					newCell.discomfort += densityCont [1]* agentWeight;
+//				} else if (newIndex [0] == leftIndex [0] + 1 && newIndex [1] == leftIndex [1] + 1) {
+//					newCell.discomfort += densityCont [2]* agentWeight;
+//				} else if (newIndex [0] == leftIndex [0] && newIndex [1] == leftIndex [1] + 1) {
+//					newCell.discomfort += densityCont [3]* agentWeight;
+//				}
 
 			}
 			// calculate average velocity

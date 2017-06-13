@@ -153,21 +153,21 @@ namespace CrowdSim
 						}
 
 
-						if (faces [1].potentialGrad == 0 && faces [3].potentialGrad > 0) {
-							faces [3].potentialGrad = 0;
-						}
-
-						if (faces [3].potentialGrad == 0 && faces [1].potentialGrad > 0) {
-							faces [1].potentialGrad = 0;
-						}
-
-						if (faces [0].potentialGrad == 0 && faces [2].potentialGrad > 0) {
-							faces [2].potentialGrad = 0;
-						}
-
-						if (faces [2].potentialGrad == 0 && faces [0].potentialGrad > 0) {
-							faces [0].potentialGrad = 0;
-						}
+//						if (faces [1].potentialGrad == 0 && faces [3].potentialGrad > 0) {
+//							faces [3].potentialGrad = 0;
+//						}
+//
+//						if (faces [3].potentialGrad == 0 && faces [1].potentialGrad > 0) {
+//							faces [1].potentialGrad = 0;
+//						}
+//
+//						if (faces [0].potentialGrad == 0 && faces [2].potentialGrad > 0) {
+//							faces [2].potentialGrad = 0;
+//						}
+//
+//						if (faces [2].potentialGrad == 0 && faces [0].potentialGrad > 0) {
+//							faces [0].potentialGrad = 0;
+//						}
 							
 						normaliseGrads (cell);
 						calculateGroupVelocity (cell);
