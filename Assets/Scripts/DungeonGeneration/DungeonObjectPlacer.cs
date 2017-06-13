@@ -139,8 +139,6 @@ namespace DungeonGeneration
 			// Get all the types of nested objects this instance has
 			List<NestedObject> nestedObjects = new List<NestedObject>(instance.GetComponents<NestedObject>());
 
-			Debug.Log (nestedObjects.Count);
-
 			// Get the nested anchor points
 			List<Transform> anchors = new List<Transform>();
 
@@ -166,8 +164,8 @@ namespace DungeonGeneration
 					transform.Translate (nestedObject.translationOffset * UnityEngine.Random.Range (-1.0f, 1.0f));
 					transform.Rotate (nestedObject.rotationOffset * UnityEngine.Random.Range (-1.0f, 1.0f));
 
-					if (nestedObject.spawnChance > UnityEngine.Random.value) {
-						GameObject nestedInstance = MonoBehaviour.Instantiate (nestedObject.prefab);
+					if (nestedObject.spawnChance > UnityEngine.Random.value && nestedObject.prefabs.Count > 0) {
+						GameObject nestedInstance = MonoBehaviour.Instantiate (nestedObject.GetPrefab());
 						nestedInstance.transform.SetParent (parent.transform);
 						nestedInstance.transform.Translate (transform.position.x, instance.transform.position.y, transform.position.z);
 						nestedInstance.transform.Rotate (transform.rotation.eulerAngles);
