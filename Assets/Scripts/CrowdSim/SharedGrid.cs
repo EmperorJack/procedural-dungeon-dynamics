@@ -17,7 +17,7 @@ namespace CrowdSim
 		private Helper<Cell> helper;
 
 		// 'constant' values
-		float densityExp = 0.1f;
+		float densityExp = 0.4f;
 		// 0 (spread out) -> 10 (form lines)
 		public float maxCalcDensity = 0f;
 		public float minDensity = 5.0f;
@@ -203,8 +203,8 @@ namespace CrowdSim
 		}
 
 		public void assignDiscomfort(SimObject simObject){
-			float maxStep = 15.0f;
-			for (float step = 4.0f; step <= maxStep; step=step+1.0f) {
+			float maxStep = 6.0f;
+			for (float step = 2.0f; step <= maxStep; step=step+1.0f) {
 				float deltaTime = step* (System.DateTime.Now.Millisecond - prevTime) * 0.001f;
 				Vector2 newPos = simObject.getPosition () + deltaTime * simObject.velocity;
 				prevTime = System.DateTime.Now.Millisecond;
@@ -232,7 +232,9 @@ namespace CrowdSim
 			float dist = Mathf.Sqrt (Vector2.SqrMagnitude (cell.position - rbCenter));
 			Vector2 closestPoint = new Vector2 (rb.ClosestPointOnBounds (cellPos).x, rb.ClosestPointOnBounds (cellPos).z);
 			float closestDist = Mathf.Sqrt (Vector2.SqrMagnitude (cell.position - closestPoint));
-			cell.discomfort += objectAvoidance * simObject.densityWeight * (1.0f - (closestDist / dist));
+			foreach (GroupGrid groupGrid in groups) {
+				groupGrid.grid[cell.index[0],cell.index[1]].discomfort+= objectAvoidance * simObject.densityWeight * (1.0f - (closestDist / dist));
+			}
 		}
 
 		public void calculateDensity (SimObject simObject, Vector2 pos, bool assign, float discomfortWieght, Cell[,] grid)
