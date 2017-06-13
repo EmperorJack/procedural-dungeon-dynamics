@@ -274,7 +274,15 @@ namespace CrowdSim
 						addAgent (new Vector2 (hitPosition.x, hitPosition.z));
 					}
 
-					justAdd = true;
+					justAdd = false;
+					if (action.Equals ("goal")) {
+						int[] selectedIndex = addGoal (new Vector2 (hitPosition.x, hitPosition.z), justAdd);
+						if (selectedIndex != null) {
+							print ("Selected cell: " + selectedIndex [0] + " " + selectedIndex [1]);
+						} else {
+							print ("Failed to select cell at: " + hitPosition.x + " " + hitPosition.z);
+						}
+					}
 				}
 			}				
 

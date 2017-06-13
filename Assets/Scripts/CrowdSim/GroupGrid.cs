@@ -27,6 +27,8 @@ namespace CrowdSim
 
 		private GameObject groupParent;
 
+		public int groupId = -1;
+
 		public Color color;
 
 		public GroupGrid (GameObject groupParent, Color color, float cellWidth, int dim, SharedGrid sharedGrid, DungeonGeneration.Cell[,] dungeon, int gridRatio) : base (cellWidth, dim, dungeon, gridRatio)
@@ -401,9 +403,8 @@ namespace CrowdSim
 
 		private Face[] getUpwinds (Cell cell)
 		{
-			Cell sharedCell = cell.sharedCell;
-			Face horUp = upwindFace (sharedCell.faces [1], sharedCell.faces [3], cell.faces [1].cell, cell.faces [3].cell);
-			Face vertUp = upwindFace (sharedCell.faces [0], sharedCell.faces [2], cell.faces [0].cell, cell.faces [2].cell);
+			Face horUp = upwindFace (cell.faces [1], cell.faces [3], cell.faces [1].cell, cell.faces [3].cell);
+			Face vertUp = upwindFace (cell.faces [0], cell.faces [2], cell.faces [0].cell, cell.faces [2].cell);
 			return new Face[]{ horUp, vertUp };
 		}
 

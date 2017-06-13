@@ -8,13 +8,15 @@ namespace Primitives
 	{
 		Vector2 position;
 		public Vector2 velocity;
-		public float densityWeight = 1.0f;
+		public float densityWeight = 5.0f;
 
 		public GameObject sceneObject;
 
 		private Rigidbody rb;
 
 		public bool moveable = false;
+
+		public int groupId = -5;
 
 		public SimObject (Vector2 position, Vector2 velocity, GameObject sceneObject, bool moveable)
 		{

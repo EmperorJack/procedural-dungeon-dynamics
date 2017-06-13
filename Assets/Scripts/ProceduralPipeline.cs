@@ -92,6 +92,8 @@ public class ProceduralPipeline : MonoBehaviour
 			decreaseAvoidance ();
 		if (Input.GetKeyDown (KeyCode.Escape))
 			Application.Quit();
+		if (Input.GetKeyDown (KeyCode.Z))
+			togglePause ();
 	}
 
 	public void Perform ()
