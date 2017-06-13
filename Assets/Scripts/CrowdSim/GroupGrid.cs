@@ -182,33 +182,33 @@ namespace CrowdSim
 				}
 			}
 
-			if (trigger) {
-				for (int i = 0; i < dim; i++) {
-					for (int j = 0; j < dim; j++) {
-						Cell cell = grid [i, j];
-						if (cell != null) {
-
-							Vector2 totalVel = Vector2.zero;
-							Vector2 totalGrad = Vector2.zero;
-							int existFaces = 0;
-
-							foreach (Face face in cell.faces) {
-								if (face.cell != null && face.cell.potGrad != null) {
-									totalGrad += face.cell.potGrad;
-									totalVel += face.cell.groupVelocity;
-
-									existFaces++;
-								}
-							}
-							Vector2 newVel = totalVel / existFaces;
-							Vector2 newGrad = totalGrad / existFaces;
-							cell.potGrad = newGrad;
-							cell.groupVelocity = totalVel;
-																			
-						}
-					}
-				}
-			}
+//			if (trigger) {
+//				for (int i = 0; i < dim; i++) {
+//					for (int j = 0; j < dim; j++) {
+//						Cell cell = grid [i, j];
+//						if (cell != null) {
+//
+//							Vector2 totalVel = Vector2.zero;
+//							Vector2 totalGrad = Vector2.zero;
+//							int existFaces = 0;
+//
+//							foreach (Face face in cell.faces) {
+//								if (face.cell != null && face.cell.potGrad != null) {
+//									totalGrad += face.cell.potGrad;
+//									totalVel += face.cell.groupVelocity;
+//
+//									existFaces++;
+//								}
+//							}
+//							Vector2 newVel = totalVel / existFaces;
+//							Vector2 newGrad = totalGrad / existFaces;
+//							cell.potGrad = newGrad;
+//							cell.groupVelocity = totalVel;
+//																			
+//						}
+//					}
+//				}
+//			}
 		}
 
 		private void calculateGroupVelocity (Cell cell)
@@ -226,7 +226,6 @@ namespace CrowdSim
 					faces [1].groupVelocity = -faces [1].potentialGrad * sharedFaces [1].velocity;
 					faces [2].groupVelocity = -faces [2].potentialGrad * sharedFaces [2].velocity;
 					faces [3].groupVelocity = -faces [3].potentialGrad * sharedFaces [3].velocity;
-			
 				}
 				cell.groupVelocity = new Vector2 (faces [1].groupVelocity - faces [3].groupVelocity, faces [0].groupVelocity - faces [2].groupVelocity);
 			}
