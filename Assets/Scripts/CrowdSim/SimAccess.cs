@@ -57,7 +57,7 @@ namespace CrowdSim
 			DestroyImmediate (GameObject.Find ("Components"));
 
 		}
-
+			
 		public void setAvoidance(float avoidance){
 			if (simManager == null || simManager.sharedGrid == null) {
 				return;
@@ -366,6 +366,11 @@ namespace CrowdSim
 			executeUpdate (0);
 		}
 
+		public void addAgent(Vector2 pos, int id){
+			simManager.addAgent (pos, simObject, true, id);
+			executeUpdate (0);
+		}
+
 		private void displayGrid (GridGraphics graphics)
 		{
 			if (graphics != null) {
@@ -410,6 +415,20 @@ namespace CrowdSim
 		public void trigger ()
 		{
 			simManager.trigger ();
+		}
+
+		public void increaseAvoidance(){
+			if (simManager == null) {
+				return;
+			}
+			simManager.increaseAvoidance ();
+		}
+
+		public void decreaseAvoidance(){
+			if (simManager == null) {
+				return;
+			}
+			simManager.decreaseAvoidance ();
 		}
 			
 	}
