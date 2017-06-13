@@ -6,6 +6,7 @@ using CrowdSim;
 public class ProceduralPipeline : MonoBehaviour
 {
 	// Seed
+	public bool specifySeed = false;
 	public int seed = 0;
 
 	// Dungeon components
@@ -74,7 +75,9 @@ public class ProceduralPipeline : MonoBehaviour
 	public void Perform ()
 	{
 		// Set the user set seed
-		if (seed != 0) Random.InitState(seed);
+		if (!specifySeed) seed = (int) (Random.value * 10000);
+
+		Random.InitState (seed);
 
 		Reset();
 
