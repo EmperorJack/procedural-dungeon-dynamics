@@ -322,19 +322,19 @@ namespace CrowdSim
 					doInterp2 = true;
 				}
 
-//				else if (zeroVec (cVel)) {
-//					Vector2 interpX = interp2 (aVel, bVel, u); 
-//					 total = interp2 (interpX, dVel, v);
-//				} else if (zeroVec (dVel)) {
-//					Vector2 interpX = interp2 (aVel, bVel, u);
-//					 total = interp2 (interpX, cVel, v);
-//				} else if (zeroVec (aVel)) {
-//					Vector2 interpX = interp2 (cVel, dVel, u);
-//					 total = interp2 (interpX, bVel, v);
-//				} else if (zeroVec (bVel)) {
-//					Vector2 interpX = interp2 (cVel, dVel, u);
-//					 total = interp2 (interpX, aVel, v);
-//				}
+				else if (zeroVec (cVel)) {
+					Vector2 interpX = interp2 (aVel, bVel, u); 
+					total = interpX;//interp2 (interpX, dVel, v);
+				} else if (zeroVec (dVel)) {
+					Vector2 interpX = interp2 (aVel, bVel, u);
+					total = interpX;//interp2 (interpX, cVel, v);
+				} else if (zeroVec (aVel)) {
+					Vector2 interpX = interp2 (cVel, dVel, u);
+					total = interpX;//interp2 (interpX, bVel, v);
+				} else if (zeroVec (bVel)) {
+					Vector2 interpX = interp2 (cVel, dVel, u);
+					total = interpX;//interp2 (interpX, aVel, v);
+				}
 //
 //				if (total != Vector2.zero) {
 //					simObject.velocity = total;
