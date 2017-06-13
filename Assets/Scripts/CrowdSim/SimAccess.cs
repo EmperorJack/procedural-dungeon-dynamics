@@ -35,6 +35,8 @@ namespace CrowdSim
 
 		public bool defaultSetup = false;
 		// default setup for a plane grid, for testing
+
+		bool pause = false;
 		 
 		Primitives.Cell leftSelected;
 
@@ -232,7 +234,7 @@ namespace CrowdSim
 		}
 
 		void FixedUpdate(){
-			if (simManager == null) return;
+			if (simManager == null || pause ) return;
 
 			updateSim (Time.deltaTime);
 		}
@@ -278,7 +280,15 @@ namespace CrowdSim
 						addAgent (new Vector2 (hitPosition.x, hitPosition.z));
 					}
 
-					justAdd = true;
+					justAdd = false;
+					if (action.Equals ("goal")) {
+						int[] selectedIndex = addGoal (new Vector2 (hitPosition.x, hitPosition.z), justAdd);
+						if (selectedIndex != null) {
+							print ("Selected cell: " + selectedIndex [0] + " " + selectedIndex [1]);
+						} else {
+							print ("Failed to select cell at: " + hitPosition.x + " " + hitPosition.z);
+						}
+					}
 				}
 			}				
 

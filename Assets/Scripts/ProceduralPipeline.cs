@@ -95,6 +95,8 @@ public class ProceduralPipeline : MonoBehaviour
 			decreaseAvoidance ();
 		if (Input.GetKeyDown (KeyCode.Escape))
 			Application.Quit();
+		if (Input.GetKeyDown (KeyCode.Z))
+			simAccess.togglePause ();
 
 		if (seed == 5077 && simAccess != null && Time.time > 5.0f && Time.frameCount % 4 == 0 && Time.time < 15.0f) {
 			simAccess.addAgent (new Vector2 (28.0f + Random.value * 0.5f, 27.0f + Random.value * 0.5f), 0);

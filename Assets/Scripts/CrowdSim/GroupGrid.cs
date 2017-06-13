@@ -182,33 +182,33 @@ namespace CrowdSim
 				}
 			}
 
-			if (trigger) {
-				for (int i = 0; i < dim; i++) {
-					for (int j = 0; j < dim; j++) {
-						Cell cell = grid [i, j];
-						if (cell != null) {
-
-							Vector2 totalVel = Vector2.zero;
-							Vector2 totalGrad = Vector2.zero;
-							int existFaces = 0;
-
-							foreach (Face face in cell.faces) {
-								if (face.cell != null && face.cell.potGrad != null) {
-									totalGrad += face.cell.potGrad;
-									totalVel += face.cell.groupVelocity;
-
-									existFaces++;
-								}
-							}
-							Vector2 newVel = totalVel / existFaces;
-							Vector2 newGrad = totalGrad / existFaces;
-							cell.potGrad = newGrad;
-							cell.groupVelocity = totalVel;
-																			
-						}
-					}
-				}
-			}
+//			if (trigger) {
+//				for (int i = 0; i < dim; i++) {
+//					for (int j = 0; j < dim; j++) {
+//						Cell cell = grid [i, j];
+//						if (cell != null) {
+//
+//							Vector2 totalVel = Vector2.zero;
+//							Vector2 totalGrad = Vector2.zero;
+//							int existFaces = 0;
+//
+//							foreach (Face face in cell.faces) {
+//								if (face.cell != null && face.cell.potGrad != null) {
+//									totalGrad += face.cell.potGrad;
+//									totalVel += face.cell.groupVelocity;
+//
+//									existFaces++;
+//								}
+//							}
+//							Vector2 newVel = totalVel / existFaces;
+//							Vector2 newGrad = totalGrad / existFaces;
+//							cell.potGrad = newGrad;
+//							cell.groupVelocity = totalVel;
+//																			
+//						}
+//					}
+//				}
+//			}
 		}
 
 		private void calculateGroupVelocity (Cell cell)
@@ -226,7 +226,6 @@ namespace CrowdSim
 					faces [1].groupVelocity = -faces [1].potentialGrad * sharedFaces [1].velocity;
 					faces [2].groupVelocity = -faces [2].potentialGrad * sharedFaces [2].velocity;
 					faces [3].groupVelocity = -faces [3].potentialGrad * sharedFaces [3].velocity;
-			
 				}
 				cell.groupVelocity = new Vector2 (faces [1].groupVelocity - faces [3].groupVelocity, faces [0].groupVelocity - faces [2].groupVelocity);
 			}
@@ -300,41 +299,41 @@ namespace CrowdSim
 
 				Vector2 total = Vector2.zero;
 
-				if (zeroVec (aVel) && zeroVec (dVel)) {
-					interp2V1 = bVel;
-					interp2V2 = cVel;
-					u = deltaY / cellWidth;
-					doInterp2 = true;
-				} else if (zeroVec (cVel) && zeroVec (bVel)) {
-					interp2V1 = aVel;
-					interp2V2 = dVel;
-					u = deltaY / cellWidth;
-					doInterp2 = true;
-				} else if (zeroVec (aVel) && zeroVec (bVel)) {
-					interp2V1 = dVel;
-					interp2V1 = cVel;
-					u = deltaX / cellWidth;
-					doInterp2 = true;
-				} else if (zeroVec (cVel) && zeroVec (dVel)) {
-
-					interp2V1 = aVel;
-					interp2V2 = bVel;
-					u = deltaX / cellWidth;
-					doInterp2 = true;
-				}
-
+//				if (zeroVec (aVel) && zeroVec (dVel)) {
+//					interp2V1 = bVel;
+//					interp2V2 = cVel;
+//					u = deltaY / cellWidth;
+//					doInterp2 = true;
+//				} else if (zeroVec (cVel) && zeroVec (bVel)) {
+//					interp2V1 = aVel;
+//					interp2V2 = dVel;
+//					u = deltaY / cellWidth;
+//					doInterp2 = true;
+//				} else if (zeroVec (aVel) && zeroVec (bVel)) {
+//					interp2V1 = dVel;
+//					interp2V1 = cVel;
+//					u = deltaX / cellWidth;
+//					doInterp2 = true;
+//				} else if (zeroVec (cVel) && zeroVec (dVel)) {
+//
+//					interp2V1 = aVel;
+//					interp2V2 = bVel;
+//					u = deltaX / cellWidth;
+//					doInterp2 = true;
+//				}
+//
 //				else if (zeroVec (cVel)) {
 //					Vector2 interpX = interp2 (aVel, bVel, u); 
-//					 total = interp2 (interpX, dVel, v);
+//					total = interpX;//interp2 (interpX, dVel, v);
 //				} else if (zeroVec (dVel)) {
 //					Vector2 interpX = interp2 (aVel, bVel, u);
-//					 total = interp2 (interpX, cVel, v);
+//					total = interpX;//interp2 (interpX, cVel, v);
 //				} else if (zeroVec (aVel)) {
 //					Vector2 interpX = interp2 (cVel, dVel, u);
-//					 total = interp2 (interpX, bVel, v);
+//					total = interpX;//interp2 (interpX, bVel, v);
 //				} else if (zeroVec (bVel)) {
 //					Vector2 interpX = interp2 (cVel, dVel, u);
-//					 total = interp2 (interpX, aVel, v);
+//					total = interpX;//interp2 (interpX, aVel, v);
 //				}
 //
 //				if (total != Vector2.zero) {

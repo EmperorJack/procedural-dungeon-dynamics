@@ -119,21 +119,21 @@ namespace CrowdSim
 			Cell cell = helper.getCell (pos);
 			int[] index = helper.getCellIndex (pos);
 
-			goalObject.transform.parent = simObjectsParent.transform;
-			goalObject.transform.name = "GroupGoal" + groupId;
-
-			Light goalLight = goalObject.GetComponentInChildren<Light> ();
-			goalLight.color = groupGrid.color / 2.0f;
-
-			goalObject.transform.position = new Vector3 (cell.position.x, 0.001f, cell.position.y);
-			colliderScript goalScript = goalObject.GetComponent<colliderScript> ();
-			goalScript.setManager (this);
-			goalScript.setGroupId (groupId);
-
 			if (cell != null) {
 				if (cell.isGoal && justAdd == false) {
 					cell.isGoal = false;
 				} else {
+					goalObject.transform.parent = simObjectsParent.transform;
+					goalObject.transform.name = "GroupGoal" + groupId;
+
+					Light goalLight = goalObject.GetComponentInChildren<Light> ();
+					goalLight.color = groupGrid.color / 2.0f;
+
+					goalObject.transform.position = new Vector3 (cell.position.x, 0.001f, cell.position.y);
+					colliderScript goalScript = goalObject.GetComponent<colliderScript> ();
+					goalScript.setManager (this);
+					goalScript.setGroupId (groupId);
+
 					cell.isGoal = true;
 				}
 				groupGrid.addGoal (cell);
@@ -356,7 +356,7 @@ namespace CrowdSim
 
 		public void increaseAvoidance(){
 			avoidance += 0.2f;
-			if (avoidance > 1.0f) {
+			if (avoidance > 2.0f) {
 				avoidance = 1.0f;
 			}
 
