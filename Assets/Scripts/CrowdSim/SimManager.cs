@@ -200,8 +200,7 @@ namespace CrowdSim
 				sceneObject = createDummyAgent (pos);
 				simObject = new SimObject (pos, new Vector2 (0, 0), sceneObject, moveable);
 			} else {
-				//Debug.Log ("Adding slime agent at :" + pos.x + ", " + pos.y);
-				//Debug.Log ("Grid index: [" + index [0] + ", " + index [1] + "]");
+
 				if (moveable) {
 					sceneObject = GameObject.Instantiate (sceneObject);
 					if (groupId > 0) {

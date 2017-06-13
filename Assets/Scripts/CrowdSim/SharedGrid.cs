@@ -146,21 +146,24 @@ namespace CrowdSim
 				
 				calculateDensity(simObject, simObject.getPosition(), true);
 
-//				Vector2 newPos = simObject.getPosition () + time * simObject.velocity;
-//				Cell newCell = helper.getCell (newPos);
-//				newCell.discomfort += 0.5f;
-//				float[] densityCont = calculateDensity(simObject, newPos, false);
-//				int[] leftIndex = helper.getLeft (newPos);
-//				int[] newIndex = helper.getCellIndex (newPos);
-//				if (newIndex [0] == leftIndex [0] && newIndex [1] == leftIndex [1]) {
-//					newCell.discomfort += densityCont [0];
-//				} else if (newIndex [0] == leftIndex [0] + 1 && newIndex [1] == leftIndex [1]) {
-//					newCell.discomfort += densityCont [1];
-//				} else if (newIndex [0] == leftIndex [0] + 1 && newIndex [1] == leftIndex [1] + 1) {
-//					newCell.discomfort += densityCont [2];
-//				} else if (newIndex [0] == leftIndex [0] && newIndex [1] == leftIndex [1] + 1) {
-//					newCell.discomfort += densityCont [3];
-//				}
+				Vector2 newPos = simObject.getPosition () + time * simObject.velocity;
+				Cell newCell = helper.getCell (newPos);
+				float[] densityCont = calculateDensity(simObject, newPos, false);
+				int[] leftIndex = helper.getLeft (newPos);
+				int[] newIndex = helper.getCellIndex (newPos);
+
+				float agentWeight = 0.0f;
+
+
+				if (newIndex [0] == leftIndex [0] && newIndex [1] == leftIndex [1]) {
+					newCell.discomfort += densityCont [0] * agentWeight;
+				} else if (newIndex [0] == leftIndex [0] + 1 && newIndex [1] == leftIndex [1]) {
+					newCell.discomfort += densityCont [1]* agentWeight;
+				} else if (newIndex [0] == leftIndex [0] + 1 && newIndex [1] == leftIndex [1] + 1) {
+					newCell.discomfort += densityCont [2]* agentWeight;
+				} else if (newIndex [0] == leftIndex [0] && newIndex [1] == leftIndex [1] + 1) {
+					newCell.discomfort += densityCont [3]* agentWeight;
+				}
 
 			}
 			// calculate average velocity

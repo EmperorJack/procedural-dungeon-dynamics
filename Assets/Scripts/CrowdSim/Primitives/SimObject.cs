@@ -71,6 +71,7 @@ namespace Primitives
 		{
 			if (moveable) {
 				sceneObject.GetComponent<Rigidbody> ().velocity = new Vector3 (vel.x, 0, vel.y);
+				velocity = vel;
 			}
 
 		}

@@ -184,11 +184,16 @@ namespace CrowdSim
 			}
 		}
 
+		void FixedUpdate(){
+			if (simManager == null) return;
+
+			updateSim (Time.deltaTime);
+		}
+
 		void Update ()
 		{
 			if (simManager == null) return;
 
-			updateSim (Time.deltaTime);
 			Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
 			RaycastHit hit;
 
@@ -318,7 +323,7 @@ namespace CrowdSim
 
 		public void addAgent (Vector2 pos)
 		{
-			Debug.Log ("Total agents: " + simManager.addAgent (pos, simObject, true));
+			simManager.addAgent (pos, simObject, true);
 			executeUpdate (0);
 		}
 
