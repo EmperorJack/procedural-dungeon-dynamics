@@ -16,11 +16,11 @@ namespace CrowdSim
 		private Helper<Cell> helper;
 
 		// 'constant' values
-		float densityExp = 0.2f;
+		float densityExp = 0.1f;
 		// 0 (spread out) -> 10 (form lines)
 		public float maxCalcDensity = 0f;
 		public float minDensity = 1.0f;
-		public float maxDensity = 5.0f;
+		public float maxDensity = 10.0f;
 		public float maxVelocity = 1.0f;
 		public float distanceWeight = 0.2f;
 		public float timeWeight = 1.0f;
@@ -361,7 +361,7 @@ namespace CrowdSim
 										if (deltaP == 0) {
 											face.velocity = fT;
 										} else {
-											face.velocity = fT + ((face.cell.density - minDensity) / (deltaP)) * (fT - fS);
+											face.velocity = fT + ((face.cell.density - minDensity) / (deltaP)) * (fS -fT);
 										}
 									}
 								}
