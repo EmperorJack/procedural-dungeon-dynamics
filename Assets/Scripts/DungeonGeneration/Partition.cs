@@ -159,10 +159,16 @@ namespace DungeonGeneration {
 
         public new void Display(GameObject dungeonParent)
 	    {
-	        base.Display(dungeonParent);
-
-	        if (left != null) left.Display(dungeonParent);
-	        if (right != null) right.Display(dungeonParent);
+			// Intermediate node
+			if (left != null && right != null)
+			{
+				if (left != null) left.Display(dungeonParent);
+				if (right != null) right.Display(dungeonParent);
+			}
+			else // Leaf node
+			{
+				base.Display(dungeonParent);
+			}
 	    }
 
         public new void Hide()
@@ -180,7 +186,7 @@ namespace DungeonGeneration {
 
         public override int DisplayHeight()
         {
-            return 20 - depth;
+			return 0;
         }
     }
 }

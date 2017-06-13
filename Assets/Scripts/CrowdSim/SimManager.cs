@@ -19,7 +19,7 @@ namespace CrowdSim
 		public int dim;
 		public Helper<Cell> helper;
 
-		List<SimObject> simObjects;
+		public List<SimObject> simObjects;
 		GameObject simObjectsParent;
 
 		List<Color> groupColors;

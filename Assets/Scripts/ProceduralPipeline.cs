@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using CrowdSim;
+using Primitives;
 
 public class ProceduralPipeline : MonoBehaviour
 {
@@ -11,6 +12,8 @@ public class ProceduralPipeline : MonoBehaviour
 
 	public GameObject breakableWall = null;
 	private GameObject wallInstance;
+	private SimObject followAgent;
+	private List<float> angles;
 
 	// Dungeon components
 	public DungeonGeneration.DungeonLayoutGenerator dungeonLayoutGenerator;
@@ -93,10 +96,28 @@ public class ProceduralPipeline : MonoBehaviour
 		if (Input.GetKeyDown (KeyCode.Escape))
 			Application.Quit();
 
-		if (seed == 8115 && simAccess != null && Time.time > 5.0f && Time.frameCount % 4 == 0 && Time.time < 15.0f) {
-			simAccess.addAgent (new Vector2 (10.0f + Random.value * 0.5f, 26.0f + Random.value * 0.5f), 1);
-			simAccess.addAgent (new Vector2 (6.0f + Random.value * 0.5f, 9.0f + Random.value * 0.5f), 2);
+		if (seed == 5077 && simAccess != null && Time.time > 5.0f && Time.frameCount % 4 == 0 && Time.time < 15.0f) {
+			simAccess.addAgent (new Vector2 (28.0f + Random.value * 0.5f, 27.0f + Random.value * 0.5f), 0);
+			//simAccess.addAgent (new Vector2 (6.0f + Random.value * 0.5f, 9.0f + Random.value * 0.5f), 2);
+
+			//if (Time.time > 7.0f && followAgent == null) {
+			//	followAgent = simAccess.simManager.simObjects [simAccess.simManager.simObjects.Count - 1];
+			//	angles = new List<float> ();
+			//}
 		}
+
+		//if (followAgent != null) {
+		//	Camera.main.gameObject.transform.parent.position = followAgent.sceneObject.transform.position;
+		//
+		//	if (angles.Count == 20) angles.RemoveAt (1);
+		//	angles.Add(Vector3.Angle(followAgent.velocity, new Vector3(0.0f, 1.0f, 0.0f)));
+		//
+		//	float angle = 0.0f;
+		//	foreach (float a in angles) angle += a;
+		//	angle /= 20;
+		//
+		//	Camera.main.gameObject.transform.parent.rotation = Quaternion.Euler (0.0f, angle, 0.0f);
+		//}
 	}
 
 	public void Perform ()
@@ -133,17 +154,17 @@ public class ProceduralPipeline : MonoBehaviour
 
         createSim();
 
-		simAccess.addGroup ();
+		//simAccess.addGroup ();
 
-		if (seed == 8115) {
+		if (seed == 5077) {
 			wallInstance = MonoBehaviour.Instantiate (breakableWall);
 			wallInstance.transform.Translate (2.0f, 0.0f, 6.5f);
 
 			//simAccess.addGroup ();
-			simAccess.addGoal (new Vector2 (20.0f, 9.0f), false);
+			simAccess.addGoal (new Vector2 (7.0f, 11.0f), false);
 
-			simAccess.addGroup ();
-			simAccess.addGoal (new Vector2 (24.0f, 19.0f), false);
+			//simAccess.addGroup ();
+			//simAccess.addGoal (new Vector2 (24.0f, 19.0f), false);
 		}
 	}
 
