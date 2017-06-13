@@ -10,7 +10,7 @@ namespace CrowdSim
 {
 	public class SimManager
 	{
-		SharedGrid sharedGrid;
+		public SharedGrid sharedGrid;
 		public int groupId = -1;
 		public GroupGrid groupGrid;
 		public List<GroupGrid> groups;

@@ -58,6 +58,49 @@ namespace CrowdSim
 
 		}
 
+		public void setAvoidance(float avoidance){
+			if (simManager == null || simManager.sharedGrid == null) {
+				return;
+			}
+
+			simManager.sharedGrid.setAvoidance (avoidance);
+		}
+
+		public void setTimeWeight(float timeWeight){
+			if (simManager == null || simManager.sharedGrid == null) {
+				return;
+			}
+
+			simManager.sharedGrid.setTimeWeight (timeWeight);		}
+
+		public void setDistanceWeight(float distanceWeight){
+			if (simManager == null || simManager.sharedGrid == null) {
+				return;
+			}
+
+			simManager.sharedGrid.setDistanceWeight (distanceWeight);		}
+
+		public void setMaxDensity(float maxDensity){
+			if (simManager == null || simManager.sharedGrid == null) {
+				return;
+			}
+
+			simManager.sharedGrid.setMaxDensity (maxDensity);		}
+
+		public void setMinDensity(float minDensity){
+			if (simManager == null || simManager.sharedGrid == null) {
+				return;
+			}
+
+			simManager.sharedGrid.setMinDensity (minDensity);		}
+
+		public void setMaxVelocity(float maxVelocity){
+			if (simManager == null || simManager.sharedGrid == null) {
+				return;
+			}
+
+			simManager.sharedGrid.setMaxVelocity (maxVelocity);		}
+
 		void Start ()
 		{
 

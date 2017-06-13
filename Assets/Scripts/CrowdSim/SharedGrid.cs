@@ -20,11 +20,13 @@ namespace CrowdSim
 		// 0 (spread out) -> 10 (form lines)
 		public float maxCalcDensity = 0f;
 		public float minDensity = 2.0f;
-		public float maxDensity = 5.0f;
+		public float maxDensity = 10.0f;
 		public float maxVelocity = 1.0f;
-		public float distanceWeight = 0.5f;
+		public float distanceWeight = 0.2f;
 		public float timeWeight = 0.5f;
 		public float discomfortWeight = 1.0f;
+
+		public float objectAvoidance = 0.7f;
 
 		private bool customDungeon = false;
 
@@ -35,6 +37,30 @@ namespace CrowdSim
 		private List<SimObject> simObjects = new List<SimObject> ();
 
 		int ratio;
+
+		public void setAvoidance(float avoidance){
+			objectAvoidance = avoidance;
+		}
+
+		public void setTimeWeight(float timeWeight){
+			this.timeWeight = timeWeight;
+		}
+
+		public void setDistanceWeight(float distanceWeight){
+			this.distanceWeight = distanceWeight;
+		}
+
+		public void setMaxDensity(float maxDensity){
+			this.maxDensity = maxDensity;
+		}
+
+		public void setMinDensity(float minDensity){
+			this.minDensity = minDensity;
+		}
+
+		public void setMaxVelocity(float maxVelocity){
+			this.maxVelocity = maxVelocity;
+		}
 
 		public SharedGrid (float cellWidth, int dim, DungeonGeneration.Cell[,] dungeon, int ratio)
 		{
@@ -186,7 +212,7 @@ namespace CrowdSim
 			float dist = Mathf.Sqrt(Vector2.SqrMagnitude(cell.position - rbCenter));
 			Vector2 closestPoint = new Vector2 (rb.ClosestPointOnBounds (cellPos).x, rb.ClosestPointOnBounds (cellPos).z);
 			float closestDist = Mathf.Sqrt (Vector2.SqrMagnitude (cell.position - closestPoint));
-			cell.discomfort += simObject.densityWeight * (1.0f - (closestDist/ dist));
+			cell.discomfort += objectAvoidance * simObject.densityWeight * (1.0f - (closestDist/ dist));
 		}
 
 		public float[] calculateDensity (SimObject simObject, Vector2 pos, bool assign)
@@ -356,7 +382,7 @@ namespace CrowdSim
 
 			Vector2 offset = neighbour.position - cell.position;
 		
-			return Mathf.Max (Vector2.Dot (neighbour.avgVelocity, offset), 0.01f);
+			return Mathf.Max (Vector2.Dot (neighbour.avgVelocity, offset), 0.1f);
 		}
 
 		public virtual void update (float time)
