@@ -5,6 +5,8 @@ using CrowdSim;
 
 public class ProceduralPipeline : MonoBehaviour
 {
+	// Seed
+	public int seed = 0;
 
 	// Dungeon components
 	public DungeonGeneration.DungeonLayoutGenerator dungeonLayoutGenerator;
@@ -69,6 +71,9 @@ public class ProceduralPipeline : MonoBehaviour
 
 	public void Perform ()
 	{
+		// Set the user set seed
+		if (seed != 0) Random.InitState(seed);
+
 		Reset();
 
 		dungeonLayoutGenerator.Generate();
