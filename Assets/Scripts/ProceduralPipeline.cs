@@ -99,8 +99,17 @@ public class ProceduralPipeline : MonoBehaviour
 	public void toggleTextUI(){
 		if (simAccess == null) {
 			return;
-		} else
+		} else {
 			simAccess.toggleTextUI ();
+		}
+	}
+
+	public void toggleRevive(){
+		if (simAccess == null) {
+			return;
+		} else {
+			simAccess.toggleRevive ();
+		}
 	}
 
 	public void createSim ()
@@ -146,6 +155,8 @@ public class ProceduralPipeline : MonoBehaviour
 			decreaseLaneFormation ();
 		if (Input.GetKeyDown (KeyCode.L))
 			toggleTextUI ();
+		if (Input.GetKeyDown (KeyCode.K))
+			toggleRevive ();
 		
 	}
 

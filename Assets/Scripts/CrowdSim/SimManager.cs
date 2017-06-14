@@ -31,7 +31,7 @@ namespace CrowdSim
 
 		bool pause = true;
 
-		bool revive = true;
+		bool revive = false;
 
 		public void reset ()
 		{
@@ -111,7 +111,7 @@ namespace CrowdSim
 		public void swapAgent(SimObject toSwap, int groupId){
 			// change color
 			//
-			if (groups.Count <= 0) {
+			if (groups.Count <= 1) {
 				return;
 			}
 			int randomGroup = groupId;
