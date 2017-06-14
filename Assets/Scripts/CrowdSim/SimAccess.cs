@@ -179,9 +179,6 @@ namespace CrowdSim
 				Gizmos.DrawCube(new Vector3(pos.x, 0.01f, pos.y), new Vector3(0.1f, 0.1f,0.1f));
 			}
 
-			Gizmos.color = Color.yellow;
-			Gizmos.DrawLine (new Vector3 (0, 0.1f, 0), new Vector3 (0, 0.1f, 10f));
-			Gizmos.DrawLine (new Vector3 (0, 0.1f, 0), new Vector3 (10f, 0.1f, 0));
 			if (displayField > 0) {
 				Primitives.Cell[,] grid = simManager.groupGrid.grid;
 				for (int i = 0; i < grid.GetLength (0); i++) {
@@ -251,12 +248,7 @@ namespace CrowdSim
 
 					justAdd = false;
 					if (action.Equals ("goal")) {
-						int[] selectedIndex = addGoal (new Vector2 (hitPosition.x, hitPosition.z), justAdd);
-						if (selectedIndex != null) {
-							print ("Selected cell: " + selectedIndex [0] + " " + selectedIndex [1]);
-						} else {
-							print ("Failed to select cell at: " + hitPosition.x + " " + hitPosition.z);
-						}
+						addGoal (new Vector2 (hitPosition.x, hitPosition.z));
 					}
 
 					if (action.Equals ("select")) {
@@ -274,14 +266,9 @@ namespace CrowdSim
 						addAgent (new Vector2 (hitPosition.x, hitPosition.z));
 					}
 
-					justAdd = false;
 					if (action.Equals ("goal")) {
-						int[] selectedIndex = addGoal (new Vector2 (hitPosition.x, hitPosition.z), justAdd);
-						if (selectedIndex != null) {
-							print ("Selected cell: " + selectedIndex [0] + " " + selectedIndex [1]);
-						} else {
-							print ("Failed to select cell at: " + hitPosition.x + " " + hitPosition.z);
-						}
+						addGoal (new Vector2 (hitPosition.x, hitPosition.z));
+
 					}
 				}
 			}				
@@ -328,22 +315,12 @@ namespace CrowdSim
 			}
 		}
 
-		public int[] addGoal (Vector2 pos, bool justAdd)
+		public void addGoal (Vector2 pos)
 		{
-			GameObject goalObject = Instantiate (goalPrefab);
-			int[] index = simManager.addGoal (pos, justAdd, goalObject);
-			if (groupGraphics [simManager.groupId] != null) {
-				GridCell graphicCell = groupGraphics [simManager.groupId].getDispCell (index);
-
-				if (graphicCell != null) {
-					if (graphicCell.getColor ().Equals (Color.green) && justAdd == false) {
-						graphicCell.setColor (Color.black);
-					} else {
-						graphicCell.setColor (Color.green);
-					}
-				} 
+			GameObject goalObject = Instantiate (goalPrefab);;
+			if (simManager.addGoal (pos, goalObject) == false) {
+				Object.Destroy (goalObject);
 			}
-			return index;
 		}
 
 		public void selectCell (Vector2 pos)
@@ -371,12 +348,10 @@ namespace CrowdSim
 		public void addAgent (Vector2 pos)
 		{
 			simManager.addAgent (pos, simObject, true);
-			executeUpdate (0);
 		}
 
 		public void addAgent(Vector2 pos, int id){
 			simManager.addAgent (pos, simObject, true, id);
-			executeUpdate (0);
 		}
 
 		private void displayGrid (GridGraphics graphics)
@@ -437,6 +412,39 @@ namespace CrowdSim
 				return;
 			}
 			simManager.decreaseAvoidance ();
+		}
+
+		public void decreaseDensityExp(){
+			if (simManager == null) {
+				return;
+			}
+
+			simManager.decreaseDensityExp ();
+		}
+
+		public void increaseDensityExp(){
+			if (simManager == null) {
+				return;
+			}
+
+			simManager.increaseDensityExp ();
+
+		}
+
+		public void decreaseLaneFormation(){
+			if (simManager == null) {
+				return;
+			}
+
+			simManager.decreaseLaneFormation ();
+		}
+
+		public void increaseLaneFormation(){
+			if (simManager == null) {
+				return;
+			}
+
+			simManager.increaseLaneFormation ();
 		}
 			
 	}

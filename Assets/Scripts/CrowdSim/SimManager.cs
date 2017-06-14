@@ -109,13 +109,12 @@ namespace CrowdSim
 	
 		}
 
-		public int[] addGoal (Vector2 pos, bool justAdd, GameObject goalObject)
+		public bool addGoal (Vector2 pos, GameObject goalObject)
 		{
 			Cell cell = helper.getCell (pos);
 			int[] index = helper.getCellIndex (pos);
 
 			if (cell.isGoal == false) {
-
 				goalObject.transform.parent = simObjectsParent.transform;
 				goalObject.transform.name = "GroupGoal" + groupId;
 
@@ -128,17 +127,10 @@ namespace CrowdSim
 				goalScript.setGroupId (groupId);
 				cell.isGoal = true;
 				groupGrid.addGoal (cell);
+				return true;
 			}
 
-//			if (cell != null) {
-//				if (cell.isGoal && justAdd == false) {
-//					cell.isGoal = false;
-//				} else {
-//					cell.isGoal = true;
-//				}
-//				groupGrid.addGoal (cell);
-//			} 
-			return index;
+			return false;
 		}
 
 		public int[] getCell (Vector2 pos)
@@ -243,6 +235,31 @@ namespace CrowdSim
 			//t.parent = simObjectsParent.transform;
 			t.localScale = new Vector3 (0.5f, 0.5f, 0.5f);
 			t.position = new Vector3 (pos.x, 0, pos.y);
+		}
+
+
+		public void increaseLaneFormation(){
+			if (sharedGrid != null) {
+				sharedGrid.increasePathAvoidance ();
+			}
+		}
+
+		public void decreaseLaneFormation(){
+			if (sharedGrid != null) {
+				sharedGrid.decreasePathAvoidance ();
+			}
+		}
+
+		public void increaseDensityExp(){
+			if (sharedGrid != null) {
+				sharedGrid.increaseDensityExp ();
+			}
+		}
+
+		public void decreaseDensityExp(){
+			if (sharedGrid != null) {
+				sharedGrid.decreaseDensityExp ();
+			}
 		}
 
 		private GameObject createDummyAgent (Vector2 pos)

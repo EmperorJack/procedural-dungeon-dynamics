@@ -16,6 +16,8 @@ namespace CrowdSim
 
 		private Helper<Cell> helper;
 
+		float pathAvoidance = 2.0f;
+
 		// 'constant' values
 		float densityExp = 0.1f;
 		// 0 (spread out) -> 10 (form lines)
@@ -202,9 +204,37 @@ namespace CrowdSim
 			}
 		}
 
+		public void increasePathAvoidance(){
+			pathAvoidance += 1.0f;
+			if (pathAvoidance >= 5.0f) {
+				pathAvoidance = 1.0f;
+			}
+		}
+
+		public void decreasePathAvoidance(){
+			pathAvoidance -= 1.0f;
+			if (pathAvoidance <= 1.0f) {
+				pathAvoidance = 1.0f;
+			}
+		}
+
+		public void increaseDensityExp(){
+			densityExp += 0.1f;
+			if (densityExp > 0.6) {
+				densityExp = 0.6f;
+			}
+		}
+
+		public void decreaseDensityExp(){
+			densityExp -= 0.1f;
+			if (densityExp < 0.1f) {
+				densityExp = 0.1f;
+			}
+		}
+
 		public void assignDiscomfort(SimObject simObject){
-			float maxStep = 15.0f;
-			for (float step = 4.0f; step <= maxStep; step=step+1.0f) {
+			float maxStep = 2 + pathAvoidance;
+			for (float step = 2.0f; step <= maxStep; step=step+1.0f) {
 				float deltaTime = step* (System.DateTime.Now.Millisecond - prevTime) * 0.001f;
 				Vector2 newPos = simObject.getPosition () + deltaTime * simObject.velocity;
 				prevTime = System.DateTime.Now.Millisecond;
@@ -232,7 +262,9 @@ namespace CrowdSim
 			float dist = Mathf.Sqrt (Vector2.SqrMagnitude (cell.position - rbCenter));
 			Vector2 closestPoint = new Vector2 (rb.ClosestPointOnBounds (cellPos).x, rb.ClosestPointOnBounds (cellPos).z);
 			float closestDist = Mathf.Sqrt (Vector2.SqrMagnitude (cell.position - closestPoint));
-			cell.discomfort += objectAvoidance * simObject.densityWeight * (1.0f - (closestDist / dist));
+			foreach (GroupGrid groupGrid in groups) {
+				groupGrid.grid[cell.index[0],cell.index[1]].discomfort+= objectAvoidance * simObject.densityWeight * (1.0f - (closestDist / dist));
+			}
 		}
 
 		public void calculateDensity (SimObject simObject, Vector2 pos, bool assign, float discomfortWieght, Cell[,] grid)
