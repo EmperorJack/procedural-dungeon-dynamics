@@ -93,3 +93,20 @@ At runtime:
 **Fracturing**
 
 **Crowd Simulation**
+
+
+----------
+
+
+#### Attributions
+
+Models:
+- www.turbosquid.com (list here)
+- The remainder were modelled by us.
+
+Textures:
+- www.textures.com (all?)
+
+Audio:
+- www.freesfx.co.uk (all?)
+- Torch flame -  http://freesound.org/people/stratcat322/sounds/233189/
