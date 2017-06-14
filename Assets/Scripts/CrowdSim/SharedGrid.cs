@@ -452,6 +452,7 @@ namespace CrowdSim
 			assignSpeedField ();
 			assignCosts ();
 		}
+			
 	}
 }
 

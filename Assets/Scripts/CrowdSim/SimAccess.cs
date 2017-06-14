@@ -57,6 +57,11 @@ namespace CrowdSim
 		public GameObject pausedText;
 		public GameObject reviveText;
 			
+		List<SliderScript> sliders = new List<SliderScript>();
+
+		public void addSlider(SliderScript slider){
+			sliders.Add (slider);
+		}
 
 		public void reset ()
 		{
@@ -113,6 +118,21 @@ namespace CrowdSim
 			}
 
 			simManager.sharedGrid.setMaxVelocity (maxVelocity);		
+		}
+
+		public void sliderAction(string action, float value){
+			if (simManager == null) {
+				return;
+			}
+//			if (action.Equals ("time")) {
+//				simManager.setTimeWeight (value);
+//			} else if (action.Equals ("distance")) {
+//				simManager.setDistanceWeight (value);
+//			} else if (action.Equals ("minDensity")) {
+//				simManager.setMinDensity(value);
+//			} else if(action.Equals("maxDensity")){
+//				simManager.setMaxDensity(value);
+//			}
 		}
 
 		public void toggleRevive(){

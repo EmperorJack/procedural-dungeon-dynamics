@@ -442,6 +442,22 @@ namespace CrowdSim
 			return avoidance.ToString ("#.##");
 		}
 
+		public void setDistanceWeight(float distanceWeight){
+			sharedGrid.setDistanceWeight (distanceWeight);
+		}
+
+		public void setTimeWeight(float timeWeight){
+			sharedGrid.setTimeWeight (timeWeight);
+		}
+
+		public void setMaxDensity(float max){
+			sharedGrid.setMaxDensity (max);
+		}
+
+		public void setMinDensity(float min){
+			sharedGrid.setMinDensity (min);
+		}
+
 		public void resetGrids ()
 		{
 			for (int i = 0; i < dim; i++) {
