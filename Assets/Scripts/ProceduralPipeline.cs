@@ -161,27 +161,29 @@ public class ProceduralPipeline : MonoBehaviour
 		dungeonLayoutGenerator.Generate();
 		simpleLayout = dungeonLayoutGenerator.GetSimpleLayout();
 
-		dungeonAssetPopulator.Setup(
-			dungeonLayoutGenerator.GetRooms(),
-			dungeonLayoutGenerator.GetCorridors(),
-			dungeonLayoutGenerator.GetGridSpacing()
-		);
+		dungeonLayoutGenerator.Display ();
 
-		dungeonAnchorGenerator.Generate(
-			dungeonLayoutGenerator.GetRooms(),
-			dungeonLayoutGenerator.GetGridSpacing()
-		);
-
-		anchors = dungeonAnchorGenerator.GetAnchors();
-
-		dungeonObjectPlacer.Setup(anchors);
-
-		DisplayComplexLayout();
-
-		DisplayObjects();
-        populatedObjects = dungeonObjectPlacer.GetPopulatedObjects();
-
-        createSim();
+//		dungeonAssetPopulator.Setup(
+//			dungeonLayoutGenerator.GetRooms(),
+//			dungeonLayoutGenerator.GetCorridors(),
+//			dungeonLayoutGenerator.GetGridSpacing()
+//		);
+//
+//		dungeonAnchorGenerator.Generate(
+//			dungeonLayoutGenerator.GetRooms(),
+//			dungeonLayoutGenerator.GetGridSpacing()
+//		);
+//
+//		anchors = dungeonAnchorGenerator.GetAnchors();
+//
+//		dungeonObjectPlacer.Setup(anchors);
+//
+//		DisplayComplexLayout();
+//
+//		DisplayObjects();
+//        populatedObjects = dungeonObjectPlacer.GetPopulatedObjects();
+//
+//        createSim();
 	}
 
 	public void swapGroups(){

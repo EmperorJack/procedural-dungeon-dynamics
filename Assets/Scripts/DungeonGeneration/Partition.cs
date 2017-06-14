@@ -104,15 +104,15 @@ namespace DungeonGeneration {
 				right.MakeCorridors(corridors);
 
                 // Connect left and right partitions by corridor
-                Corridor corridor = CorridorBuilder.CreateCorridor(generator, left, right, horizontalCut, corridors); 
-                if (corridor != null) corridors.Add(corridor);
+                List<Corridor> corridor = CorridorBuilder.CreateCorridor(generator, left, right, horizontalCut, corridors); 
+                if (corridor != null) corridors.AddRange(corridor);
 
                 if (depth > generator.GetTreeDepth() - generator.addLoopsToLevel - 1 &&
                     depth <= generator.GetTreeDepth() - generator.addLoopsFromLevel - 1 &&
                     generator.loopSpawnChance > UnityEngine.Random.value)
                 {
                     corridor = CorridorBuilder.CreateCorridor(generator, left, right, horizontalCut, corridors);
-                    if (corridor != null) corridors.Add(corridor);
+                    if (corridor != null) corridors.AddRange(corridor);
                 }
 
                 allCorridors.AddRange(corridors);

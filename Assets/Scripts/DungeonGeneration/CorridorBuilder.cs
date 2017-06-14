@@ -39,7 +39,7 @@ namespace DungeonGeneration {
 	        }
 	    }
 
-	    public static Corridor CreateCorridor(DungeonLayoutGenerator generator, Partition partitionA, Partition partitionB, bool horizontalCut, List<Corridor> existingCorridors)
+	    public static List<Corridor> CreateCorridor(DungeonLayoutGenerator generator, Partition partitionA, Partition partitionB, bool horizontalCut, List<Corridor> existingCorridors)
 	    {
 	        List<ConnectableGridArea> areasA = new List<ConnectableGridArea>();
 	        partitionA.GetRooms(areasA);
@@ -261,35 +261,37 @@ namespace DungeonGeneration {
             }
 
             // Choose a corridor placement
-            PossibleOverlap chosenOverlap = overlap[UnityEngine.Random.Range(0, overlap.Count)];
+//            PossibleOverlap chosenOverlap = overlap[UnityEngine.Random.Range(0, overlap.Count)];
 
-            int xFinal = (int)chosenOverlap.posA.x;
-            int yFinal = (int)chosenOverlap.posA.y;
-            int widthFinal;
-            int heightFinal;
+			List<Corridor> corridors = new List<Corridor>();
+			foreach (PossibleOverlap chosenOverlap in overlap) {
+				int xFinal = (int)chosenOverlap.posA.x;
+				int yFinal = (int)chosenOverlap.posA.y;
+				int widthFinal;
+				int heightFinal;
 
-            if (horizontalCut)
-            {
-                widthFinal = 1;
-                heightFinal = (int)(chosenOverlap.posB.y - chosenOverlap.posA.y);
-            }
-            else // Vertical cut
-            {
-                widthFinal = (int)(chosenOverlap.posB.x - chosenOverlap.posA.x);
-                heightFinal = 1;
-            }
+				if (horizontalCut) {
+					widthFinal = 1;
+					heightFinal = (int)(chosenOverlap.posB.y - chosenOverlap.posA.y);
+				} else { // Vertical cut
+					widthFinal = (int)(chosenOverlap.posB.x - chosenOverlap.posA.x);
+					heightFinal = 1;
+				}
 
-            int id = generator.NextCorridorId();
+				int id = generator.NextCorridorId ();
 
-            Corridor corridor = new Corridor(id, generator, xFinal, yFinal, widthFinal, heightFinal, !horizontalCut);
+				Corridor corridor = new Corridor (id, generator, xFinal, yFinal, widthFinal, heightFinal, !horizontalCut);
 
-            // Setup connection relationships between areas
-            chosenOverlap.areaA.AddConnectedCorridor(corridor);
-            chosenOverlap.areaB.AddConnectedCorridor(corridor);
-            chosenOverlap.areaA.AddDoorPosition(new Vector2(chosenOverlap.posA.x - (horizontalCut ? 0.0f : 1.0f), chosenOverlap.posA.y - (horizontalCut ? 1.0f : 0.0f)));
-            chosenOverlap.areaB.AddDoorPosition(new Vector2(chosenOverlap.posB.x, chosenOverlap.posB.y));
+				// Setup connection relationships between areas
+				chosenOverlap.areaA.AddConnectedCorridor (corridor);
+				chosenOverlap.areaB.AddConnectedCorridor (corridor);
+				chosenOverlap.areaA.AddDoorPosition (new Vector2 (chosenOverlap.posA.x - (horizontalCut ? 0.0f : 1.0f), chosenOverlap.posA.y - (horizontalCut ? 1.0f : 0.0f)));
+				chosenOverlap.areaB.AddDoorPosition (new Vector2 (chosenOverlap.posB.x, chosenOverlap.posB.y));
 
-            return corridor;
+				corridors.Add (corridor);
+			}
+
+            return corridors;
         }
 	}
 }
