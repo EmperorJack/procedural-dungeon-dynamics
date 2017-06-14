@@ -237,6 +237,31 @@ namespace CrowdSim
 			t.position = new Vector3 (pos.x, 0, pos.y);
 		}
 
+
+		public void increaseLaneFormation(){
+			if (sharedGrid != null) {
+				sharedGrid.increasePathAvoidance ();
+			}
+		}
+
+		public void decreaseLaneFormation(){
+			if (sharedGrid != null) {
+				sharedGrid.decreasePathAvoidance ();
+			}
+		}
+
+		public void increaseDensityExp(){
+			if (sharedGrid != null) {
+				sharedGrid.increaseDensityExp ();
+			}
+		}
+
+		public void decreaseDensityExp(){
+			if (sharedGrid != null) {
+				sharedGrid.decreaseDensityExp ();
+			}
+		}
+
 		private GameObject createDummyAgent (Vector2 pos)
 		{
 			GameObject dummy = GameObject.CreatePrimitive (PrimitiveType.Cylinder);

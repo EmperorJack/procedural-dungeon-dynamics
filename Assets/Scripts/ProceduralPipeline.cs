@@ -63,6 +63,38 @@ public class ProceduralPipeline : MonoBehaviour
 		simAccess.decreaseAvoidance ();
 	}
 
+	public void increaseDensityExp(){
+		if (simAccess == null) {
+			return;
+		}
+
+		simAccess.increaseDensityExp ();
+	}
+
+	public void decreaseDensityExp(){
+		if (simAccess == null) {
+			return;
+		}
+			
+		simAccess.decreaseDensityExp ();
+	}
+
+
+	public void increaseLaneFormation(){
+		if (simAccess == null) {
+			return;
+		}
+
+		simAccess.increaseLaneFormation ();
+	}
+
+	public void decreaseLaneFormation(){
+		if (simAccess == null) {
+			return;
+		}
+
+		simAccess.decreaseLaneFormation ();
+	}
 	public void createSim ()
 	{
 		if (simAccess == null) {
@@ -94,6 +126,15 @@ public class ProceduralPipeline : MonoBehaviour
 			Application.Quit();
 		if (Input.GetKeyDown (KeyCode.Z))
 			togglePause ();
+		if (Input.GetKeyDown (KeyCode.B))
+			increaseDensityExp ();
+		if (Input.GetKeyDown (KeyCode.V))
+			decreaseDensityExp ();
+		if (Input.GetKeyDown (KeyCode.C))
+			increaseLaneFormation ();
+		if (Input.GetKeyDown (KeyCode.X))
+			decreaseLaneFormation ();
+		
 	}
 
 	public void Perform ()

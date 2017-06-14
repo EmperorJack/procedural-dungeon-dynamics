@@ -413,6 +413,39 @@ namespace CrowdSim
 			}
 			simManager.decreaseAvoidance ();
 		}
+
+		public void decreaseDensityExp(){
+			if (simManager == null) {
+				return;
+			}
+
+			simManager.decreaseDensityExp ();
+		}
+
+		public void increaseDensityExp(){
+			if (simManager == null) {
+				return;
+			}
+
+			simManager.increaseDensityExp ();
+
+		}
+
+		public void decreaseLaneFormation(){
+			if (simManager == null) {
+				return;
+			}
+
+			simManager.decreaseLaneFormation ();
+		}
+
+		public void increaseLaneFormation(){
+			if (simManager == null) {
+				return;
+			}
+
+			simManager.increaseLaneFormation ();
+		}
 			
 	}
 }

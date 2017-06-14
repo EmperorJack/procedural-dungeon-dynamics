@@ -16,8 +16,10 @@ namespace CrowdSim
 
 		private Helper<Cell> helper;
 
+		float pathAvoidance = 2.0f;
+
 		// 'constant' values
-		float densityExp = 0.4f;
+		float densityExp = 0.1f;
 		// 0 (spread out) -> 10 (form lines)
 		public float maxCalcDensity = 0f;
 		public float minDensity = 5.0f;
@@ -202,8 +204,36 @@ namespace CrowdSim
 			}
 		}
 
+		public void increasePathAvoidance(){
+			pathAvoidance += 1.0f;
+			if (pathAvoidance >= 5.0f) {
+				pathAvoidance = 1.0f;
+			}
+		}
+
+		public void decreasePathAvoidance(){
+			pathAvoidance -= 1.0f;
+			if (pathAvoidance <= 1.0f) {
+				pathAvoidance = 1.0f;
+			}
+		}
+
+		public void increaseDensityExp(){
+			densityExp += 0.1f;
+			if (densityExp > 0.6) {
+				densityExp = 0.6f;
+			}
+		}
+
+		public void decreaseDensityExp(){
+			densityExp -= 0.1f;
+			if (densityExp < 0.1f) {
+				densityExp = 0.1f;
+			}
+		}
+
 		public void assignDiscomfort(SimObject simObject){
-			float maxStep = 6.0f;
+			float maxStep = 2 + pathAvoidance;
 			for (float step = 2.0f; step <= maxStep; step=step+1.0f) {
 				float deltaTime = step* (System.DateTime.Now.Millisecond - prevTime) * 0.001f;
 				Vector2 newPos = simObject.getPosition () + deltaTime * simObject.velocity;
