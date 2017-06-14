@@ -55,6 +55,7 @@ namespace CrowdSim
 		public GameObject groupText;
 		public GameObject actionText;
 		public GameObject pausedText;
+		public GameObject reviveText;
 			
 
 		public void reset ()
@@ -111,7 +112,14 @@ namespace CrowdSim
 				return;
 			}
 
-			simManager.sharedGrid.setMaxVelocity (maxVelocity);		}
+			simManager.sharedGrid.setMaxVelocity (maxVelocity);		
+		}
+
+		public void toggleRevive(){
+			if (simManager != null) {
+				reviveText.GetComponent<Text>().text = simManager.toggleRevive ();
+			}
+		}
 
 		void Start ()
 		{
@@ -232,6 +240,7 @@ namespace CrowdSim
 
 			groupText.GetComponent<Text> ().text = "0";
 			pausedText.GetComponent<Text> ().text = "Paused";
+			reviveText.GetComponent<Text> ().text = "False";
 		}
 
 		public void toggleTextUI(){
@@ -241,6 +250,7 @@ namespace CrowdSim
 			laneText.SetActive (!laneText.activeSelf);
 			groupText.SetActive (!groupText.activeSelf);
 			pausedText.SetActive (!pausedText.activeSelf);
+			reviveText.SetActive (!reviveText.activeSelf);
 
 		}
 

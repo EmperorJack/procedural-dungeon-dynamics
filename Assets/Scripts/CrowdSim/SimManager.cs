@@ -31,6 +31,8 @@ namespace CrowdSim
 
 		bool pause = true;
 
+		bool revive = true;
+
 		public void reset ()
 		{
 			foreach (SimObject simObject in simObjects) {
@@ -50,6 +52,16 @@ namespace CrowdSim
 				return "Paused";
 			} else {
 				return "Running";
+			}
+		}
+
+		public string toggleRevive()
+		{
+			revive = !revive;
+			if (revive) {
+				return "True";
+			} else {
+				return "False";
 			}
 		}
 
@@ -96,6 +108,26 @@ namespace CrowdSim
 			}
 		}
 
+		public void swapAgent(SimObject toSwap, int groupId){
+			// change color
+			//
+			if (groups.Count <= 0) {
+				return;
+			}
+			int randomGroup = groupId;
+			GameObject sceneObject = toSwap.sceneObject;
+			while (randomGroup == groupId) {
+				randomGroup = Random.Range (0, groups.Count);
+			}
+
+			Material mat = sceneObject.GetComponent<Renderer> ().material;
+
+			mat.color = groupColors [randomGroup];
+
+			groups [groupId].simObjects.Remove (toSwap);
+			groups [randomGroup].simObjects.Add (toSwap);
+		}
+
 		public void removeAgent (GameObject toRemove, int groupId)
 		{
 			Rigidbody rb = toRemove.GetComponent<Rigidbody> ();
@@ -104,11 +136,16 @@ namespace CrowdSim
 			foreach (SimObject simObject in groups[groupId].simObjects) {
 				if (simObject.getPosition () == pos) {
 					groups [groupId].simObjects.Remove (simObject);
-					sharedGrid.removeAgent (simObject);
-					simObjects.Remove (simObject);
+					if (revive) {
+						swapAgent (simObject, groupId);
+					} else {
+						sharedGrid.removeAgent (simObject);
+						simObjects.Remove (simObject);
 
-					Object.Destroy (simObject.sceneObject);
+						Object.Destroy (simObject.sceneObject);
+					}
 					return;
+
 				}
 			}
 	
@@ -207,7 +244,7 @@ namespace CrowdSim
 				return "UnPaused";
 			}
 		}
-
+			
 		public int addAgent (Vector2 pos, GameObject sceneObject, bool moveable)
 		{
 			SimObject simObject = null;
