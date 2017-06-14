@@ -275,6 +275,9 @@ namespace CrowdSim
 				int[] index = helper.getLeft (simObject.getPosition ());
 				Cell leftCell = helper.accessGridCell (index);
 
+				if (leftCell == null) {
+					return;
+				}
 				//simObject.velocity = leftCell.groupVelocity;
 
 				// interpolate center of each surrounding cell

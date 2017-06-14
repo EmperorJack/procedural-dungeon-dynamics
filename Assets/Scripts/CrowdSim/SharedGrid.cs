@@ -45,6 +45,18 @@ namespace CrowdSim
 
 		int prevTime;
 
+		public void setObjectAvoidance(float oA){
+			this.objectAvoidance = oA;
+		}
+
+		public void setDensityExponent(float densityExp){
+			this.densityExp = densityExp;
+		}
+
+		public void setPathAvoidance(float pA){
+			pathAvoidance = pA;
+		}
+
 		public void setAvoidance (float avoidance)
 		{
 			objectAvoidance = avoidance;

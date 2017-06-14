@@ -31,7 +31,7 @@ namespace CrowdSim
 
 		bool pause = true;
 
-		bool revive = true;
+		bool revive = false;
 
 		public void reset ()
 		{
@@ -81,13 +81,12 @@ namespace CrowdSim
 			groups = new List<GroupGrid> ();
 
 			//groupGrid = new GroupGrid (cellWidth, dim, sharedGrid, dungeon,gridRatio);
-			Debug.Log ("Default: " + defaultSetup);
 			if (defaultSetup) {
 				defaultInit ();
 			} else {
-				addGroup ();
+				//addGroup ();
 			}
-			helper = new Helper<Cell> (groups [0].grid, cellWidth, gridRatio);
+			helper = new Helper<Cell> (sharedGrid.grid, cellWidth, gridRatio);
 
 			sharedGrid.setAvoidance (avoidance);
 		}
@@ -111,7 +110,7 @@ namespace CrowdSim
 		public void swapAgent(SimObject toSwap, int groupId){
 			// change color
 			//
-			if (groups.Count <= 0) {
+			if (groups.Count <= 1) {
 				return;
 			}
 			int randomGroup = groupId;
@@ -122,7 +121,7 @@ namespace CrowdSim
 
 			Material mat = sceneObject.GetComponent<Renderer> ().material;
 
-			mat.color = groupColors [randomGroup];
+			mat.color = groups[randomGroup].color;
 
 			groups [groupId].simObjects.Remove (toSwap);
 			groups [randomGroup].simObjects.Add (toSwap);
@@ -135,8 +134,10 @@ namespace CrowdSim
 
 			foreach (SimObject simObject in groups[groupId].simObjects) {
 				if (simObject.getPosition () == pos) {
-					groups [groupId].simObjects.Remove (simObject);
 					if (revive) {
+						if (groups.Count <= 1) {
+							return;
+						}
 						swapAgent (simObject, groupId);
 					} else {
 						sharedGrid.removeAgent (simObject);
@@ -144,6 +145,9 @@ namespace CrowdSim
 
 						Object.Destroy (simObject.sceneObject);
 					}
+
+					groups [groupId].simObjects.Remove (simObject);
+
 					return;
 
 				}
@@ -153,25 +157,26 @@ namespace CrowdSim
 
 		public bool addGoal (Vector2 pos, GameObject goalObject)
 		{
-			Cell cell = helper.getCell (pos);
-			int[] index = helper.getCellIndex (pos);
+			if (groups.Count > 0) {
+				Cell cell = helper.getCell (pos);
+				int[] index = helper.getCellIndex (pos);
 
-			if (cell.isGoal == false) {
-				goalObject.transform.parent = simObjectsParent.transform;
-				goalObject.transform.name = "GroupGoal" + groupId;
+				if (cell.isGoal == false) {
+					goalObject.transform.parent = simObjectsParent.transform;
+					goalObject.transform.name = "GroupGoal" + groupId;
 
-				Light goalLight = goalObject.GetComponentInChildren<Light> ();
-				goalLight.color = groupGrid.color / 2.0f;
+					Light goalLight = goalObject.GetComponentInChildren<Light> ();
+					goalLight.color = groupGrid.color / 2.0f;
 
-				goalObject.transform.position = new Vector3 (cell.position.x, 0.001f, cell.position.y);
-				colliderScript goalScript = goalObject.GetComponent<colliderScript> ();
-				goalScript.setManager (this);
-				goalScript.setGroupId (groupId);
-				cell.isGoal = true;
-				groupGrid.addGoal (cell);
-				return true;
+					goalObject.transform.position = new Vector3 (cell.position.x, 0.001f, cell.position.y);
+					colliderScript goalScript = goalObject.GetComponent<colliderScript> ();
+					goalScript.setManager (this);
+					goalScript.setGroupId (groupId);
+					cell.isGoal = true;
+					groupGrid.addGoal (cell);
+					return true;
+				}
 			}
-
 			return false;
 		}
 
@@ -237,18 +242,22 @@ namespace CrowdSim
 			return groupId;
 		}
 
-		public string getPaused(){
-			if (pause) {
-				return "Paused";
-			} else {
-				return "UnPaused";
-			}
+		public bool getPaused(){
+			return pause;
 		}
 			
 		public int addAgent (Vector2 pos, GameObject sceneObject, bool moveable)
 		{
+			if (groups.Count <= 0 && moveable) {
+				return 0;
+			}
+
 			SimObject simObject = null;
 			int[] index = helper.getLeft (pos);
+
+			if (helper.accessGridCell (index) == null || helper.accessGridCell (index).exists == false) {
+				return simObjects.Count;
+			}
 
 			if (sceneObject == null) {
 				sceneObject = createDummyAgent (pos);
@@ -260,7 +269,7 @@ namespace CrowdSim
 					if (groupId > 0) {
 						Material mat = sceneObject.GetComponent<Renderer> ().material;
 
-						mat.color = groupColors [groupId];
+						mat.color = groupGrid.color;
 						//rend.material = mat;
 					}
 					initGameObject (pos, sceneObject);
@@ -328,7 +337,10 @@ namespace CrowdSim
 
 		public float getMax ()
 		{
-			return groupGrid.getMax ();
+			if (groupGrid != null) {
+				return groupGrid.getMax ();
+			}
+			return 0.0f;
 		}
 
 		public float getMaxDensity ()
@@ -343,13 +355,12 @@ namespace CrowdSim
 			} else {
 				groupGrid.trigger = true;
 			}
-			Debug.Log ("Trigger: " + groupGrid.trigger);
 		}
 
 		Color[] colors = new Color[]{ Color.green, Color.blue, Color.yellow, Color.red };
 		int colorId = -1;
 
-		public void addGroup ()
+		public Color addGroup ()
 		{
 			colorId++;
 			if (colorId >= colors.GetLength (0)) {
@@ -370,7 +381,8 @@ namespace CrowdSim
 			groupGrid.groupId = groupId;
 			helper = new Helper<Cell> (groups [groupId].grid, cellWidth, gridRatio);
 
-			Debug.Log ("Now editing group: " + groupId);
+
+			return colors [groupId];
 		}
 
 		public void defaultInit ()
@@ -397,13 +409,13 @@ namespace CrowdSim
 			helper = new Helper<Cell> (groups [groupId].grid, cellWidth, gridRatio);
 
 			groupGrid = groups [id];
-			Debug.Log ("Now editing group: " + groupId);
 
 		}
 
-		public void swapGroup ()
+		public Color swapGroup ()
 		{
 			groupId++;
+
 			if (groupId >= groups.Count) {
 				groupId = 0;
 				groupGrid = groups [0];
@@ -411,7 +423,8 @@ namespace CrowdSim
 				groupGrid = groups [groupId];
 			}
 			helper = new Helper<Cell> (groups [groupId].grid, cellWidth, gridRatio);
-			Debug.Log ("Now editing group: " + groupId);
+
+			return groupGrid.color;
 		}
 
 		public void setUpdateField (bool updateField)
@@ -456,6 +469,18 @@ namespace CrowdSim
 
 		public void setMinDensity(float min){
 			sharedGrid.setMinDensity (min);
+		}
+
+		public void setPathAvoidance(float pA){
+			sharedGrid.setPathAvoidance (pA);
+		}
+
+		public void setDensityExp(float densityExp){
+			sharedGrid.setDensityExponent (densityExp);
+		}
+
+		public void setObjectAvoidance(float oA){
+			sharedGrid.setObjectAvoidance (oA);
 		}
 
 		public void resetGrids ()
