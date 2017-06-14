@@ -182,8 +182,6 @@ public class ProceduralPipeline : MonoBehaviour
         populatedObjects = dungeonObjectPlacer.GetPopulatedObjects();
 
         createSim();
-
-		simAccess.resetValues ();
 	}
 
 	public void swapGroups(){
