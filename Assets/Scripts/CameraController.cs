@@ -42,15 +42,21 @@ public class CameraController : MonoBehaviour {
 			}
 
 			if (Input.GetKey (KeyCode.A)) {
-				transform.Rotate (0.0f, -scaledTurnSpeed, 0.0f);
+				transform.Translate (-scaledMoveSpeed, 0.0f, 0.0f);
 			} else if (Input.GetKey (KeyCode.D)) {
-				transform.Rotate (0.0f, scaledTurnSpeed, 0.0f);
+				transform.Translate (scaledMoveSpeed, 0.0f, 0.0f);
 			}
 
-			if (Input.GetKey (KeyCode.E)) {
+			if (Input.GetKey (KeyCode.R)) {
 				transform.Translate (0.0f, -scaledMoveSpeed, 0.0f);
-			} else if (Input.GetKey (KeyCode.Q)) {
+			} else if (Input.GetKey (KeyCode.F)) {
 				transform.Translate (0.0f, scaledMoveSpeed, 0.0f);
+			}
+
+			if (Input.GetKey (KeyCode.Q)) {
+				transform.Rotate (0.0f, -scaledTurnSpeed, 0.0f);
+			} else if (Input.GetKey (KeyCode.E)) {
+				transform.Rotate (0.0f, scaledTurnSpeed, 0.0f);
 			}
 		} else {
 			float currentTime = Time.time;
