@@ -31,7 +31,11 @@ public class ProceduralPipeline : MonoBehaviour
 
 	public GameObject colliderQuad;
 
+	public GameObject realCamera;
+
 	public CrowdSim.SimAccess simAccess;
+
+	bool inTopDown = true;
 
 	public void setAddAgent ()
 	{
@@ -123,6 +127,19 @@ public class ProceduralPipeline : MonoBehaviour
 		}
 	}
 
+	public void topDown(){
+		if (!inTopDown) {
+			realCamera.transform.eulerAngles = realCamera.transform.eulerAngles += new Vector3 (45f, 0f, 0f);
+			inTopDown = true;
+		}
+	}
+
+	public void wideShot(){
+		if (inTopDown) {
+			realCamera.transform.eulerAngles = realCamera.transform.eulerAngles -= new Vector3 (45f, 0f, 0f);
+			inTopDown = false;
+		}
+	}
 
 
 	public void Update()
@@ -137,26 +154,15 @@ public class ProceduralPipeline : MonoBehaviour
 			addGroup();
 		if (Input.GetKeyDown (KeyCode.P))
 			swapGroups();
-		if (Input.GetKeyDown (KeyCode.M))
-			increaseAvoidance ();
-		if (Input.GetKeyDown (KeyCode.N))
-			decreaseAvoidance ();
 		if (Input.GetKeyDown (KeyCode.Escape))
 			Application.Quit();
 		if (Input.GetKeyDown (KeyCode.Z))
-			togglePause ();
-		if (Input.GetKeyDown (KeyCode.B))
-			increaseDensityExp ();
-		if (Input.GetKeyDown (KeyCode.V))
-			decreaseDensityExp ();
-		if (Input.GetKeyDown (KeyCode.C))
-			increaseLaneFormation ();
+			wideShot ();
 		if (Input.GetKeyDown (KeyCode.X))
-			decreaseLaneFormation ();
+			topDown ();
 		if (Input.GetKeyDown (KeyCode.L))
 			toggleTextUI ();
-		if (Input.GetKeyDown (KeyCode.K))
-			toggleRevive ();
+
 		
 	}
 
