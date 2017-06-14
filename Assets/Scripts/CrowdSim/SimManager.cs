@@ -191,6 +191,18 @@ namespace CrowdSim
 			return groupGrid.grid;
 		}
 
+		public int getGroupId(){
+			return groupId;
+		}
+
+		public string getPaused(){
+			if (pause) {
+				return "Paused";
+			} else {
+				return "UnPaused";
+			}
+		}
+
 		public int addAgent (Vector2 pos, GameObject sceneObject, bool moveable)
 		{
 			SimObject simObject = null;
@@ -238,28 +250,21 @@ namespace CrowdSim
 		}
 
 
-		public void increaseLaneFormation(){
-			if (sharedGrid != null) {
-				sharedGrid.increasePathAvoidance ();
-			}
+		public string increaseLaneFormation(){
+			return sharedGrid.increasePathAvoidance ();
 		}
 
-		public void decreaseLaneFormation(){
-			if (sharedGrid != null) {
-				sharedGrid.decreasePathAvoidance ();
-			}
+		public string decreaseLaneFormation(){
+			return sharedGrid.decreasePathAvoidance ();
 		}
 
-		public void increaseDensityExp(){
-			if (sharedGrid != null) {
-				sharedGrid.increaseDensityExp ();
-			}
+		public string increaseDensityExp(){
+			return sharedGrid.increaseDensityExp ();
 		}
 
-		public void decreaseDensityExp(){
-			if (sharedGrid != null) {
-				sharedGrid.decreaseDensityExp ();
-			}
+		public string decreaseDensityExp(){
+			return sharedGrid.decreaseDensityExp ();
+			
 		}
 
 		private GameObject createDummyAgent (Vector2 pos)
@@ -374,7 +379,7 @@ namespace CrowdSim
 			}
 		}
 
-		public void increaseAvoidance(){
+		public string increaseAvoidance(){
 			avoidance += 0.2f;
 			if (avoidance > 2.0f) {
 				avoidance = 1.0f;
@@ -382,17 +387,17 @@ namespace CrowdSim
 
 
 			sharedGrid.setAvoidance (avoidance);
-			Debug.Log ("Avoidance set: " + avoidance);
+			return avoidance.ToString ("#.##");
 		}
 
-		public void decreaseAvoidance(){
+		public string decreaseAvoidance(){
 			avoidance -= 0.2f;
 			if (avoidance < 0f) {
 				avoidance = 0f;
 			}
 				
 			sharedGrid.setAvoidance (avoidance);
-			Debug.Log ("Avoidance set: " + avoidance);
+			return avoidance.ToString ("#.##");
 		}
 
 		public void resetGrids ()

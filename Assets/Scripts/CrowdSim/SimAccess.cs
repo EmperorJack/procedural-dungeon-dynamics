@@ -5,6 +5,8 @@ using UnityEngine;
 using Visualization;
 using DungeonGeneration;
 
+using UnityEngine.UI;
+
 namespace CrowdSim
 {
 	public class SimAccess : MonoBehaviour
@@ -47,6 +49,15 @@ namespace CrowdSim
 
 		DungeonGeneration.Cell[,] dungeon;
 
+		public GameObject avoidanceText;
+		public GameObject laneText;
+		public GameObject densityText;
+
+		public GameObject groupText;
+		public GameObject actionText;
+		public GameObject pausedText;
+			
+
 		public void reset ()
 		{
 			if (simManager != null) {
@@ -64,6 +75,8 @@ namespace CrowdSim
 			}
 
 			simManager.sharedGrid.setAvoidance (avoidance);
+
+			avoidanceText.GetComponent<Text>().text = avoidance.ToString ("#.##");
 		}
 
 		public void setTimeWeight(float timeWeight){
@@ -134,6 +147,8 @@ namespace CrowdSim
 			foreach (GridGraphics graphics in groupGraphics) {
 				hideGrid (graphics);
 			}
+
+			groupText.GetComponent<Text> ().text = simManager.getGroupId().ToString();
 		}
 
 		public void addGroup ()
@@ -145,6 +160,7 @@ namespace CrowdSim
 					hideGrid (graphics);
 				}
 			}
+			groupText.GetComponentInParent<Text> ().text = simManager.getGroupId ().ToString();
 		}
 
 		public SimAccess ()
@@ -205,7 +221,17 @@ namespace CrowdSim
 
 		public void setAction (string action)
 		{
+			actionText.GetComponent<Text> ().text = action;
 			this.action = action;
+		}
+
+		public void toggleTextUI(){
+			actionText.SetActive (!actionText.activeSelf);
+			densityText.SetActive (!densityText.activeSelf);
+			avoidanceText.SetActive (!avoidanceText.activeSelf);
+			laneText.SetActive (!laneText.activeSelf);
+			groupText.SetActive (!groupText.activeSelf);
+			pausedText.SetActive (!pausedText.activeSelf);
 		}
 
 		public void setDisplayFields ()
@@ -400,26 +426,33 @@ namespace CrowdSim
 			simManager.trigger ();
 		}
 
+		void setAvoidanceText(string toAdd){
+			avoidanceText.GetComponent<Text> ().text = toAdd;
+		}
+
 		public void increaseAvoidance(){
 			if (simManager == null) {
 				return;
 			}
-			simManager.increaseAvoidance ();
+			setAvoidanceText(simManager.increaseAvoidance ());
 		}
 
 		public void decreaseAvoidance(){
 			if (simManager == null) {
 				return;
 			}
-			simManager.decreaseAvoidance ();
+			setAvoidanceText(simManager.decreaseAvoidance ());
 		}
 
+		void setDensityText(string toAdd){
+			densityText.GetComponent<Text> ().text = toAdd;
+		}
 		public void decreaseDensityExp(){
 			if (simManager == null) {
 				return;
 			}
 
-			simManager.decreaseDensityExp ();
+			setDensityText(simManager.decreaseDensityExp ());
 		}
 
 		public void increaseDensityExp(){
@@ -427,8 +460,12 @@ namespace CrowdSim
 				return;
 			}
 
-			simManager.increaseDensityExp ();
+			setDensityText(simManager.increaseDensityExp ());
 
+		}
+
+		void setLaneText(string toAdd){
+			laneText.GetComponent<Text> ().text = toAdd;
 		}
 
 		public void decreaseLaneFormation(){
@@ -436,7 +473,7 @@ namespace CrowdSim
 				return;
 			}
 
-			simManager.decreaseLaneFormation ();
+			setLaneText(simManager.decreaseLaneFormation ());
 		}
 
 		public void increaseLaneFormation(){
@@ -444,7 +481,7 @@ namespace CrowdSim
 				return;
 			}
 
-			simManager.increaseLaneFormation ();
+			setLaneText(simManager.increaseLaneFormation ());
 		}
 			
 	}

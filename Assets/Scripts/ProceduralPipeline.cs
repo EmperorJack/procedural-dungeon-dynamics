@@ -95,6 +95,14 @@ public class ProceduralPipeline : MonoBehaviour
 
 		simAccess.decreaseLaneFormation ();
 	}
+
+	public void toggleTextUI(){
+		if (simAccess == null) {
+			return;
+		} else
+			simAccess.toggleTextUI ();
+	}
+
 	public void createSim ()
 	{
 		if (simAccess == null) {
@@ -105,6 +113,8 @@ public class ProceduralPipeline : MonoBehaviour
 			simAccess.addDungeonObjects (populatedObjects);
 		}
 	}
+
+
 
 	public void Update()
 	{
@@ -134,6 +144,8 @@ public class ProceduralPipeline : MonoBehaviour
 			increaseLaneFormation ();
 		if (Input.GetKeyDown (KeyCode.X))
 			decreaseLaneFormation ();
+		if (Input.GetKeyDown (KeyCode.L))
+			toggleTextUI ();
 		
 	}
 

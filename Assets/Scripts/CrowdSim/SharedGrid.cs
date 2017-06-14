@@ -204,32 +204,37 @@ namespace CrowdSim
 			}
 		}
 
-		public void increasePathAvoidance(){
+		public string increasePathAvoidance(){
 			pathAvoidance += 1.0f;
 			if (pathAvoidance >= 5.0f) {
 				pathAvoidance = 1.0f;
 			}
+
+			return pathAvoidance.ToString("#.##");
 		}
 
-		public void decreasePathAvoidance(){
+		public string decreasePathAvoidance(){
 			pathAvoidance -= 1.0f;
 			if (pathAvoidance <= 1.0f) {
 				pathAvoidance = 1.0f;
 			}
+			return pathAvoidance.ToString("#.##");
 		}
 
-		public void increaseDensityExp(){
+		public string increaseDensityExp(){
 			densityExp += 0.1f;
-			if (densityExp > 0.6) {
+			if (densityExp > 0.6f) {
 				densityExp = 0.6f;
 			}
+			return densityExp.ToString("#.##");
 		}
 
-		public void decreaseDensityExp(){
+		public string decreaseDensityExp(){
 			densityExp -= 0.1f;
 			if (densityExp < 0.1f) {
 				densityExp = 0.1f;
 			}
+			return densityExp.ToString("#.##");
 		}
 
 		public void assignDiscomfort(SimObject simObject){
