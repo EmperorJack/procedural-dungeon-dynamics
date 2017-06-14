@@ -45,7 +45,6 @@ namespace CrowdSim
 		private bool updateFields = true;
 		int frames = 1;
 
-		bool justAdd = false;
 
 		DungeonGeneration.Cell[,] dungeon;
 
@@ -225,6 +224,16 @@ namespace CrowdSim
 			this.action = action;
 		}
 
+		public void resetValues(){
+			setAction ("select");
+			setAvoidanceText ("0.7");
+			setDensityText ("0.4");
+			setLaneText ("2.0");
+
+			groupText.GetComponent<Text> ().text = "0";
+			pausedText.GetComponent<Text> ().text = "Paused";
+		}
+
 		public void toggleTextUI(){
 			actionText.SetActive (!actionText.activeSelf);
 			densityText.SetActive (!densityText.activeSelf);
@@ -232,6 +241,7 @@ namespace CrowdSim
 			laneText.SetActive (!laneText.activeSelf);
 			groupText.SetActive (!groupText.activeSelf);
 			pausedText.SetActive (!pausedText.activeSelf);
+
 		}
 
 		public void setDisplayFields ()
@@ -272,7 +282,6 @@ namespace CrowdSim
 					int[] index = simManager.helper.getLeft (new Vector2 (hitPosition.x, hitPosition.z));
 					leftSelected = simManager.helper.accessGridCell (index);
 
-					justAdd = false;
 					if (action.Equals ("goal")) {
 						addGoal (new Vector2 (hitPosition.x, hitPosition.z));
 					}
@@ -326,7 +335,7 @@ namespace CrowdSim
 		public void togglePause ()
 		{
 			if (simManager != null) {
-				simManager.togglePause ();
+				pausedText.GetComponent<Text>().text= simManager.togglePause ();
 			}
 		}
 

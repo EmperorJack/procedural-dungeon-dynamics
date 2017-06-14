@@ -43,9 +43,14 @@ namespace CrowdSim
 
 		}
 
-		public void togglePause ()
+		public string togglePause ()
 		{
 			pause = !pause;
+			if (pause) {
+				return "Paused";
+			} else {
+				return "Running";
+			}
 		}
 
 		public SimManager (float cellWidth, int dim, GameObject simObjectsParent, DungeonGeneration.Cell[,] dungeon, int gridRatio, bool defaultSetup)

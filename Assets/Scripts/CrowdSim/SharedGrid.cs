@@ -19,7 +19,7 @@ namespace CrowdSim
 		float pathAvoidance = 2.0f;
 
 		// 'constant' values
-		float densityExp = 0.1f;
+		float densityExp = 0.4f;
 		// 0 (spread out) -> 10 (form lines)
 		public float maxCalcDensity = 0f;
 		public float minDensity = 5.0f;
