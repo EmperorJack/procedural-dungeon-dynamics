@@ -101,12 +101,13 @@ At runtime:
 #### Attributions
 
 Models:
-- www.turbosquid.com (list here)
+- www.turbosquid.com (Ancient Vase, Tall Vase, Warrior Statue, Cat Statue, Plinth)
 - The remainder were modelled by us.
 
 Textures:
-- www.textures.com (all?)
+- www.textures.com 
 
 Audio:
-- www.freesfx.co.uk (all?)
+- www.freesfx.co.uk
+- www.freesound.org
 - Torch flame -  http://freesound.org/people/stratcat322/sounds/233189/
