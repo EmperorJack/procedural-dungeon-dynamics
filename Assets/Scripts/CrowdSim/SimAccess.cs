@@ -41,14 +41,17 @@ namespace CrowdSim
 		 
 		Primitives.Cell leftSelected;
 
-		string action = "agent";
+		string action = "goal";
 		private int displayField = 0;
-		private bool updateFields = true;
 		int frames = 1;
+
+		int groups = 0;
 
 		bool onCanvas = false;
 
 		public GameObject swapBtn;
+
+		public GameObject groupBtn;
 
 		public GameObject canvas;
 
@@ -59,6 +62,8 @@ namespace CrowdSim
 		public GameObject revive;
 
 		public GameObject panel;
+
+		public GameObject defaultBtn;
 
 		DungeonGeneration.Cell[,] dungeon;
 			
@@ -152,14 +157,18 @@ namespace CrowdSim
 			}
 		}
 
-		void setActionBtn(){
+		void toggleActionBtn(){
 			if (actionBtn != null) {
 				if (action.Equals ("goal")) {
-					actionBtn.GetComponentInChildren<Text> ().text = "Add Agent";
+					setActionBtn ("Add Agent");
 				} else if(action.Equals("agent")){
-					actionBtn.GetComponentInChildren<Text>().text = "Add Goal";
+					setActionBtn ("Add Goal");
 				}
 			}
+		}
+
+		void setActionBtn(string text){
+			actionBtn.GetComponentInChildren<Text> ().text = text;
 		}
 
 		public void toggleRevive(){
@@ -188,14 +197,7 @@ namespace CrowdSim
 
 			groupGraphics = new GridGraphics[10];
 
-//			if (simObject == null) {
-//				simObject = Resources.Load ("Prefabs/slime", GameObject) as GameObject;
-//				if (simObject == null) {
-//					Debug.Log ("Failed to find default prefab: Prefabs/slime");
-//				}
-//			}
-
-			setActionBtn ();
+			setActionBtn ("Add Goal");
 
 			resetValues ();
 		}
@@ -222,11 +224,18 @@ namespace CrowdSim
 		public void addGroup ()
 		{
 			if (simManager != null) {
+				groups++;
 				Color newColor = simManager.addGroup ();
 				swapBtn.GetComponent<Image> ().color = newColor;
 				foreach (GridGraphics graphics in groupGraphics) {
 					hideGrid (graphics);
 				}
+
+				revive.SetActive (true);
+				pause.SetActive (true);
+				actionBtn.SetActive (true);
+				defaultBtn.SetActive (true);
+				swapBtn.SetActive (true);
 			}
 		}
 
@@ -250,6 +259,8 @@ namespace CrowdSim
 			simObjects = new GameObject ();
 			simObjects.name = "Sim Objects";
 			simObjects.transform.parent = crowdSim.transform;
+
+			groupBtn.SetActive (true);
 
 			this.simManager = new SimManager (cellWidth / gridRatio, (int)(dim * gridRatio), simObjects, dungeon, (int)gridRatio, defaultSetup);
 		}
@@ -292,13 +303,18 @@ namespace CrowdSim
 			} else {
 				setAction ("goal");
 			}
-			setActionBtn ();
+			toggleActionBtn ();
 		}
 
 		public void setAction (string action)
 		{
 			this.action = action;
-			setActionBtn ();
+			toggleActionBtn ();
+		}
+
+		public void initValues(){
+			groups = 0;
+			resetValues ();
 		}
 
 		public void resetValues(){
@@ -307,11 +323,20 @@ namespace CrowdSim
 				slider.reset ();
 			}
 
-			//if (simManager != null) {
+			groupBtn.SetActive (true);
+
+			if (groups > 0) {
 				pause.GetComponent<Toggle> ().isOn = true;
 				revive.GetComponent<Toggle> ().isOn = false;
-			//}
 
+				pause.SetActive (true);
+				actionBtn.SetActive (true);
+				defaultBtn.SetActive (true);
+			}
+
+			if (groups > 1) {
+				swapBtn.SetActive (true);
+			}
 		}
 
 		public void toggleTextUI(){
@@ -395,11 +420,9 @@ namespace CrowdSim
 		public void updateSim (float time)
 		{
 			if (frames >= frameLimit) {
-				updateFields = true;
 				setGroupUpdateField (true);
 				frames = 0;
 			} else {
-				updateFields = false;
 				setGroupUpdateField (false);
 				frames++;
 			}

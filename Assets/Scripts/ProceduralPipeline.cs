@@ -124,6 +124,7 @@ public class ProceduralPipeline : MonoBehaviour
 			Debug.Log ("Initializing Simulation");
 			simAccess.init (simpleLayout);
 			simAccess.addDungeonObjects (populatedObjects);
+			simAccess.initValues ();
 		}
 	}
 
@@ -200,7 +201,7 @@ public class ProceduralPipeline : MonoBehaviour
 
         createSim();
 
-		simAccess.resetValues ();
+		simAccess.initValues ();
 	}
 
 	public void swapGroups(){

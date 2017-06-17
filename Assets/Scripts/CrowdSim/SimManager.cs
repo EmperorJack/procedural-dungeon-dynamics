@@ -183,45 +183,27 @@ namespace CrowdSim
 		public int[] getCell (Vector2 pos)
 		{
 			return helper.getCellIndex (pos);
-//			Cell cell = helper.getCell (pos);
-//			int[] leftIndex = helper.getLeft (pos);
-//			Cell leftCell = helper.accessGridCell (leftIndex);
-//			if (leftCell == null) {
-//				return new int[]{ -1, -1 };
-//			} else {
-//				float deltaX = pos.x - leftCell.position.x;
-//				float deltaY = pos.y - leftCell.position.y;
-//
-//				if (deltaX >= cellWidth / 2) {
-//					leftIndex [0]++;
-//				}
-//
-//				if (deltaY >= cellWidth / 2) {
-//					leftIndex [1]++;
-//				}
-//				return leftIndex;
-//			}
-
 		}
 
 		public void addDungeonObjects (List<GameObject> objects)
 		{
 			foreach (GameObject gameObject in objects) {
-				
-				//Debug.Log (gameObject.name);
-				Transform parentTransform = gameObject.GetComponent<Transform> ();
-				Vector2 parentPos = new Vector2 (parentTransform.position.x, parentTransform.position.z);
+				addDungeonObject(gameObject);
+			}
+		}
 
-				if (gameObject.name.Contains ("table")) {
-					addAgent (getObjectPos (gameObject), gameObject, false);
-				} else {
-					foreach (Transform childT in gameObject.transform) {
+		void addDungeonObject(GameObject gameObject){
+			if (gameObject.transform.name.Contains ("_whole")) {
+				addAgent (getObjectPos (gameObject), gameObject, false);
+			} else {
+				foreach (Transform childT in gameObject.transform) {
+					if (childT.name.Contains ("_broken") == false) {
 						GameObject child = childT.gameObject;
-						if (child.name.Contains ("whole")) {
-							addAgent (getObjectPos (child), child, false);
-						} else {
-							//table 
-						}
+						addDungeonObject (child);
+
+					} else if (childT.name.Contains ("chair") || childT.name.Contains("table") || childT.name.Contains("bench")) {
+						// for non breakable objects
+						addAgent (getObjectPos (childT.gameObject), childT.gameObject, false);
 					}
 				}
 			}
