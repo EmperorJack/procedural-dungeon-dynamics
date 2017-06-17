@@ -6,18 +6,25 @@ using UnityEngine;
 namespace DungeonGeneration
 {
 
-    public class DungeonAnchorGenerator : MonoBehaviour
+    public class DungeonAnchorGenerator : PipelineComponent
     {
 
         // User set fields
         public GameObject anchorPrefab;
-        [Range(1, 10)] public int centerSpacing = 1;
-        [Range(1, 10)] public int edgeSpacing = 1;
+        [Range(1, 10)] public int centerSpacing = 3;
+        [Range(1, 10)] public int edgeSpacing = 2;
         [Range(1, 10)] public int edgeBuffer = 1;
 
         // Anchor fields
         private int nextAnchorId;
         private List<Anchor> anchors;
+
+        public override void ChangeValue(string targetField, float value)
+        {
+            if (targetField.Equals("centerSpacing")) centerSpacing = (int) value;
+            else if (targetField.Equals("edgeSpacing")) edgeSpacing = (int) value;
+            else if (targetField.Equals("edgeBuffer")) edgeBuffer = (int) value;
+        }
 
         public void Generate(List<Room> rooms, float gridSpacing)
         {

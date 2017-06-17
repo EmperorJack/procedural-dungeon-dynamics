@@ -6,7 +6,7 @@ using System;
 namespace DungeonGeneration
 {
 
-    public class DungeonAssetPopulator : MonoBehaviour
+    public class DungeonAssetPopulator : PipelineComponent
     {
 
         // User set fields
@@ -21,6 +21,11 @@ namespace DungeonGeneration
         private List<Room> rooms;
         private List<Corridor> corridors;
         private float gridSpacing;
+
+        public override void ChangeValue(string targetField, float value)
+        {
+            if (targetField.Equals("torchSpacing")) torchSpacing = (int) value;
+        }
 
         public void Setup(List<Room> rooms, List<Corridor> corridors, float gridSpacing)
         {

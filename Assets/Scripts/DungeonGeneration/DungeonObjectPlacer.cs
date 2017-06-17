@@ -6,7 +6,7 @@ using System;
 namespace DungeonGeneration
 {
 
-    public class DungeonObjectPlacer : MonoBehaviour
+    public class DungeonObjectPlacer : PipelineComponent
     {
 
         // User set fields
@@ -30,6 +30,13 @@ namespace DungeonGeneration
 
         // Object fields
         private List<GameObject> populatedObjects;
+
+        public override void ChangeValue(string targetField, float value)
+        {
+            if (targetField.Equals("edgeSpawnChance")) edgeSpawnChance = value;
+            else if (targetField.Equals("cornerSpawnChance")) cornerSpawnChance = value;
+            else if (targetField.Equals("centerSpawnChance")) centerSpawnChance = value;
+        }
 
         public void Setup(List<Anchor> anchors)
         {
