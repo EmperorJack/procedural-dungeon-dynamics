@@ -8,7 +8,7 @@ using Utilities;
 
 namespace CrowdSim
 {
-	public class SharedGrid : MonoBehaviour
+	public class SharedGrid
 	{
 		public Cell[,] grid;
 		float cellWidth;
@@ -101,7 +101,6 @@ namespace CrowdSim
 				this.dim = dungeon.GetLength (0) * ratio;
 			}
 
-			Debug.Log ("DIM: " + this.dim);
 
 			grid = new Cell[this.dim, this.dim];
 			helper = new Helper<Cell> (grid, cellWidth, ratio);
@@ -141,7 +140,6 @@ namespace CrowdSim
 				}
 			}
 
-			Debug.Log ("REAL CELLS: " + realCells);
 
 			for (int i = 0; i < dim; i++) {
 				for (int j = 0; j < dim; j++) {

@@ -67,9 +67,10 @@ namespace CrowdSim
 
 		DungeonGeneration.Cell[,] dungeon;
 			
-		List<SliderScript> sliders = new List<SliderScript>();
+		List<SliderScript> sliders = new List<SliderScript> ();
 
-		public void addSlider(SliderScript slider){
+		public void addSlider (SliderScript slider)
+		{
 			sliders.Add (slider);
 		}
 
@@ -85,8 +86,9 @@ namespace CrowdSim
 			swapBtn.GetComponent<Image> ().color = Color.white;
 
 		}
-			
-		public void setAvoidance(float avoidance){
+
+		public void setAvoidance (float avoidance)
+		{
 			if (simManager == null || simManager.sharedGrid == null) {
 				return;
 			}
@@ -94,35 +96,44 @@ namespace CrowdSim
 			simManager.sharedGrid.setAvoidance (avoidance);
 		}
 
-		public void setTimeWeight(float timeWeight){
+		public void setTimeWeight (float timeWeight)
+		{
 			if (simManager == null || simManager.sharedGrid == null) {
 				return;
 			}
 
-			simManager.sharedGrid.setTimeWeight (timeWeight);		}
+			simManager.sharedGrid.setTimeWeight (timeWeight);
+		}
 
-		public void setDistanceWeight(float distanceWeight){
+		public void setDistanceWeight (float distanceWeight)
+		{
 			if (simManager == null || simManager.sharedGrid == null) {
 				return;
 			}
 
-			simManager.sharedGrid.setDistanceWeight (distanceWeight);		}
+			simManager.sharedGrid.setDistanceWeight (distanceWeight);
+		}
 
-		public void setMaxDensity(float maxDensity){
+		public void setMaxDensity (float maxDensity)
+		{
 			if (simManager == null || simManager.sharedGrid == null) {
 				return;
 			}
 
-			simManager.sharedGrid.setMaxDensity (maxDensity);		}
+			simManager.sharedGrid.setMaxDensity (maxDensity);
+		}
 
-		public void setMinDensity(float minDensity){
+		public void setMinDensity (float minDensity)
+		{
 			if (simManager == null || simManager.sharedGrid == null) {
 				return;
 			}
 
-			simManager.sharedGrid.setMinDensity (minDensity);		}
+			simManager.sharedGrid.setMinDensity (minDensity);
+		}
 
-		public void setMaxVelocity(float maxVelocity){
+		public void setMaxVelocity (float maxVelocity)
+		{
 			if (simManager == null || simManager.sharedGrid == null) {
 				return;
 			}
@@ -130,11 +141,13 @@ namespace CrowdSim
 			simManager.sharedGrid.setMaxVelocity (maxVelocity);		
 		}
 
-		public void setFrameLimit(float value){
+		public void setFrameLimit (float value)
+		{
 			frameLimit = (int)value;
 		}
 
-		public void sliderAction(string action, float value){
+		public void sliderAction (string action, float value)
+		{
 			if (simManager == null) {
 				return;
 			}
@@ -157,52 +170,47 @@ namespace CrowdSim
 			}
 		}
 
-		void toggleActionBtn(){
+		void toggleActionBtn ()
+		{
 			if (actionBtn != null) {
 				if (action.Equals ("goal")) {
 					setActionBtn ("Add Agent");
-				} else if(action.Equals("agent")){
+				} else if (action.Equals ("agent")) {
 					setActionBtn ("Add Goal");
 				}
 			}
 		}
 
-		void setActionBtn(string text){
+		void setActionBtn (string text)
+		{
 			actionBtn.GetComponentInChildren<Text> ().text = text;
 		}
 
-		public void toggleRevive(){
+		public void toggleRevive ()
+		{
 			if (simManager != null) {
 				simManager.toggleRevive ();
 			}
 		}
 
-		public void enterCanvas(){
-			//Debug.Log ("ENTER");
+		public void enterCanvas ()
+		{
 			onCanvas = true;
 		}
 
-		public void exitCanvas(){
-			//Debug.Log ("EXIT");
+		public void exitCanvas ()
+		{
 			onCanvas = false;
 		}
 
 		void Start ()
 		{
 
-			Collider c = GetComponent<Collider> ();
-			c.transform.position = pos;
-			c.transform.localScale = new Vector3 (cellWidth * dim * gridRatio, 0, cellWidth * dim * gridRatio);
-			c.transform.position = c.transform.position + new Vector3 ((cellWidth * gridRatio * (dim - 1)) / 2, 0, (cellWidth * gridRatio * (dim - 1)) / 2);
 
-			groupGraphics = new GridGraphics[10];
-
-			setActionBtn ("Add Goal");
-
-			resetValues ();
 		}
 
-		public void addDungeonObjects(List<GameObject> gameObjects){
+		public void addDungeonObjects (List<GameObject> gameObjects)
+		{
 			if (simManager != null) {
 				simManager.addDungeonObjects (gameObjects);
 			}
@@ -247,7 +255,19 @@ namespace CrowdSim
 		public void init (DungeonGeneration.Cell[,] dungeon)
 		{
 			this.dungeon = dungeon;
-			//Debug.Log ("Creating Sim on grid: " + dim + " x " + dim);
+			this.dim = dungeon.GetLength (0);
+
+			Collider c = GetComponent<Collider> ();
+			c.transform.position = pos;
+			c.transform.localScale = new Vector3 (cellWidth * dim * gridRatio, 0, cellWidth * dim * gridRatio);
+			c.transform.position = c.transform.position + new Vector3 ((cellWidth * gridRatio * (dim - 1)) / 2, 0, (cellWidth * gridRatio * (dim - 1)) / 2);
+
+			groupGraphics = new GridGraphics[10];
+
+			setActionBtn ("Add Goal");
+
+			resetValues ();
+
 			crowdSim = new GameObject ();
 			crowdSim.name = "Components";
 			crowdSim.transform.position = new Vector3 (0, 0, 0);
@@ -270,7 +290,7 @@ namespace CrowdSim
 			if (leftSelected != null) {
 				Vector2 pos = leftSelected.position;
 				Gizmos.color = Color.blue;
-				Gizmos.DrawCube(new Vector3(pos.x, 0.01f, pos.y), new Vector3(0.1f, 0.1f,0.1f));
+				Gizmos.DrawCube (new Vector3 (pos.x, 0.01f, pos.y), new Vector3 (0.1f, 0.1f, 0.1f));
 			}
 
 			if (displayField > 0) {
@@ -297,7 +317,8 @@ namespace CrowdSim
 			}
 		}
 
-		public void toggleAction(){
+		public void toggleAction ()
+		{
 			if (action.Equals ("goal")) {
 				setAction ("agent");
 			} else {
@@ -312,12 +333,14 @@ namespace CrowdSim
 			toggleActionBtn ();
 		}
 
-		public void initValues(){
+		public void initValues ()
+		{
 			groups = 0;
 			resetValues ();
 		}
 
-		public void resetValues(){
+		public void resetValues ()
+		{
 			setAction ("select");
 			foreach (SliderScript slider in sliders) {
 				slider.reset ();
@@ -339,7 +362,8 @@ namespace CrowdSim
 			}
 		}
 
-		public void toggleTextUI(){
+		public void toggleTextUI ()
+		{
 			if (canvas != null) {
 				canvas.SetActive (!canvas.activeSelf);
 			}
@@ -351,25 +375,21 @@ namespace CrowdSim
 			if (displayField >= 3) {
 				displayField = 0;
 			}
-
-			if (displayField == 1) {
-				//Debug.Log ("Displaying potential Gradients");
-			}
-
-			if (displayField == 2) {
-				//Debug.Log ("Displaying velocities");
-			}
+				
 		}
 
-		void FixedUpdate(){
-			if (simManager == null) return;
+		void FixedUpdate ()
+		{
+			if (simManager == null)
+				return;
 
 			updateSim (Time.deltaTime);
 		}
 
 		void Update ()
 		{
-			if (simManager == null || onCanvas) return;
+			if (simManager == null || onCanvas)
+				return;
 			Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
 			RaycastHit hit;
 
@@ -383,7 +403,7 @@ namespace CrowdSim
 					return;
 				}
 
-				 if (Input.GetMouseButtonDown (0) && action != null) {
+				if (Input.GetMouseButtonDown (0) && action != null) {
 					// set grid cell to a goal
 
 					int[] index = simManager.helper.getLeft (new Vector2 (hitPosition.x, hitPosition.z));
@@ -458,7 +478,8 @@ namespace CrowdSim
 
 		public void addGoal (Vector2 pos)
 		{
-			GameObject goalObject = Instantiate (goalPrefab);;
+			GameObject goalObject = Instantiate (goalPrefab);
+			;
 			if (simManager.addGoal (pos, goalObject) == false) {
 				Object.Destroy (goalObject);
 			}
@@ -471,19 +492,14 @@ namespace CrowdSim
 			if (selected != null) {
 				leftSelected = selected;
 				Primitives.Cell sharedCell = leftSelected.sharedCell;
-				//Debug.Log (selected.index [0] + ", " + selected.index [1] + ": Potential: " + selected.potential+" vel: [" + selected.groupVelocity.x + ", " + selected.groupVelocity.y + "] Density: "+ sharedCell.density);
-
-				//Debug.Log ("Faces: ");
 
 				for (int i = 0; i < 4; i++) {
 					Primitives.Face face = selected.faces [i];
-					Primitives.Face sharedFace = sharedCell.faces[i];
+					Primitives.Face sharedFace = sharedCell.faces [i];
 					if (face != null) {
-						//Debug.Log (i + " Cost: " + face.cost + " grad: " + face.potentialGrad + "vel: "+face.velocity+" groupVel: "+face.groupVelocity);
 					}
 				}
-				Debug.Log ("-------------");
-			}//
+			}
 		}
 
 		public void addAgent (Vector2 pos)
@@ -491,7 +507,8 @@ namespace CrowdSim
 			simManager.addAgent (pos, simObject, true);
 		}
 
-		public void addAgent(Vector2 pos, int id){
+		public void addAgent (Vector2 pos, int id)
+		{
 			simManager.addAgent (pos, simObject, true, id);
 		}
 
@@ -511,7 +528,6 @@ namespace CrowdSim
 
 		private void addGraphics ()
 		{
-			//Debug.Log ("Creating graphical grids");
 
 			GameObject newParent = new GameObject ();
 			newParent.name = "Graphics Grid: " + simManager.groupId;
@@ -527,8 +543,7 @@ namespace CrowdSim
 				hideGrid (groupGraphics [simManager.groupId]);
 				visilbe = false;
 			} else {
-				//Debug.Log ("Displaying group grid: " + simManager.groupId);
-				if (groupGraphics [simManager.groupId] == null){
+				if (groupGraphics [simManager.groupId] == null) {
 					addGraphics ();
 				}
 				displayGrid (groupGraphics [simManager.groupId]);
@@ -543,14 +558,16 @@ namespace CrowdSim
 
 
 
-		public void increaseAvoidance(){
+		public void increaseAvoidance ()
+		{
 			if (simManager == null) {
 				return;
 			}
 			simManager.increaseAvoidance ();
 		}
 
-		public void decreaseAvoidance(){
+		public void decreaseAvoidance ()
+		{
 			if (simManager == null) {
 				return;
 			}
@@ -558,7 +575,8 @@ namespace CrowdSim
 		}
 
 
-		public void decreaseDensityExp(){
+		public void decreaseDensityExp ()
+		{
 			if (simManager == null) {
 				return;
 			}
@@ -566,7 +584,8 @@ namespace CrowdSim
 			simManager.decreaseDensityExp ();
 		}
 
-		public void increaseDensityExp(){
+		public void increaseDensityExp ()
+		{
 			if (simManager == null) {
 				return;
 			}
@@ -574,9 +593,10 @@ namespace CrowdSim
 			simManager.increaseDensityExp ();
 
 		}
-			
 
-		public void decreaseLaneFormation(){
+
+		public void decreaseLaneFormation ()
+		{
 			if (simManager == null) {
 				return;
 			}
@@ -584,7 +604,8 @@ namespace CrowdSim
 			simManager.decreaseLaneFormation ();
 		}
 
-		public void increaseLaneFormation(){
+		public void increaseLaneFormation ()
+		{
 			if (simManager == null) {
 				return;
 			}

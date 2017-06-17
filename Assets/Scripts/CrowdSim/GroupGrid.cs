@@ -36,7 +36,6 @@ namespace CrowdSim
 			this.color = color;
 			goals = new List<Cell> ();
 			dim = sharedGrid.grid.GetLength (0);
-			Debug.Log ("HI: " + dim + " " + grid.GetLength (0) + " ");
 			this.sharedGrid = sharedGrid;
 			for (int i = 0; i < dim; i++) {
 				for (int j = 0; j < dim; j++) {
@@ -160,57 +159,12 @@ namespace CrowdSim
 								}
 							}
 						}
-
-
-//						if (faces [1].potentialGrad == 0 && faces [3].potentialGrad > 0) {
-//							faces [3].potentialGrad = 0;
-//						}
-//
-//						if (faces [3].potentialGrad == 0 && faces [1].potentialGrad > 0) {
-//							faces [1].potentialGrad = 0;
-//						}
-//
-//						if (faces [0].potentialGrad == 0 && faces [2].potentialGrad > 0) {
-//							faces [2].potentialGrad = 0;
-//						}
-//
-//						if (faces [2].potentialGrad == 0 && faces [0].potentialGrad > 0) {
-//							faces [0].potentialGrad = 0;
-//						}
 							
 						normaliseGrads (cell);
 						calculateGroupVelocity (cell);
 					}
 				}
 			}
-
-//			if (trigger) {
-//				for (int i = 0; i < dim; i++) {
-//					for (int j = 0; j < dim; j++) {
-//						Cell cell = grid [i, j];
-//						if (cell != null) {
-//
-//							Vector2 totalVel = Vector2.zero;
-//							Vector2 totalGrad = Vector2.zero;
-//							int existFaces = 0;
-//
-//							foreach (Face face in cell.faces) {
-//								if (face.cell != null && face.cell.potGrad != null) {
-//									totalGrad += face.cell.potGrad;
-//									totalVel += face.cell.groupVelocity;
-//
-//									existFaces++;
-//								}
-//							}
-//							Vector2 newVel = totalVel / existFaces;
-//							Vector2 newGrad = totalGrad / existFaces;
-//							cell.potGrad = newGrad;
-//							cell.groupVelocity = totalVel;
-//																			
-//						}
-//					}
-//				}
-//			}
 		}
 
 		private void calculateGroupVelocity (Cell cell)
@@ -326,7 +280,6 @@ namespace CrowdSim
 					u = deltaX / cellWidth;
 					doInterp2 = true;
 				}
-//
 				else if (zeroVec (cVel)) {
 					Vector2 interpX = interp2 (aVel, bVel, u); 
 					total = interpX;//interp2 (interpX, dVel, v);

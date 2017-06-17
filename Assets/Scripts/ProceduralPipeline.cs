@@ -18,10 +18,10 @@ public class ProceduralPipeline : MonoBehaviour
 	// Component reuslts
 	private DungeonGeneration.Cell[,] simpleLayout;
 	private List<DungeonGeneration.Anchor> anchors;
-    private List<GameObject> populatedObjects;
+	private List<GameObject> populatedObjects;
 
-    // Parent transform objects
-    private GameObject simpleLayoutParent;
+	// Parent transform objects
+	private GameObject simpleLayoutParent;
 	private GameObject complexLayoutParent;
 	private GameObject anchorsParent;
 	private GameObject objectsParent;
@@ -48,15 +48,17 @@ public class ProceduralPipeline : MonoBehaviour
 	{
 		simAccess.setAction ("select");
 	}
-		
-	public void increaseAvoidance(){
+
+	public void increaseAvoidance ()
+	{
 		if (simAccess == null) {
 			return;
 		}
 		simAccess.increaseAvoidance ();
 	}
 
-	public void decreaseAvoidance(){
+	public void decreaseAvoidance ()
+	{
 		if (simAccess == null) {
 			return;
 		}
@@ -64,7 +66,8 @@ public class ProceduralPipeline : MonoBehaviour
 		simAccess.decreaseAvoidance ();
 	}
 
-	public void increaseDensityExp(){
+	public void increaseDensityExp ()
+	{
 		if (simAccess == null) {
 			return;
 		}
@@ -72,7 +75,8 @@ public class ProceduralPipeline : MonoBehaviour
 		simAccess.increaseDensityExp ();
 	}
 
-	public void decreaseDensityExp(){
+	public void decreaseDensityExp ()
+	{
 		if (simAccess == null) {
 			return;
 		}
@@ -81,7 +85,8 @@ public class ProceduralPipeline : MonoBehaviour
 	}
 
 
-	public void increaseLaneFormation(){
+	public void increaseLaneFormation ()
+	{
 		if (simAccess == null) {
 			return;
 		}
@@ -89,7 +94,8 @@ public class ProceduralPipeline : MonoBehaviour
 		simAccess.increaseLaneFormation ();
 	}
 
-	public void decreaseLaneFormation(){
+	public void decreaseLaneFormation ()
+	{
 		if (simAccess == null) {
 			return;
 		}
@@ -97,7 +103,8 @@ public class ProceduralPipeline : MonoBehaviour
 		simAccess.decreaseLaneFormation ();
 	}
 
-	public void toggleTextUI(){
+	public void toggleTextUI ()
+	{
 		if (simAccess == null) {
 			return;
 		} else {
@@ -105,7 +112,8 @@ public class ProceduralPipeline : MonoBehaviour
 		}
 	}
 
-	public void toggleRevive(){
+	public void toggleRevive ()
+	{
 		if (simAccess == null) {
 			return;
 		} else {
@@ -114,25 +122,22 @@ public class ProceduralPipeline : MonoBehaviour
 	}
 
 	public void createSim ()
-	{
-		if (simAccess == null) {
-			//simAccess = new SimAccess ();
-		} else {
-			Debug.Log ("Initializing Simulation");
-			simAccess.init (simpleLayout);
-			simAccess.addDungeonObjects (populatedObjects);
-			simAccess.initValues ();
-		}
+	{	
+		simAccess.init (simpleLayout);
+		simAccess.addDungeonObjects (populatedObjects);
+		simAccess.initValues ();
 	}
 
-	public void topDown(){
+	public void topDown ()
+	{
 		if (!inTopDown) {
 			realCamera.transform.eulerAngles = realCamera.transform.eulerAngles += new Vector3 (45f, 0f, 0f);
 			inTopDown = true;
 		}
 	}
 
-	public void wideShot(){
+	public void wideShot ()
+	{
 		if (inTopDown) {
 			realCamera.transform.eulerAngles = realCamera.transform.eulerAngles -= new Vector3 (45f, 0f, 0f);
 			inTopDown = false;
@@ -140,20 +145,20 @@ public class ProceduralPipeline : MonoBehaviour
 	}
 
 
-	public void Update()
+	public void Update ()
 	{
 		if (Input.GetKeyDown (KeyCode.Space))
-			Perform();
+			Perform ();
 		if (Input.GetKeyDown (KeyCode.U))
-			setAddAgent();
+			setAddAgent ();
 		if (Input.GetKeyDown (KeyCode.I))
-			setAddGoal();
+			setAddGoal ();
 		if (Input.GetKeyDown (KeyCode.O))
-			addGroup();
+			addGroup ();
 		if (Input.GetKeyDown (KeyCode.P))
-			swapGroups();
+			swapGroups ();
 		if (Input.GetKeyDown (KeyCode.Escape))
-			Application.Quit();
+			Application.Quit ();
 		if (Input.GetKeyDown (KeyCode.Z))
 			wideShot ();
 		if (Input.GetKeyDown (KeyCode.X))
@@ -165,53 +170,57 @@ public class ProceduralPipeline : MonoBehaviour
 	public void Perform ()
 	{
 		// Set the user set seed
-		if (!specifySeed) seed = (int) (Random.value * 10000);
+		if (!specifySeed)
+			seed = (int)(Random.value * 10000);
 
 		Random.InitState (seed);
 
-		Reset();
+		Reset ();
 
-		dungeonLayoutGenerator.Generate();
-		simpleLayout = dungeonLayoutGenerator.GetSimpleLayout();
+		dungeonLayoutGenerator.Generate ();
+		simpleLayout = dungeonLayoutGenerator.GetSimpleLayout ();
 
-		dungeonAssetPopulator.Setup(
-			dungeonLayoutGenerator.GetRooms(),
-			dungeonLayoutGenerator.GetCorridors(),
-			dungeonLayoutGenerator.GetGridSpacing()
+		dungeonAssetPopulator.Setup (
+			dungeonLayoutGenerator.GetRooms (),
+			dungeonLayoutGenerator.GetCorridors (),
+			dungeonLayoutGenerator.GetGridSpacing ()
 		);
 
-		dungeonAnchorGenerator.Generate(
-			dungeonLayoutGenerator.GetRooms(),
-			dungeonLayoutGenerator.GetGridSpacing()
+		dungeonAnchorGenerator.Generate (
+			dungeonLayoutGenerator.GetRooms (),
+			dungeonLayoutGenerator.GetGridSpacing ()
 		);
 
-		anchors = dungeonAnchorGenerator.GetAnchors();
+		anchors = dungeonAnchorGenerator.GetAnchors ();
 
-		dungeonObjectPlacer.Setup(anchors);
+		dungeonObjectPlacer.Setup (anchors);
 
-		DisplayComplexLayout();
+		DisplayComplexLayout ();
 
-		DisplayObjects();
-        populatedObjects = dungeonObjectPlacer.GetPopulatedObjects();
+		DisplayObjects ();
+		populatedObjects = dungeonObjectPlacer.GetPopulatedObjects ();
 
-        createSim();
+		createSim ();
 
 		simAccess.initValues ();
 	}
 
-	public void swapGroups(){
+	public void swapGroups ()
+	{
 		if (simAccess != null) {
 			simAccess.swapGroups ();
 		}
 	}
 
-	public void addGroup(){
+	public void addGroup ()
+	{
 		if (simAccess != null) {
 			simAccess.addGroup ();
 		}
 	}
 
-	public void togglePause(){
+	public void togglePause ()
+	{
 		if (simAccess != null) {
 			simAccess.togglePause ();
 		}
@@ -231,10 +240,9 @@ public class ProceduralPipeline : MonoBehaviour
 			simAccess.reset ();
 		}
 	}
-		
+
 	public void displaySim ()
 	{
-		Debug.Log ("Displaying Sim");
 
 		if (simAccess != null) {
 			simAccess.displaySim ();
