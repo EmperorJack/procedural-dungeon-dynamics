@@ -33,7 +33,9 @@ namespace DungeonGeneration
 
         public override void ChangeValue(string targetField, float value)
         {
-
+            if (targetField.Equals("edgeSpawnChance")) edgeSpawnChance = value;
+            else if (targetField.Equals("cornerSpawnChance")) cornerSpawnChance = value;
+            else if (targetField.Equals("centerSpawnChance")) centerSpawnChance = value;
         }
 
         public void Setup(List<Anchor> anchors)
