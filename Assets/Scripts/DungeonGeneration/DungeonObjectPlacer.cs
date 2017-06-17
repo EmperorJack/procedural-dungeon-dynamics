@@ -6,7 +6,7 @@ using System;
 namespace DungeonGeneration
 {
 
-    public class DungeonObjectPlacer : MonoBehaviour
+    public class DungeonObjectPlacer : PipelineComponent
     {
 
         // User set fields
@@ -30,6 +30,11 @@ namespace DungeonGeneration
 
         // Object fields
         private List<GameObject> populatedObjects;
+
+        public override void ChangeValue(string targetField, float value)
+        {
+
+        }
 
         public void Setup(List<Anchor> anchors)
         {

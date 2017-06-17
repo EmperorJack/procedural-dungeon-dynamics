@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace DungeonGeneration {
 
-	public class DungeonLayoutGenerator : MonoBehaviour {
+	public class DungeonLayoutGenerator : PipelineComponent
+    {
 
 	    // User set fields
 	    public int gridSize = 10;
@@ -13,9 +15,9 @@ namespace DungeonGeneration {
         public float minRoomWidthHeightRatio = 1.0f;
         public float maxRoomWidthHeightRatio = 1.0f;
         public GameObject simpleLayoutPrefab;
-        public int maxDepth = 5;
+        public int maxDepth = 15;
         public int addLoopsFromLevel = 0;
-        public int addLoopsToLevel = 0;
+        public int addLoopsToLevel = 15;
         [Range(0.0f, 1.0f)] public float loopSpawnChance = 0.5f;
         public bool allowLoopsBetweenTwoRooms = false;
 
@@ -35,7 +37,17 @@ namespace DungeonGeneration {
 		private List<Corridor> corridors;
         private int treeDepth;
 
-	    public void Generate()
+        public override void ChangeValue(string targetField, float value)
+        {
+            if (targetField.Equals("gridSize")) gridSize = (int)value;
+            else if (targetField.Equals("minimumRoomSize")) { minimumRoomSize = (int)value; Debug.Log(value); }
+            else if (targetField.Equals("roomBuffer")) roomBuffer = (int)value;
+            else if (targetField.Equals("minRoomWidthHeightRatio")) minRoomWidthHeightRatio = value;
+            else if (targetField.Equals("maxRoomWidthHeightRatio")) maxRoomWidthHeightRatio = value;
+            else if (targetField.Equals("loopSpawnChance")) loopSpawnChance = value;
+        }
+
+        public void Generate()
 	    {
             Clear();
 
@@ -169,6 +181,11 @@ namespace DungeonGeneration {
         public List<Corridor> GetCorridors()
         {
             return corridors;
+        }
+
+        public void GridSize(int value)
+        {
+            this.gridSize = value;
         }
     }
 }

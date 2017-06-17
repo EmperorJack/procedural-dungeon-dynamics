@@ -6,7 +6,7 @@ using UnityEngine;
 namespace DungeonGeneration
 {
 
-    public class DungeonAnchorGenerator : MonoBehaviour
+    public class DungeonAnchorGenerator : PipelineComponent
     {
 
         // User set fields
@@ -18,6 +18,11 @@ namespace DungeonGeneration
         // Anchor fields
         private int nextAnchorId;
         private List<Anchor> anchors;
+
+        public override void ChangeValue(string targetField, float value)
+        {
+
+        }
 
         public void Generate(List<Room> rooms, float gridSpacing)
         {
