@@ -160,8 +160,6 @@ public class ProceduralPipeline : MonoBehaviour
 			topDown ();
 		if (Input.GetKeyDown (KeyCode.L))
 			toggleTextUI ();
-
-		
 	}
 
 	public void Perform ()

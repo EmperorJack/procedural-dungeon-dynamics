@@ -36,8 +36,7 @@ To generate dungeons from within the Unity editor:
 To generate dungeons at runtime:
 
 - Run the game.
-- Press the `space` key to generate a new dungeon.
-
+- Click the `Generate Dungeon` button or press the `space` key to generate a new dungeon.
 
 **Fracturing**
 
@@ -53,9 +52,16 @@ At runtime:
 **Camera Controls**
 
 - Use the `W` and `S` keys to move forward and backward.
-- Use the `A` and `D` keys to turn left and right.
-- Use the `Q` and `E` keys to move up and down.
+- Use the `A` and `D` keys to move left and right.
+- Use the `Q` and `E` keys to turn left and right.
+- Use the `R` and `F` keys to move up and down.
+- Use the `Z` key to use a wide camera angle.
+- Use the `X` key to use a top down camera angle.
 
+**General Controls**
+
+- Use the `Escape` key to exit the game.
+- Use the `L` key to toggle the GUI.
 
 ----------
 
@@ -63,6 +69,8 @@ At runtime:
 #### Parameters
 
 **Dungeon Generation**
+
+To change dungeon parameters from within the Unity editor:
 
 - Select the `DungeonGenerator` game object in the hierarchy
 - Useful *Dungeon Layout Generator* parameters:
@@ -90,6 +98,11 @@ At runtime:
   - `* Rotation Offset` - maximum rotation offset that is applied to an instantiated object
   - `* Spawn Chance` - chance of an object spawning (0 - 1)
 
+To change dungeon parameters at runtime:
+
+- Ensure the Dungeon Generation GUI is shown by clicking the `Toggle Dungeon Generation GUI` button.
+- Configure the available parameters as listed avove.
+
 **Fracturing**
 
 **Crowd Simulation**
@@ -105,7 +118,7 @@ Models:
 - The remainder were modelled by us.
 
 Textures:
-- www.textures.com 
+- www.textures.com
 
 Audio:
 - www.freesfx.co.uk
