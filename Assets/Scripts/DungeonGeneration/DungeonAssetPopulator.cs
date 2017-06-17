@@ -24,7 +24,7 @@ namespace DungeonGeneration
 
         public override void ChangeValue(string targetField, float value)
         {
-
+            if (targetField.Equals("torchSpacing")) torchSpacing = (int) value;
         }
 
         public void Setup(List<Room> rooms, List<Corridor> corridors, float gridSpacing)
