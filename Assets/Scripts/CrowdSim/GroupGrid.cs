@@ -228,10 +228,8 @@ namespace CrowdSim
 			foreach (SimObject simObject in simObjects) {
 				int[] index = helper.getLeft (simObject.getPosition ());
 				Cell leftCell = helper.accessGridCell (index);
+				Cell objCell = helper.getCell (simObject.getPosition ());
 
-				if (leftCell == null) {
-					return;
-				}
 				//simObject.velocity = leftCell.groupVelocity;
 
 				// interpolate center of each surrounding cell
@@ -243,9 +241,14 @@ namespace CrowdSim
 				// |       |
 				// a ----- b
 
-				Vector2 dVel = getCenterVelocity (grid [index [0], index [1] + 1]);
-				Vector2 cVel = getCenterVelocity (grid [index [0] + 1, index [1] + 1]);
-				Vector2 bVel = getCenterVelocity (grid [index [0] + 1, index [1]]);
+				Cell dCell = grid [index [0], index [1] + 1];
+				Cell cCell = grid [index [0] + 1, index [1] + 1];
+				Cell bcell = grid [index [0] + 1, index [1]];
+				Cell aCell = leftCell;
+
+				Vector2 dVel = getCenterVelocity (dCell);
+				Vector2 cVel = getCenterVelocity (cCell);
+				Vector2 bVel = getCenterVelocity (bcell);
 				Vector2 aVel = getCenterVelocity (leftCell);
 				Vector2 velocity = new Vector2 (0f, 0f);
 
@@ -256,47 +259,27 @@ namespace CrowdSim
 				Vector2 interp2V2 = Vector2.zero;
 				bool doInterp2 = false;
 
-				Vector2 total = Vector2.zero;
-
-				if (zeroVec (aVel) && zeroVec (dVel)) {
-					interp2V1 = bVel;
-					interp2V2 = cVel;
-					u = deltaY / cellWidth;
-					doInterp2 = true;
-				} else if (zeroVec (cVel) && zeroVec (bVel)) {
-					interp2V1 = aVel;
-					interp2V2 = dVel;
-					u = deltaY / cellWidth;
-					doInterp2 = true;
-				} else if (zeroVec (aVel) && zeroVec (bVel)) {
-					interp2V1 = dVel;
-					interp2V1 = cVel;
-					u = deltaX / cellWidth;
-					doInterp2 = true;
-				} else if (zeroVec (cVel) && zeroVec (dVel)) {
-
-					interp2V1 = aVel;
-					interp2V2 = bVel;
-					u = deltaX / cellWidth;
-					doInterp2 = true;
+				if (!checkCell (aCell) && !checkCell (bcell)) {
+					aVel = dVel;
+					bVel = cVel;
+				} else if (!checkCell (dCell) && !checkCell (cCell)) {
+					dVel = aVel;
+					cVel = bVel;
+				} else if (!checkCell (aCell) && !checkCell (dCell)) {
+					aVel = bVel;
+					dVel = cVel;
+				} else if (!checkCell (bcell) && !checkCell (cCell)) {
+					bVel = aVel;
+					cVel = dVel;
+				} else if (!checkCell (dCell)) {
+					dVel = (aVel + cVel) / 2;
+				} else if (!checkCell (cCell)) {
+					cVel = (dVel + bVel) / 2;
+				} else if (!checkCell (aCell)) {
+					aVel = (dVel + bVel) / 2;
+				} else if (!checkCell (bcell)) {
+					bVel = (aVel + cVel) / 2;
 				}
-				else if (zeroVec (cVel)) {
-					Vector2 interpX = interp2 (aVel, bVel, u); 
-					total = interpX;//interp2 (interpX, dVel, v);
-				} else if (zeroVec (dVel)) {
-					Vector2 interpX = interp2 (aVel, bVel, u);
-					total = interpX;//interp2 (interpX, cVel, v);
-				} else if (zeroVec (aVel)) {
-					Vector2 interpX = interp2 (cVel, dVel, u);
-					total = interpX;//interp2 (interpX, bVel, v);
-				} else if (zeroVec (bVel)) {
-					Vector2 interpX = interp2 (cVel, dVel, u);
-					total = interpX;//interp2 (interpX, aVel, v);
-				}
-
-				if (total != Vector2.zero) {
-					simObject.velocity = total;
-				} else 
 
 				if (doInterp2) {
 					simObject.velocity = interp2 (interp2V1, interp2V2, u);
@@ -314,6 +297,9 @@ namespace CrowdSim
 			}
 		}
 
+		public bool checkCell(Cell cell){
+			return cell != null && cell.exists;
+		}
 		public Vector2 interp2 (Vector2 v1, Vector2 v2, float u)
 		{
 			Vector2 interp = Vector2.Lerp (v1, v2, u);
