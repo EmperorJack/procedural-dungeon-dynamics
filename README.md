@@ -115,7 +115,7 @@ To change dungeon parameters at runtime:
 
 Models:
 - www.turbosquid.com (Ancient Vase, Tall Vase, Warrior Statue, Cat Statue, Plinth)
-- The remainder were modelled by us.
+- The remainder were created by us.
 
 Textures:
 - www.textures.com
@@ -123,4 +123,7 @@ Textures:
 Audio:
 - www.freesfx.co.uk
 - www.freesound.org
-- Torch flame -  http://freesound.org/people/stratcat322/sounds/233189/
+- Torch flame - http://freesound.org/people/stratcat322/sounds/233189/
+
+Sprites:
+- Torch flame - https://opengameart.org
