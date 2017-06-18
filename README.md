@@ -113,7 +113,7 @@ To change dungeon parameters at runtime:
 
 **Crowd Simulation**
 
-Parameters must be changed at run time, click the `Toggle Crowd Simulation GUI` button and adjust the corresponding sliders:
+Parameters must be changed at run time, click the `Toggle Crowd Simulation GUI` button and adjust the corresponding sliders, these parameters affect the shared potential field, and so are not specific to each group. :
 
 - `Update Period` sets the frame period for updating the crowd simulation. Decreasing this will decrease performance.
 - `Max Density` sets the density cut off above which the velocity field will be dominated by the average velocity of the crowd.
@@ -123,7 +123,6 @@ Parameters must be changed at run time, click the `Toggle Crowd Simulation GUI` 
 - `Avoidance Time Steps` the number of timesteps ahead of each agent along which discomfort is added to the potential field to allow other groups to anticipate their movements. Increasing this will decrease performance.
 - `Object Avoidance` the weight which objects add discomfort to the grid, 0 will mean agents do not avoid objects, 3 will increase avoidance.
 
-Note: These parameters affect the shared potential field, and so are not specific to each group. 
 ----------
 
 
