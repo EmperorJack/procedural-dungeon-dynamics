@@ -48,6 +48,12 @@ In Unity:
 
 At runtime:
 - Note that a new dungeon must be generated at runtime before the crowd simulation will work.
+- Once generated click `Add Group` to add a new group to the simulation
+- The `Swap Group` button will swap the active group for adding goals and agents, it will highlight the group colour
+- The action button toggles state between `Add Goal` and `Add Agent`
+- Use `Default Settings` to reset parameters
+- The toggle `Pause` will toggle the simulation affecting agent velocities
+
 
 **Camera Controls**
 
@@ -101,12 +107,21 @@ To change dungeon parameters from within the Unity editor:
 To change dungeon parameters at runtime:
 
 - Ensure the Dungeon Generation GUI is shown by clicking the `Toggle Dungeon Generation GUI` button.
-- Configure the available parameters as listed avove.
+- Configure the available parameters as listed above.
 
 **Fracturing**
 
 **Crowd Simulation**
 
+Parameters must be changed at run time, click the `Toggle Crowd Simulation GUI` button and adjust the corresponding sliders, these parameters affect the shared potential field, and so are not specific to each group. :
+
+- `Update Period` sets the frame period for updating the crowd simulation. Decreasing this will decrease performance.
+- `Max Density` sets the density cut off above which the velocity field will be dominated by the average velocity of the crowd.
+- `Time Weight` the weighted cost moving from cell to cell, decreasing this will decrease the agents preference to arrive at the goal by the fastest route.
+- `Distance Weight` the weighted cost moving from cell to cel which is weighted by the velocity between those cell. Increasing this will increase the agents preference to arrive at the goal by the shortest route.
+- `Density Exponent` the contribution for each agent to the density of the potential fields, increasing this decreases the contribution of each aget.
+- `Avoidance Time Steps` the number of timesteps ahead of each agent along which discomfort is added to the potential field to allow other groups to anticipate their movements. Increasing this will decrease performance.
+- `Object Avoidance` the weight which objects add discomfort to the grid, 0 will mean agents do not avoid objects, 3 will increase avoidance.
 
 ----------
 
