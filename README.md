@@ -17,12 +17,12 @@ Mark: Fracturing
 Haylem: Crowd Simulation
 
 
-----------
-
-
 #### Usage
 
 This Unity project can be opened like any project in Unity. It may require version 5.6 to be at least used. The python fracturing scripts are run inside Maya and have been tested with Maya 2016.
+
+----------
+
 
 **Dungeon Generation**
 
@@ -38,11 +38,36 @@ To generate dungeons at runtime:
 - Run the game.
 - Click the `Generate Dungeon` button or press the `space` key to generate a new dungeon.
 
+
+
 **Fracturing**
 
 In Maya:
-
+- The fracturing script requires an installation of NumPy; http://www.numpy.org/
+- Copy `BowyerWatson.py` and `Sampler.py` into a location reachable by the Maya Python path
+- Import geometry.  Make sure the object has no non-standard ASCII characters in the name.
+- Manually select the geometry
+- In the Script Editor, `import BowyerWatson`
+- The following commands can then be run:
+  - `BowyerWatson.randomShatter(numberOfSamples, debug)` : selects numberOfSamples points at random from within the object's bounding box. The debug parameter is a boolean - if True, generates geometry displaying the tessellation.  The tessellation geometry will not have correct normals, it is purely for visual debugging.  This is the same across all commands.
+  - `BowyerWatson.unweightedShatter(numberOfSamples, debug)` : selects numberOfSamples vertices of the mesh to use as points for the            tessellation.
+  - `BowyerWatson.unweightedShatterPercent(samplePercent, debug)` : selects samplePercent of vertices to use as tessellation points.
+  - `BowyerWatson.weightedShatter(numberOfSamples, samplePercent, debug)` : selects samplePercent of vertices to use as tessellation        points, then selects numberOfSamples of the resulting tetrahedra and uses their centroids as the points for a new tessellation.
+- Export the geometry, remembering to keep the broken geometry grouped.  The file names must end in `_whole` for the original geometry, and `_broken` for the shattered group.
+ 
 In Unity:
+- Import the `_whole` and `_broken` geometry.  There should be output in the log stating that attributes have been set on them.
+- Create an empty GameObject in the scene.  Name it something ending in `_breakable`.
+- Parent instances of \_whole and \_broken to it by dragging them into the explorer.
+- Give the \_whole geometry a new `Physical Material`, or use one of the ones in `Assets/Materials`
+- Attach the `WholeObject` script in `Scripts/Shattered/` to the \_whole instance.
+- Drag the instance of \_broken into the `Broken Geo` field (in the attached WholeObject script).
+- Optional: Set the `Collision Threshold` (default is 1). I have used 1 for brittle objects such as plates, 2 for slightly sturdier objects like crates.
+- Optional: Set the `Shatter Sound`. 
+- Press `Initialise Broken Geo` to copy physical and visual materials from \_whole to \_broken, or make sure `Initialize On Start` is checked to copy them across at runtime.
+- Drag the \_breakable instance into `Prefabs/Breakable/`.  This makes it a unity prefab.
+- The prefab can then be assigned to the lists in `DungeonObjectPlacer`, and be placed in the scene when a new dungeon is generated.
+
 
 **Crowd Simulation**
 
@@ -110,6 +135,19 @@ To change dungeon parameters at runtime:
 - Configure the available parameters as listed above.
 
 **Fracturing**
+
+In Maya:
+- In all scripts, the `debug` parameter is a boolean - if True, generates geometry displaying the tessellation.  The tessellation geometry will not have correct normals, it is purely for visual debugging.
+- In `randomShatter` and `unweightedShatter`, `numberOfSamples` is the amount of sample points to be inserted into the tessellation.  The more points, the longer the script will take to run, and the more the mesh will be subdivided
+- In `unweightedShatterPercent`, `samplePercent` is the percentage of mesh vertices to use as tessellation points.
+- In `weightedShatter`, `samplePercent` is the percentage of mesh vertices to use as initial tessellation points.  These will not be used to subdivide the mesh, but will be used to provide further points to be sampled.
+- In `weightedShatter`, `numberOfSamples` is the amount of tetrahedra centroids from the first tessellation to sample as points for mesh subdivision.
+
+In Unity (`WholeGeo`):
+- `BrokenGeo` : The imported geometry group representing the shattered object
+- `Collision Threshold` : The velocity threshold a collision must reach or pass to trigger the script
+- `Shatter Sound` : Sound to be played when script is triggered.  Will have a small amount of random pitch offset applied at runtime.
+- `Initialize On Start` : If the physical properties of the whole geometry have not been copied over, attempt to do so at runtime. 
 
 **Crowd Simulation**
 
