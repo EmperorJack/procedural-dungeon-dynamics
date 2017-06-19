@@ -48,8 +48,8 @@ class VertexSampler:
     def uniformSamples(self,numberOfSamples):
         return np.random.choice(self.vertexPositions,numberOfSamples)
 
-    def geometricSamples(self,min,max,numberOfSamples):
-        sampleList = []
+
+
 
 
 

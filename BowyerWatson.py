@@ -4,7 +4,7 @@ import numpy as np
 import sys
 import maya.mel as mel
 import Sampler
-import vShatter
+import random
 
 
 
@@ -119,7 +119,7 @@ class Tessellation:
         self.outerTets = []
 
     def makeGeo(self):
-        groupName = object[0] + "_tessellation"
+        groupName = str(object) + "_tessellation"
         tessellationGroup = cmds.group(em=True, name=groupName)
         for t in self.tetras:
             tetGeo = t.makeGeo()
@@ -128,9 +128,15 @@ class Tessellation:
     def getCenters(self):
         return [t.center for t in self.tetras]
 
+    def getVolumes(self):
+        return [t.volume for t in self.tetras]
+
     def getTetsByVolume(self):
         sortedTets = sorted(self.tetras, key=lambda x: x.volume)
         return sortedTets
+
+    def getCentersByVolume(self):
+        return [t.center for t in self.getTetsByVolume()]
 
     def addVertex(self,v):
         self.vertices.append(v)
@@ -184,8 +190,8 @@ class Tessellation:
     def removeFaceFromVertex(self,v,f):
         if f in self.vertexToFaces[v]:
             self.vertexToFaces[v].remove(f)
-        else:
-            print "ERROR WHILE REMOVING: vertex not attached to face"
+        #else:
+        #    print "ERROR WHILE REMOVING: vertex not attached to face"
 
     def addFace(self,f):
         for v in f.vertices:
@@ -384,9 +390,9 @@ class Tessellation:
         if len(conflictingTets) == 0:
             #containingTet.makeGeo()
             print "ERROR: Containing tetra found but not in circumsphere"
-            pointSphere = cmds.polySphere(r = 0.3, sx= 2, sy=2)
-            cmds.move(p[0], p[1], p[2], pointSphere)
-            containingTet.makeGeo()
+            #pointSphere = cmds.polySphere(r = 0.3, sx= 2, sy=2)
+            #cmds.move(p[0], p[1], p[2], pointSphere)
+            #containingTet.makeGeo()
         return conflictingTets
 
     def findCircumsphereTets(self,p,t, conflictingTets, visited):
@@ -462,8 +468,8 @@ class Tessellation:
             else:
                 print "ERROR: Trying to remove tet that's not in tessellation"
                 t.printCoords()
-                t.makeGeo()
-                quit()
+                #t.makeGeo()
+                #quit()
             if t in self.outerTets:
                 self.outerTets.remove(t)
 
@@ -508,11 +514,12 @@ class Tessellation:
 
     def shatter(self):
         if self.object:
-            cmds.setAttr(self.object + '.visibility', 0)
-            brokenGeoName = self.object + "_broken"
+            #cmds.setAttr(str(self.object) + '.visibility', 0)
+            brokenGeoName = str(self.object) + "_broken"
             brokenGroup = cmds.group(em=True, name=brokenGeoName)
             for v in self.vertices:
                 objectCopy = cmds.duplicate(self.object)
+                cmds.setAttr(objectCopy[0] + '.visibility', 1)
                 cmds.parent(objectCopy, brokenGroup)
                 for n in self.edges[v]:
                     aim = [(vec1 - vec2) for (vec1, vec2) in zip(v, n)]
@@ -630,69 +637,99 @@ def getVertices(object):
     print vertList
 
 
+def randomShatter(numberOfSamples,debug):
+    object = cmds.ls(sl=True)
+    for obj in object:
+        dt = Tessellation(obj)
+        bBox = cmds.exactWorldBoundingBox(obj)
+        pointsX = [random.uniform(bBox[0], bBox[3]) for i in range(numberOfSamples)]
+        pointsY = [random.uniform(bBox[1], bBox[3]) for i in range(numberOfSamples)]
+        pointsZ = [random.uniform(bBox[2], bBox[5]) for i in range(numberOfSamples)]
+        points = zip(pointsX, pointsY, pointsZ)
+        dt.tessellate(points)
+        if debug:
+            dt.makeGeo()
+        dt.shatter()
 
 
-object = cmds.ls(sl=True)
-for obj in object:
-    dt = Tessellation(obj)
-    s = Sampler.VertexSampler(obj)
-    points = s.randomSamples(12)
-    #points = s.randomPercent(5)
-    dt.tessellate(points)
-    dt.finish()
-    volTets = dt.getTetsByVolume()
-    for t in volTets:
-        print t.volume
-    #dt.makeGeo()
-    #dt.shatter()
-    #dt.printInfo()
+def unweightedShatter(numberOfSamples, debug):
+    object = cmds.ls(sl=True)
+    for obj in object:
+        dt = Tessellation(obj)
+        s = Sampler.VertexSampler(obj)
+        points = s.randomSamples(numberOfSamples)
+        dt.tessellate(points)
+        dt.finish()
+        if debug:
+            dt.makeGeo()
+        dt.shatter()
+
+def unweightedShatterPercent(samplePercent, debug):
+    object = cmds.ls(sl=True)
+    for obj in object:
+        dt = Tessellation(obj)
+        s = Sampler.VertexSampler(obj)
+        points = s.randomPercent(samplePercent)
+        dt.tessellate(points)
+        if debug:
+            dt.makeGeo()
+        dt.finish()
+        dt.shatter()
+
+def weightedShatter(numberOfSamples,samplePercent, debug):
+    object = cmds.ls(sl=True)
+    for obj in object:
+        dt = Tessellation(obj)
+        s = Sampler.VertexSampler(obj)
+        points = s.randomPercent(samplePercent)
+        dt.tessellate(points)
+        dt.finish()
+        newPoints = dt.getCentersByVolume()[0:numberOfSamples]
+        dt2 = Tessellation(obj)
+        dt2.tessellate(newPoints)
+        dt2.finish()
+        if debug:
+            dt2.makeGeo()
+        dt2.shatter()
 
 
-#points = [[0,0,0],[-1,0,-1]]
-#points = [[0,0,0]]
-#points = [[0,0,0],[2,2,2]]
-#points = [[0,0,0],[2,2,2],[-1,0,-1]]
-#points = []
+def selectedShatter(numberOfSamples, debug):
+    #object = cmds.ls(ls=True)
+    object = cmds.filterExpand(sm = 31)
+    print object
+    objectName = ""
+    points = []
+    for obj in object:
+        objName = obj.split('.vtx')[0]
+        if objectName == "":
+            objectName = objName
 
+        if objName == objectName:
+            vertex = cmds.xform(obj, q=True, ws=True, t=True)
+            #print "Sampling vertex",
+            #print obj,
+            #print ": ",
+            #print vertex
+            if vertex not in points:
+                points.append(vertex)
 
-"""
-def vertexSampler(object, samplePercent):
-    cmds.select(object + ".vtx[*]", r=True)
-    vertPosTemp = cmds.xform(object + '.vtx[*]', q=True, ws=True, t=True)
-    vertices = zip(*[iter(vertPosTemp)] * 3)
-    print object,
-    print " has ",
-    print len(vertices),
-    print " vertices."
-    if samplePercent < 100 and samplePercent > 0:
-        print "Sampling ",
-        print samplePercent,
-        print " percent (",
-        h = len(vertices) * (samplePercent / 100.0)
-        print h,
-        print " rounded to",
-        numberOfSamples = (int)(round(h))
-        print numberOfSamples,
-        print " vertices)"
-        return random.sample(set(vertices),numberOfSamples)
-    else:
-        print "Sampling all vertices"
-        return vertices
-
-
-object = cmds.ls(sl=True)
-for obj in object:
-    getVertices(obj)
-    dt = Tessellation()
-    points = vertexSampler(obj,50)
-    #print points
-    #points = [[0,0,0]]
-    #points = [[0, 0, 0],[-5.0,-5.0,-5.0]]
-    #points = [[-5.0, -5.0, 5.0], [5.0, -5.0, 5.0]]
-    #points = [[0,0,0],[1,0,0],[0,1,0],[0,0,1]]
-
-    #dt.tessellate(obj,points)
-    #dt.makeGeo()
-    #dt.printInfo()
-"""
-
+    if objectName != "":
+        if len(points) > 0:
+            object = cmds.ls(objectName)
+            print object
+            print points[0]
+            dt = Tessellation(object)
+            dt.tessellate(points)
+            #dt.makeGeo()
+            dt.finish()
+            #dt.shatter()
+            #newPoints = dt.getCentersByVolume()[0:numberOfSamples]
+            newPoints = random.sample(dt.getCenters(),numberOfSamples)
+            dt2 = Tessellation(object)
+            dt2.tessellate(newPoints)
+            dt2.finish()
+            if (debug):
+                dt2.makeGeo()
+            dt2.shatter()
+        else:
+            print "ERROR: No points inserted"
