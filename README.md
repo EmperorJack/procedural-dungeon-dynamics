@@ -73,11 +73,12 @@ In Unity:
 
 At runtime:
 - Note that a new dungeon must be generated at runtime before the crowd simulation will work.
-- Once generated click `Add Group` to add a new group to the simulation
-- The `Swap Group` button will swap the active group for adding goals and agents, it will highlight the group colour
-- The action button toggles state between `Add Goal` and `Add Agent`
-- Use `Default Settings` to reset parameters
-- The toggle `Pause` will toggle the simulation affecting agent velocities
+- Once generated click `Add Group` to add a new group to the simulation.
+- The `Swap Group` button will swap the active group for adding goals and agents, it will highlight the group colour.
+- The action button toggles state between `Add Goal` and `Add Agent`.
+- Use `Default Settings` to reset parameters.
+- The toggle `Pause` will toggle the simulation affecting agent velocities.
+- The toggle `Revive` will toggle whether agents are removed from their active group and added to a random other group when they reach their goal.
 
 
 **Camera Controls**
