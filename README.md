@@ -17,12 +17,12 @@ Mark: Fracturing
 Haylem: Crowd Simulation
 
 
+----------
+
+
 #### Usage
 
 This Unity project can be opened like any project in Unity. It may require version 5.6 to be at least used. The python fracturing scripts are run inside Maya and have been tested with Maya 2016.
-
-----------
-
 
 **Dungeon Generation**
 
